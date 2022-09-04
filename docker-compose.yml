@@ -1,7 +1,6 @@
 services:
   api:
-    build: api
-    # image: weat/api
+    image: weat/api
     ports:
       - "3001:3001"
     volumes:
@@ -13,14 +12,11 @@ services:
       - db
 
   ui:
-    build: ui
-    # image: weat/ui
+    image: weat/ui
     ports:
       - "3000:3000"
     volumes:
       - ".:/ui"
-    environment:
-      NODE_ENV: production
     depends_on:
       - api
 
