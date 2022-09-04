@@ -1,0 +1,34 @@
+services:
+  api:
+    build: api
+    # image: weat/api
+    ports:
+      - "3001:3001"
+    volumes:
+      - ".:/api"
+    environment:
+      RAILS_ENV: production
+    env_file: .env
+    depends_on:
+      - db
+
+  ui:
+    build: ui
+    # image: weat/ui
+    ports:
+      - "3000:3000"
+    volumes:
+      - ".:/ui"
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - api
+
+  db:
+    image: postgres
+    volumes:
+      - "postgres:/var/lib/postgresql/data"
+    env_file: .env
+
+volumes:
+  postgres:
