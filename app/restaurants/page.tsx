@@ -3,7 +3,7 @@
 import DataLayout from '@/app/layouts/data_layout';
 import Content from '@/app/restaurants/content';
 import FilterSidebar from '@/app/restaurants/filter_sidebar';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const generateSearchParams = (
@@ -22,8 +22,12 @@ const generateSearchParams = (
   return params;
 };
 
+const getRestaurants = async (params: URLSearchParams) => {
+  const response = await fetch('/api/restaurants?' + params);
+  return response.json();
+};
+
 export default function Restaurants() {
-  const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -32,10 +36,13 @@ export default function Restaurants() {
   const [rating, setRating] = useState<number>(Number(searchParams.get('rating')) || 0);
   const [distance, setDistance] = useState<number>(Number(searchParams.getAll('distance')) || 0);
 
+  const [restaurants, setRestaurants] = useState([]);
+
   useEffect(() => {
-    const params = generateSearchParams(categories, prices, rating, distance).toString();
-    router.push(`${pathname}?${params}`);
-  }, [categories, distance, pathname, prices, rating, router]);
+    const params = generateSearchParams(categories, prices, rating, distance);
+    router.push(`/restaurants?${params}`);
+    getRestaurants(params).then(setRestaurants);
+  }, [categories, distance, prices, rating, router]);
 
   return (
     <>
@@ -52,7 +59,7 @@ export default function Restaurants() {
             setSelectedDistance={setDistance}
           />
         }
-        content={<Content />}
+        content={<Content restaurants={restaurants} />}
       />
     </>
   );

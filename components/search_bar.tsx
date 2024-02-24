@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { search } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 
@@ -40,7 +33,8 @@ export function SearchBar({ placeholder }: { placeholder?: string }) {
             handleSearch(value);
           }
         }}
-        placeholder={placeholder || '搜索...'}
+        // placeholder={placeholder || '搜索...'}
+        placeholder={'技能冷却中...'}
       />
       {result && (
         <CommandList>

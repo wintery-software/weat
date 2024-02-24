@@ -21,6 +21,8 @@ export default function Rating({
   onValueChange?: Dispatch<SetStateAction<number>>;
 }) {
   const [hover, setHover] = useState<number>();
+  value = Math.floor(value);
+  clearable = clearable && toggleable;
 
   return (
     <div className={cn(className, 'flex', 'flex-col', 'gap-2')}>
@@ -34,12 +36,9 @@ export default function Rating({
           >
             <StarIcon
               className={cn(
-                'w-4 h-4',
-                toggleable
-                  ? star <= (hover || value)
-                    ? 'text-yellow-600 fill-yellow-500'
-                    : 'text-muted-foreground'
-                  : 'text-yellow-600 fill-yellow-500',
+                'w-4',
+                'h-4',
+                star <= (hover || value) ? 'text-yellow-600 fill-yellow-500' : 'text-muted-foreground',
               )}
             />
           </button>

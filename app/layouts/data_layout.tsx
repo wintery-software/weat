@@ -1,16 +1,10 @@
 import MainLayout from '@/app/layouts/main_layout';
 import { ReactNode } from 'react';
 
-export default function DataLayout({
-  filter,
-  content,
-}: {
-  filter: ReactNode;
-  content: ReactNode;
-}) {
+export default function DataLayout({ filter, content }: { filter: ReactNode; content: ReactNode }) {
   return (
     <MainLayout>
-      <div className="w-52">{filter}</div>
+      <div className="min-w-64 max-w-64 pr-8">{filter}</div>
       {content}
     </MainLayout>
   );
