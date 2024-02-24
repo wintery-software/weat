@@ -1,47 +1,62 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { StarIcon } from 'lucide-react';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 export default function Rating({
   className,
-  defaultValue = 0,
+  clearable = true,
   max = 5,
-  setValue,
   toggleable = true,
-  value = 0,
+  value,
+  onValueChange,
 }: {
   className?: string;
-  defaultValue?: number;
+  clearable?: boolean;
   max?: number;
-  setValue?: Dispatch<SetStateAction<any>>;
   toggleable?: boolean;
-  value?: number;
+  value: number;
+  onValueChange?: Dispatch<SetStateAction<number>>;
 }) {
-  const [hover, setHover] = useState(0);
+  const [hover, setHover] = useState<number>();
 
   return (
-    <div className={className}>
-      {Array.from({ length: max }, (_, i) => i + 1).map((star, index) => (
-        <button
-          key={index}
-          onClick={() => setValue && setValue(star)}
-          onMouseEnter={() => setHover(star)}
-          onMouseLeave={() => setHover(value)}
+    <div className={cn(className, 'flex', 'flex-col', 'gap-2')}>
+      <div>
+        {Array.from({ length: max }, (_, i) => i + 1).map((star, index) => (
+          <button
+            key={index}
+            onClick={() => toggleable && onValueChange && onValueChange(star)}
+            onMouseEnter={() => toggleable && setHover(star)}
+            onMouseLeave={() => toggleable && setHover(value)}
+          >
+            <StarIcon
+              className={cn(
+                'w-4 h-4',
+                toggleable
+                  ? star <= (hover || value)
+                    ? 'text-yellow-600 fill-yellow-500'
+                    : 'text-muted-foreground'
+                  : 'text-yellow-600 fill-yellow-500',
+              )}
+            />
+          </button>
+        ))}
+      </div>
+      {clearable && onValueChange && (
+        <Button
+          className="p-0 h-auto justify-start text-xs font-semibold text-sky-600 hover:underline-offset-1"
+          variant="link"
+          onClick={() => {
+            onValueChange(0);
+            setHover(0);
+          }}
         >
-          <StarIcon
-            className={cn(
-              'w-4 h-4',
-              toggleable
-                ? star <= (hover || value || defaultValue)
-                  ? 'text-yellow-600 fill-yellow-500'
-                  : 'text-muted-foreground'
-                : 'text-yellow-600 fill-yellow-500',
-            )}
-          />
-        </button>
-      ))}
+          清除
+        </Button>
+      )}
     </div>
   );
 }

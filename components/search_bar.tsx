@@ -9,30 +9,17 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { search } from '@/lib/utils';
-import { useEffect, useRef, useState } from 'react';
-import { useDebounceCallback } from 'usehooks-ts';
+import { useEffect, useState } from 'react';
 
 type SearchResultType = Record<string, any[]>;
 
 export function SearchBar({ placeholder }: { placeholder?: string }) {
   const [query, setQuery] = useState<string>('');
   const [result, setResult] = useState<SearchResultType>({});
-  const abortControllerRef = useRef<AbortController>();
 
-  const handleSearch = async (query: string, type?: string) => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    // Create a new AbortController for the new request
-    abortControllerRef.current = new AbortController();
-    const signal = abortControllerRef.current.signal;
-
-    const result = await search(query, type, signal);
-    setResult(result);
+  const handleSearch = (query: string, type?: string) => {
+    search(query, type).then(setResult);
   };
-
-  const debouncedSearch = useDebounceCallback(handleSearch, 500);
 
   useEffect(() => {
     if (!query || query === '') {
@@ -50,7 +37,7 @@ export function SearchBar({ placeholder }: { placeholder?: string }) {
           if (value === '' || !value) {
             setResult({});
           } else {
-            debouncedSearch(value);
+            handleSearch(value);
           }
         }}
         placeholder={placeholder || '搜索...'}
