@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import LinkButton from '@/components/link_button';
 import { Separator } from '@/components/ui/separator';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
@@ -69,13 +69,9 @@ export const SidebarToggleGroup = ({
         ))}
       </ToggleGroup>
       {hasMore && (
-        <Button
-          className="p-0 h-auto justify-start text-xs font-semibold text-sky-600 hover:underline-offset-1"
-          variant="link"
-          onClick={showMore}
-        >
+        <LinkButton onClick={showMore}>
           再显示 {Math.min(items.length - displayingItems.length, increment)} 个
-        </Button>
+        </LinkButton>
       )}
     </>
   );

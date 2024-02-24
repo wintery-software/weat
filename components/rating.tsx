@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import LinkButton from '@/components/link_button';
 import { cn } from '@/lib/utils';
 import { StarIcon } from 'lucide-react';
 import { Dispatch, SetStateAction, useState } from 'react';
@@ -45,16 +45,14 @@ export default function Rating({
         ))}
       </div>
       {clearable && onValueChange && (
-        <Button
-          className="p-0 h-auto justify-start text-xs font-semibold text-sky-600 hover:underline-offset-1"
-          variant="link"
+        <LinkButton
           onClick={() => {
             onValueChange(0);
             setHover(0);
           }}
         >
           清除
-        </Button>
+        </LinkButton>
       )}
     </div>
   );
