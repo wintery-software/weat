@@ -1,5 +1,6 @@
 'use client';
 
+import DottedList from '@/components/dotted_list';
 import LinkButton from '@/components/link_button';
 import { Separator } from '@/components/ui/separator';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -9,17 +10,9 @@ export const Sidebar = ({ className, children }: { className?: string; children:
   <nav className={className}>{children}</nav>
 );
 
-export const SidebarSelectedFilter = ({ filters }: { filters: string[] }) => {
-  return (
-    <div className="flex flex-wrap gap-1 text-xs text-muted-foreground">
-      {filters.map((filter, index) => (
-        <span key={index} className="after:content-['·'] after:ml-1 last:after:content-none">
-          {filter}
-        </span>
-      ))}
-    </div>
-  );
-};
+export const SidebarSelectedFilter = ({ filters }: { filters: string[] }) => (
+  <DottedList items={filters} size="xs" className="text-muted-foreground" />
+);
 
 export const SidebarSeparator = () => <Separator className="my-4" />;
 

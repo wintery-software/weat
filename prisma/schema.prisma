@@ -1,0 +1,44 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Restaurant {
+  id                String               @id @default(uuid())
+  name              String
+  address           String
+  googleMapsUrl     String               @map("google_maps_url")
+  googleMapsPlaceId String               @map("google_maps_place_id")
+  price             Int
+  rating            Float
+  images            String[]
+  createdAt         DateTime             @default(now()) @map("created_at")
+  updatedAt         DateTime             @updatedAt @map("updated_at")
+  categories        RestaurantCategory[]
+
+  @@unique([name, address])
+  @@map("restaurants")
+}
+
+model Category {
+  id          String               @id @default(uuid())
+  name        String               @unique
+  restaurants RestaurantCategory[]
+
+  @@map("categories")
+}
+
+model RestaurantCategory {
+  restaurantId String     @map("restaurant_id")
+  categoryId   String     @map("category_id")
+  category     Category   @relation(fields: [categoryId], references: [id])
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@id([restaurantId, categoryId])
+  @@map("restaurants_categories")
+}

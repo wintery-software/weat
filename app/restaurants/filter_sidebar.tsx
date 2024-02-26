@@ -10,6 +10,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Slider } from '@/components/ui/slider';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Category } from '@prisma/client';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 const getCategories = async () => {
@@ -40,12 +41,19 @@ export default function FilterSidebar({
 }) {
   const [categories, setCategories] = useState<string[]>();
   useEffect(() => {
-    getCategories().then(setCategories);
+    getCategories().then((data: Category[]) =>
+      setCategories(data.map((c) => c.name)),
+    );
   }, []);
 
   const selectedFiltersStrings = selectedCategories
     .concat(selectedPrices.map((p) => '$'.repeat(parseInt(p, 10))))
-    .concat(selectedRating ? `${'★'.repeat(selectedRating)}` + (selectedRating < 5 ? ' 及以上' : '') : '')
+    .concat(
+      selectedRating
+        ? `${'★'.repeat(selectedRating)}` +
+            (selectedRating < 5 ? ' 及以上' : '')
+        : '',
+    )
     .concat(selectedDistance ? `${selectedDistance} mi 以内` : '距离不限')
     .filter(Boolean);
 
@@ -57,7 +65,11 @@ export default function FilterSidebar({
 
       <SidebarSubTitle>类别</SidebarSubTitle>
       {categories ? (
-        <SidebarToggleGroup items={categories} value={selectedCategories} onValueChange={setSelectedCategories} />
+        <SidebarToggleGroup
+          items={categories}
+          value={selectedCategories}
+          onValueChange={setSelectedCategories}
+        />
       ) : (
         <div className="flex flex-col gap-2">
           <Skeleton className="h-8" />
@@ -76,7 +88,11 @@ export default function FilterSidebar({
         onValueChange={setSelectedPrices}
       >
         {Array.from({ length: 3 }, (_, i) => i + 1).map((value, index) => (
-          <ToggleGroupItem className="text-xs" key={index} value={value.toString()}>
+          <ToggleGroupItem
+            className="text-xs"
+            key={index}
+            value={value.toString()}
+          >
             {'$'.repeat(value)}
           </ToggleGroupItem>
         ))}

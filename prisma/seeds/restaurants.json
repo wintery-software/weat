@@ -2,9 +2,9 @@
   {
     "name": "Super Wok",
     "address": "1401-L SE Maynard Rd, Cary, NC 27511",
-    "googleMapsUrl": "https://maps.app.goo.gl/kAQYAnmMEAygftNb6",
+    "googleMapsUrl": "https://maps.app.goo.gl/iEzdggDMpsG4vBtQ7",
     "googleMapsPlaceId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec",
-    "category": [
+    "categories": [
       "Chinese"
     ],
     "price": 2,
@@ -16,9 +16,9 @@
   {
     "name": "Mr. Dumpling",
     "address": "5470 Apex Peakway, Apex, NC 27502",
-    "googleMapsUrl": "https://maps.app.goo.gl/iBMYE4RLKN1UXohG8",
+    "googleMapsUrl": "https://maps.app.goo.gl/WqDyz8CQULCUPXk68",
     "googleMapsPlaceId": "ChIJ29F9IcmSrIkRlsFdSq6fOxg",
-    "category": [
+    "categories": [
       "Chinese"
     ],
     "price": 2,
@@ -30,9 +30,9 @@
   {
     "name": "Acacia Tree Asian Cuisine 玖食 餐厅 (原 大长今 Former Dae Jang Kum)",
     "address": "101 Keybridge Dr #100, Morrisville, NC 27560",
-    "googleMapsUrl": "https://maps.app.goo.gl/HM4bNXhgxkCCkN9w8",
+    "googleMapsUrl": "https://maps.app.goo.gl/cC8TbErxxuteZx157",
     "googleMapsPlaceId": "ChIJl25uVvzzrIkRITJu8arlk4s",
-    "category": [
+    "categories": [
       "Chinese"
     ],
     "price": 2,
@@ -44,9 +44,9 @@
   {
     "name": "Moge Tee Raleigh",
     "address": "2304 Hillsborough St #100, Raleigh, NC 27607",
-    "googleMapsUrl": "https://maps.app.goo.gl/JobzQAhSB3Wt8k3F8",
+    "googleMapsUrl": "https://maps.app.goo.gl/sZMFfMRU8w35Ur3k6",
     "googleMapsPlaceId": "ChIJJbH9snr1rIkRORJOTPfaHsc",
-    "category": [
+    "categories": [
       "Bubble Tea",
       "Desserts"
     ],
@@ -54,6 +54,20 @@
     "rating": 4.5,
     "images": [
       "https://lh5.googleusercontent.com/p/AF1QipNfVBaA2fS9XdY1rE0pj_XStg7DiBLB5EbfuaL3=w408-h544-k-no"
+    ]
+  },
+  {
+    "name": "C&T Wok",
+    "address": "130 Morrisville Square Way, Morrisville, NC 27560",
+    "googleMapsUrl": "https://maps.app.goo.gl/MXGcwE9KwhgktF1Z9",
+    "googleMapsPlaceId": "ChIJcT1I_wTyrIkR20BUNI-aY-8",
+    "categories": [
+      "Chinese"
+    ],
+    "price": 1,
+    "rating": 4.4,
+    "images": [
+      "https://lh5.googleusercontent.com/p/AF1QipPnAlYQ9zE9i8AJvzSUM5lgErEBYOi7EqCyt-Ze=w426-h240-k-no"
     ]
   }
 ]

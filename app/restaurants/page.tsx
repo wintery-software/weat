@@ -31,10 +31,18 @@ export default function Restaurants() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [categories, setCategories] = useState<string[]>(searchParams.getAll('category').filter(Boolean));
-  const [prices, setPrices] = useState<string[]>(searchParams.getAll('price').filter(Boolean));
-  const [rating, setRating] = useState<number>(Number(searchParams.get('rating')) || 0);
-  const [distance, setDistance] = useState<number>(Number(searchParams.getAll('distance')) || 0);
+  const [categories, setCategories] = useState<string[]>(
+    searchParams.getAll('category').filter(Boolean),
+  );
+  const [prices, setPrices] = useState<string[]>(
+    searchParams.getAll('price').filter(Boolean),
+  );
+  const [rating, setRating] = useState<number>(
+    Number(searchParams.get('rating')) || 0,
+  );
+  const [distance, setDistance] = useState<number>(
+    Number(searchParams.getAll('distance')) || 0,
+  );
 
   const [restaurants, setRestaurants] = useState([]);
 

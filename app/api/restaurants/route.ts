@@ -1,43 +1,74 @@
-import { promises as fs } from 'fs';
+import { prisma } from '@/prisma/client';
+import { Prisma } from '@prisma/client';
+import { compact, uniq } from 'lodash';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const params = url.searchParams;
 
-  const categories = new Set(params.getAll('category').filter(Boolean));
-  const prices = new Set(params.getAll('price').filter(Boolean).map(Number));
+  const categories = compact(uniq(params.getAll('category')));
+  const prices = compact(uniq(params.getAll('price'))).map(Number);
   const rating = Number(params.get('rating')) || 0;
-  const distance = Number(params.getAll('distance')) || 0;
+  const distance = Number(params.get('distance')) || 0;
 
-  const restaurants = await all();
-  const filtered = restaurants
-    .filter((r) => {
-      const matchCategories = categories.size === 0 || r.category.some((e) => categories.has(e));
-      const matchPrices = prices.size === 0 || prices.has(r.price);
-      const matchRating = rating === 0 || r.rating >= rating;
+  const limit = Number(params.get('limit')) || 10;
+  const order = (params.get('order') as keyof Restaurant) || 'rating';
+  const sort = (params.get('sort') as SortDirection) || 'desc';
 
-      return matchCategories && matchPrices && matchRating;
+  const where: Prisma.RestaurantWhereInput = {};
+
+  if (categories.length) {
+    where.categories = {
+      some: {
+        category: {
+          name: {
+            in: categories,
+          },
+        },
+      },
+    };
+  }
+
+  if (prices.length) {
+    where.price = {
+      in: prices,
+    };
+  }
+
+  if (rating) {
+    where.rating = {
+      gte: rating,
+    };
+  }
+
+  const result = await prisma.restaurant
+    .findMany({
+      where,
+      include: {
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+      },
+      take: limit,
+      orderBy: {
+        [order]: sort,
+      },
     })
-    .map((r, id) => ({
-      ...r,
-      id,
-    }));
+    .then((result) =>
+      result.map((restaurant) => ({
+        ...restaurant,
+        categories: restaurant.categories.map((c) => c.category.name),
+      })),
+    );
 
-  return Response.json(filtered);
+  return Response.json(result);
 }
 
-export interface Restaurant {
-  id: number;
-  name: string;
-  address: string;
-  googleMapsUrl: string;
-  category: string[];
-  price: number;
-  rating: number;
-  images: string[];
+export async function POST(request: Request) {
+  const body = await request.json();
+  return Response.json({ message: 'success' });
 }
-
-const all = async (): Promise<Omit<Restaurant, 'id'>[]> => {
-  const file = await fs.readFile(`${process.cwd()}/app/api/restaurants/data.json`, 'utf-8');
-  return JSON.parse(file);
-};
