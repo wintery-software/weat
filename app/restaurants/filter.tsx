@@ -18,7 +18,7 @@ const getCategories = async () => {
   return response.json();
 };
 
-export default function FilterSidebar({
+export default function Filter({
   className,
   selectedCategories,
   setSelectedCategories,

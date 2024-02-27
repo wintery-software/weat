@@ -2,7 +2,7 @@
 
 import DataLayout from '@/app/layouts/data_layout';
 import Content from '@/app/restaurants/content';
-import FilterSidebar from '@/app/restaurants/filter_sidebar';
+import Filter from '@/app/restaurants/filter';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -88,7 +88,7 @@ export default function Restaurants() {
     <>
       <DataLayout
         filter={
-          <FilterSidebar
+          <Filter
             selectedCategories={categories}
             setSelectedCategories={setCategories}
             selectedPrices={prices}
