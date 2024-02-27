@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   const rating = Number(params.get('rating')) || 0;
   const distance = Number(params.get('distance')) || 0;
 
-  const limit = Number(params.get('limit')) || 10;
+  const limit = Number(params.get('limit'));
   const order = (params.get('order') as keyof Restaurant) || 'rating';
   const sort = (params.get('sort') as SortDirection) || 'desc';
 
@@ -53,10 +53,9 @@ export async function GET(request: Request) {
           },
         },
       },
-      take: limit,
-      orderBy: {
-        [order]: sort,
-      },
+      // LIMIT is optional
+      ...(limit ? { take: limit } : {}),
+      orderBy: [{ [order]: sort }, { name: 'asc' }],
     })
     .then((result) =>
       result.map((restaurant) => ({
