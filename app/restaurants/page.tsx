@@ -53,10 +53,12 @@ export default function Restaurants() {
     if (updatingDistance) return;
 
     const params = generateSearchParams(categories, prices, rating, distance);
-    // Update URL
+    // Update URL without coordinates
     router.push(`/restaurants?${params}`);
-    // Pass coordinates to server
+    // Only pass coordinates to server
     params.append('origin', origin.join(','));
+    setLoading(true);
+
     getRestaurants(params).then((data) => {
       setRestaurants(data);
       setLoading(false);

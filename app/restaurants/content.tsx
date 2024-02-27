@@ -9,6 +9,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { Separator } from '@/components/ui/separator';
+import { isEmpty } from 'lodash';
 import { Loader2Icon, MapPinnedIcon } from 'lucide-react';
 import { Fragment } from 'react';
 
@@ -20,19 +21,10 @@ export default function Content({
   loading: boolean;
 }) {
   const render = () => {
-    if (loading) {
-      return (
-        <div className="flex items-center justify-center gap-4">
-          <Loader2Icon className="h-6 w-6 animate-spin" />
-          <p className="text-muted-foreground">加载中...</p>
-        </div>
-      );
-    }
-
-    if (!restaurants || restaurants.length === 0) {
+    if (!loading && isEmpty(restaurants)) {
       return (
         <div className="flex items-center justify-center">
-          <span>没有结果</span>
+          <span className="text-muted-foreground">没有结果</span>
         </div>
       );
     }
@@ -89,8 +81,9 @@ export default function Content({
 
   return (
     <div className="flex flex-col w-full">
-      <div className="prose mb-8">
-        <h2>评分最高的餐厅</h2>
+      <div className="flex items-center prose mb-8 gap-4">
+        <h1 className="mb-0">评分最高的餐厅</h1>
+        {loading && <Loader2Icon className="h-4 w-4 animate-spin" />}
       </div>
       {render()}
     </div>
