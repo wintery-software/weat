@@ -30,6 +30,7 @@ const getRestaurants = async (params: URLSearchParams) => {
 export default function Restaurants() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [loading, setLoading] = useState(true);
 
   const [categories, setCategories] = useState<string[]>(
     searchParams.getAll('category').filter(Boolean),
@@ -43,14 +44,45 @@ export default function Restaurants() {
   const [distance, setDistance] = useState<number>(
     Number(searchParams.getAll('distance')) || 0,
   );
+  const [updatingDistance, setUpdatingDistance] = useState(false);
+  const [origin, setOrigin] = useState<[number, number]>([0, 0]);
 
   const [restaurants, setRestaurants] = useState([]);
 
   useEffect(() => {
+    if (updatingDistance) return;
+
     const params = generateSearchParams(categories, prices, rating, distance);
+    // Update URL
     router.push(`/restaurants?${params}`);
-    getRestaurants(params).then(setRestaurants);
-  }, [categories, distance, prices, rating, router]);
+    // Pass coordinates to server
+    params.append('origin', origin.join(','));
+    getRestaurants(params).then((data) => {
+      setRestaurants(data);
+      setLoading(false);
+    });
+  }, [categories, distance, updatingDistance, origin, prices, rating, router]);
+
+  useEffect(() => {
+    setLoading(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log(latitude, longitude);
+        setOrigin([latitude, longitude]);
+        setLoading(false);
+      },
+      (error) => {
+        throw error;
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+      },
+    );
+  }, []);
 
   return (
     <>
@@ -65,9 +97,10 @@ export default function Restaurants() {
             setSelectedRating={setRating}
             selectedDistance={distance}
             setSelectedDistance={setDistance}
+            setUpdatingDistance={setUpdatingDistance}
           />
         }
-        content={<Content restaurants={restaurants} />}
+        content={<Content restaurants={restaurants} loading={loading} />}
       />
     </>
   );

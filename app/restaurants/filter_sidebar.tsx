@@ -28,6 +28,7 @@ export default function FilterSidebar({
   setSelectedRating,
   selectedDistance,
   setSelectedDistance,
+  setUpdatingDistance,
 }: {
   className?: string;
   selectedCategories: string[];
@@ -38,6 +39,7 @@ export default function FilterSidebar({
   setSelectedRating: Dispatch<SetStateAction<number>>;
   selectedDistance: number;
   setSelectedDistance: Dispatch<SetStateAction<number>>;
+  setUpdatingDistance: Dispatch<SetStateAction<boolean>>;
 }) {
   const [categories, setCategories] = useState<string[]>();
   useEffect(() => {
@@ -110,8 +112,10 @@ export default function FilterSidebar({
         max={50}
         value={[selectedDistance]}
         onValueChange={(value) => {
+          setUpdatingDistance(true);
           setSelectedDistance(value[0]);
         }}
+        onValueCommit={(value) => setUpdatingDistance(false)}
       />
       <p className="pt-1 text-xs text-muted-foreground">
         {selectedDistance ? `${selectedDistance} mi 以内` : '不限'}

@@ -12,6 +12,7 @@ export async function GET(request: Request) {
   const prices = compact(uniq(params.getAll('price'))).map(Number);
   const rating = Number(params.get('rating')) || 0;
   const distance = Number(params.get('distance')) || 0;
+  const origin = params.get('origin');
 
   const limit = Number(params.get('limit'));
   const order = (params.get('order') as keyof Restaurant) || 'rating';
