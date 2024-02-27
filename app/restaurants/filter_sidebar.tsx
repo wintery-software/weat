@@ -107,7 +107,7 @@ export default function FilterSidebar({
       <Slider
         // 16px diameter circle - 6px height bar = 10px diameter => 5px radius
         className="py-[5px]"
-        max={200}
+        max={50}
         value={[selectedDistance]}
         onValueChange={(value) => {
           setSelectedDistance(value[0]);
