@@ -1,4 +1,4 @@
-import prisma from '@/prisma/client';
+import { prisma } from '@/prisma/client';
 import { omit } from 'lodash';
 import restaurantsData from './seeds/restaurants.json';
 
@@ -7,7 +7,7 @@ const createRestaurants = async () =>
     restaurantsData.map(async (restaurant) =>
       prisma.restaurant.upsert({
         where: {
-          name_address: { name: restaurant.name, address: restaurant.address },
+          googleMapsPlaceId: restaurant.googleMapsPlaceId,
         },
         update: {
           ...omit(restaurant, 'categories'),

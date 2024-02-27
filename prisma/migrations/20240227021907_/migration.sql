@@ -31,7 +31,7 @@ CREATE TABLE "restaurants_categories" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "restaurants_name_address_key" ON "restaurants"("name", "address");
+CREATE UNIQUE INDEX "restaurants_google_maps_place_id_key" ON "restaurants"("google_maps_place_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "categories_name_key" ON "categories"("name");
