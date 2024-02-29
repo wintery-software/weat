@@ -26,7 +26,7 @@ export default function Rating({
 
   return (
     <div className={cn(className, 'flex', 'flex-col', 'gap-2')}>
-      <div>
+      <div className="flex items-center">
         {Array.from({ length: max }, (_, i) => i + 1).map((star, index) => (
           <button
             key={index}
@@ -36,10 +36,11 @@ export default function Rating({
           >
             <StarIcon
               className={cn(
-                'w-4',
-                'h-4',
-                star <= (hover || value) ? 'text-yellow-600 fill-yellow-500' : 'text-muted-foreground',
+                star <= (hover || value)
+                  ? 'text-yellow-600 fill-yellow-500'
+                  : 'text-muted-foreground',
               )}
+              size={20}
             />
           </button>
         ))}
