@@ -1,3 +1,10 @@
+import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
+import {
+  calculateDistance,
+  DistanceReturnType,
+  isGoogleMapsApiEnabled,
+} from '@/lib/google_maps';
+import { redis } from '@/lib/redis';
 import { prisma } from '@/prisma/client';
 import { Prisma } from '@prisma/client';
 import { compact, uniq } from 'lodash';
@@ -12,11 +19,12 @@ export async function GET(request: Request) {
   const prices = compact(uniq(params.getAll('price'))).map(Number);
   const rating = Number(params.get('rating')) || 0;
   const distance = Number(params.get('distance')) || 0;
-  const origin = params.get('origin');
+  const origin = params.get('origin')?.split(',').map(Number);
 
   const limit = Number(params.get('limit'));
-  const order = (params.get('order') as keyof Restaurant) || 'rating';
-  const sort = (params.get('sort') as SortDirection) || 'desc';
+  const sortBy =
+    (params.get('sort') as keyof RestaurantSortFieldsType) || 'rating';
+  const order = (params.get('order') as keyof SortOrdersType) || 'desc';
 
   const where: Prisma.RestaurantWhereInput = {};
 
@@ -44,31 +52,100 @@ export async function GET(request: Request) {
     };
   }
 
-  const result = await prisma.restaurant
-    .findMany({
-      where,
-      include: {
-        categories: {
-          include: {
-            category: true,
-          },
+  const result = await prisma.restaurant.findMany({
+    where,
+    include: {
+      categories: {
+        include: {
+          category: true,
         },
       },
-      // LIMIT is optional
-      ...(limit ? { take: limit } : {}),
-      orderBy: [{ [order]: sort }, { name: 'asc' }],
-    })
-    .then((result) =>
-      result.map((restaurant) => ({
+    },
+    // LIMIT is optional
+    ...(limit ? { take: limit } : {}),
+    ...(sortBy !== 'distance'
+      ? {
+          orderBy: [
+            { [sortBy]: order },
+            { rating: 'desc' },
+            { price: 'asc' },
+            { name: 'asc' },
+          ],
+        }
+      : {}),
+  });
+
+  const googleMapsApiEnabled = isGoogleMapsApiEnabled();
+
+  let processedResult = await Promise.all(
+    result.map(async (restaurant) => {
+      let calculated: DistanceReturnType | null = null;
+
+      if (
+        googleMapsApiEnabled &&
+        origin &&
+        (distance || sortBy === 'distance')
+      ) {
+        const client = await redis();
+        const key = `coordinate:${origin.join(',')}`;
+
+        try {
+          const cache = await client.hGet(key, restaurant.googleMapsPlaceId);
+
+          // First time fetching distance from this location
+          if (cache) {
+            const [cachedDistance, cachedDuration] = cache
+              .split(',')
+              .map(Number);
+
+            calculated = {
+              distance: cachedDistance,
+              duration: cachedDuration,
+            };
+            console.log('Using cached:', key, calculated);
+          } else {
+            calculated = await calculateDistance(
+              origin as [number, number],
+              restaurant.googleMapsPlaceId,
+            );
+
+            // Cache for 1 day
+            await client.hSet(
+              key,
+              restaurant.googleMapsPlaceId,
+              `${calculated.distance},${calculated.duration}`,
+            );
+            await client.expire(key, 60 * 60 * 24);
+            console.log('Using computed:', key, calculated);
+          }
+        } finally {
+          await client.disconnect();
+        }
+      }
+
+      return {
         ...restaurant,
+        distance: calculated,
         categories: restaurant.categories.map((c) => c.category.name),
-      })),
+      };
+    }),
+  );
+
+  if (distance) {
+    processedResult = processedResult.filter(
+      (r) => r.distance && r.distance.distance <= distance,
     );
+  }
 
-  return Response.json(result);
-}
+  if (googleMapsApiEnabled && sortBy === 'distance') {
+    processedResult = processedResult.sort((a, b) => {
+      if (!a.distance || !b.distance) return 0;
 
-export async function POST(request: Request) {
-  const body = await request.json();
-  return Response.json({ message: 'success' });
+      return order === 'asc'
+        ? a.distance.distance - b.distance.distance
+        : b.distance.distance - a.distance.distance;
+    });
+  }
+
+  return Response.json(processedResult);
 }
