@@ -15,7 +15,7 @@ export const Navbar = ({ className, ...props }: { className?: string }) => {
           setOpen(true);
         }}
       >
-        <SearchIcon className="w-3.5 h-3.5 mr-2" />
+        <SearchIcon className="mr-2" size={14} />
         搜索...
       </Button>
       <SearchDialog open={open} onOpenChange={setOpen} />
