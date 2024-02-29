@@ -4,7 +4,7 @@ import {
   DistanceReturnType,
   isGoogleMapsApiEnabled,
 } from '@/lib/google_maps';
-import { redis } from '@/lib/redis';
+import redis from '@/lib/redis';
 import { prisma } from '@/prisma/client';
 import { Prisma } from '@prisma/client';
 import { compact, uniq } from 'lodash';
