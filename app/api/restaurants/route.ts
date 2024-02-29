@@ -4,12 +4,11 @@ import {
   DistanceReturnType,
   isGoogleMapsApiEnabled,
 } from '@/lib/google_maps';
+// import logger from '@/lib/logger';
 import redis from '@/lib/redis';
 import { prisma } from '@/prisma/client';
 import { Prisma } from '@prisma/client';
 import { compact, uniq } from 'lodash';
-
-export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -102,7 +101,10 @@ export async function GET(request: Request) {
               distance: cachedDistance,
               duration: cachedDuration,
             };
-            console.log('Using cached:', key, calculated);
+            // logger.debug(
+            //   { method: request.method, url: request.url },
+            //   `Redis: "${key}" => ${JSON.stringify(calculated)}`,
+            // );
           } else {
             calculated = await calculateDistance(
               origin as [number, number],
@@ -116,7 +118,9 @@ export async function GET(request: Request) {
               `${calculated.distance},${calculated.duration}`,
             );
             await client.expire(key, 60 * 60 * 24);
-            console.log('Using computed:', key, calculated);
+            // logger.debug(
+            //   `[Distance] Google Maps API: "${key}" => ${JSON.stringify(calculated)}`,
+            // );
           }
         } finally {
           await client.disconnect();

@@ -10,7 +10,9 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Slider } from '@/components/ui/slider';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { isGoogleMapsApiEnabled } from '@/lib/google_maps';
 import { Category } from '@prisma/client';
+import { Loader2, MapPinIcon } from 'lucide-react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 const getCategories = async () => {
@@ -29,6 +31,7 @@ export default function Filter({
   selectedDistance,
   setSelectedDistance,
   setUpdatingDistance,
+  currentLocation,
 }: {
   className?: string;
   selectedCategories: string[];
@@ -40,6 +43,7 @@ export default function Filter({
   selectedDistance: number;
   setSelectedDistance: Dispatch<SetStateAction<number>>;
   setUpdatingDistance: Dispatch<SetStateAction<boolean>>;
+  currentLocation: [number, number] | string | null;
 }) {
   const [categories, setCategories] = useState<string[]>();
   useEffect(() => {
@@ -80,6 +84,10 @@ export default function Filter({
       )}
       <SidebarSeparator />
 
+      <SidebarSubTitle>评分</SidebarSubTitle>
+      <Rating value={selectedRating} onValueChange={setSelectedRating} />
+      <SidebarSeparator />
+
       <SidebarSubTitle>价格</SidebarSubTitle>
       <ToggleGroup
         className="flex-wrap justify-start"
@@ -99,27 +107,49 @@ export default function Filter({
           </ToggleGroupItem>
         ))}
       </ToggleGroup>
-      <SidebarSeparator />
 
-      <SidebarSubTitle>评分</SidebarSubTitle>
-      <Rating value={selectedRating} onValueChange={setSelectedRating} />
-      <SidebarSeparator />
-
-      <SidebarSubTitle>距离</SidebarSubTitle>
-      <Slider
-        // 16px diameter circle - 6px height bar = 10px diameter => 5px radius
-        className="py-[5px]"
-        max={50}
-        value={[selectedDistance]}
-        onValueChange={(value) => {
-          setUpdatingDistance(true);
-          setSelectedDistance(value[0]);
-        }}
-        onValueCommit={(value) => setUpdatingDistance(false)}
-      />
-      <p className="pt-1 text-xs text-muted-foreground">
-        {selectedDistance ? `${selectedDistance} mi 以内` : '不限'}
-      </p>
+      {isGoogleMapsApiEnabled() && (
+        <>
+          <SidebarSeparator />
+          <SidebarSubTitle>距离</SidebarSubTitle>
+          <Slider
+            // 16px diameter circle - 6px height bar = 10px diameter => 5px radius
+            className="py-[5px] pb-4"
+            max={50}
+            value={[selectedDistance]}
+            onValueChange={(value) => {
+              setUpdatingDistance(true);
+              setSelectedDistance(value[0]);
+            }}
+            onValueCommit={(value) => setUpdatingDistance(false)}
+          />
+          <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+            <p>{selectedDistance ? `${selectedDistance} mi 以内` : '不限'}</p>
+            <p className="flex gap-0.5 items-center">
+              <MapPinIcon size={12} />
+              {currentLocation ? (
+                Array.isArray(currentLocation) ? (
+                  <a
+                    href={`https://www.google.com/maps/@${currentLocation.join(',')},15z`}
+                    target="_blank"
+                    title="在 Google 地图中打开"
+                    className="hover:underline"
+                  >
+                    {currentLocation.join(', ')}
+                  </a>
+                ) : (
+                  currentLocation
+                )
+              ) : (
+                <>
+                  定位中
+                  <Loader2 className="animate-spin" size={12} />
+                </>
+              )}
+            </p>
+          </div>
+        </>
+      )}
     </Sidebar>
   );
 }
