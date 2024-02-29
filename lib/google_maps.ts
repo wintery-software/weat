@@ -9,9 +9,19 @@ export type DistanceReturnType = {
 };
 
 export const isGoogleMapsApiEnabled = () =>
-  process.env.NEXT_PUBLIC_ENABLE_GOOGLE_MAPS_API === 'true';
+  process.env.GOOGLE_MAPS_API_ENABLED === 'true';
 
-const getClient = () => {
+const getApiKey = (): string => {
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('Google Maps API key is not set');
+  }
+
+  return apiKey;
+};
+
+const getClient = (): Client => {
   if (!isGoogleMapsApiEnabled()) {
     throw new Error('Google Maps API is disabled');
   }
@@ -23,6 +33,7 @@ export const calculateDistance = async (
   originCoordinates: [number, number],
   destinationPlaceId: string,
 ): Promise<DistanceReturnType> => {
+  const apiKey = getApiKey();
   const client = getClient();
 
   if (!Array.isArray(originCoordinates) || originCoordinates.length !== 2) {
@@ -33,16 +44,12 @@ export const calculateDistance = async (
     throw new Error('Missing destination place ID');
   }
 
-  if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
-    throw new Error('Missing Google Maps API key');
-  }
-
   const response = await client.distancematrix({
     params: {
       origins: [originCoordinates],
       destinations: [`place_id:${destinationPlaceId}`],
       units: UnitSystem.imperial,
-      key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+      key: apiKey,
     },
   });
 
