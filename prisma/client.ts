@@ -1,4 +1,4 @@
-import { PrismaClient, Restaurant } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { pinyin } from 'pinyin-pro';
 
 export const prisma = new PrismaClient().$extends({
