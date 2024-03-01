@@ -94,6 +94,10 @@ export default function Restaurants() {
 
   // Only fetch current location once, on mount
   useEffect(() => {
+    if (!isGoogleMapsApiEnabled()) {
+      return;
+    }
+
     setLoading(true);
 
     navigator.geolocation.getCurrentPosition(
