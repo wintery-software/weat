@@ -121,7 +121,7 @@ export default function Filter({
               setUpdatingDistance(true);
               setSelectedDistance(value[0]);
             }}
-            onValueCommit={(value) => setUpdatingDistance(false)}
+            onValueCommit={() => setUpdatingDistance(false)}
           />
           <div className="flex flex-col gap-1 text-xs text-muted-foreground">
             <p>{selectedDistance ? `${selectedDistance} mi 以内` : '不限'}</p>
