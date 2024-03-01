@@ -11,14 +11,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Slider } from '@/components/ui/slider';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { isGoogleMapsApiEnabled } from '@/lib/google_maps';
+import { fetchWeatApi } from '@/lib/utils';
 import { Category } from '@prisma/client';
 import { Loader2, MapPinIcon } from 'lucide-react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
-const getCategories = async () => {
-  const response = await fetch('http://localhost:3000/api/categories');
-  return response.json();
-};
+const getCategories = async () => await fetchWeatApi('categories');
 
 export default function Filter({
   className,

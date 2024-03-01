@@ -4,6 +4,8 @@ import DataLayout from '@/app/layouts/data_layout';
 import Content from '@/app/restaurants/content';
 import Filter from '@/app/restaurants/filter';
 import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
+import { isGoogleMapsApiEnabled } from '@/lib/google_maps';
+import { fetchWeatApi } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -25,6 +27,9 @@ const generateSearchParams = (
 
   return params;
 };
+
+const getRestaurants = async (params: URLSearchParams) =>
+  await fetchWeatApi('restaurants', params);
 
 export const dynamic = 'force-dynamic';
 
@@ -75,12 +80,10 @@ export default function Restaurants() {
     }
     setLoading(true);
 
-    fetch('/api/restaurants?' + params)
-      .then((res) => res.json())
-      .then((data) => {
-        setRestaurants(data);
-        setLoading(false);
-      });
+    getRestaurants(params).then((data) => {
+      setRestaurants(data);
+      setLoading(false);
+    });
   }, [
     categories,
     distance,

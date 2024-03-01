@@ -5,6 +5,31 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const fetchWeatApi = async (
+  input: string,
+  params?: string | URLSearchParams,
+  init?: RequestInit,
+) => {
+  let url = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!url) {
+    throw new Error('API URL is not defined');
+  }
+
+  if (!input.startsWith('/')) {
+    url += '/';
+  }
+
+  url += `/${input}`;
+
+  if (params) {
+    url += `?${params}`;
+  }
+
+  const response = await fetch(url, init);
+  return response.json();
+};
+
 export const search = async (
   query: string,
   limit?: number,
