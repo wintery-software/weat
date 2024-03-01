@@ -26,6 +26,8 @@ const generateSearchParams = (
   return params;
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function Restaurants() {
   const router = useRouter();
   const searchParams = useSearchParams();
