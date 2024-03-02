@@ -9,7 +9,7 @@ export type DistanceReturnType = {
 };
 
 export const isGoogleMapsApiEnabled = () =>
-  process.env.GOOGLE_MAPS_API_ENABLED === 'true';
+  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_ENABLED === 'true';
 
 const getApiKey = (): string => {
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
