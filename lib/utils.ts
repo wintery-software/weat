@@ -7,23 +7,16 @@ export function cn(...inputs: ClassValue[]) {
 
 export const fetchWeatApi = async (
   input: string,
-  params?: string | URLSearchParams,
+  params?: URLSearchParams,
   init?: RequestInit,
 ) => {
-  let url = process.env.NEXT_PUBLIC_API_URL;
-
-  if (!url) {
-    throw new Error('API URL is not defined');
-  }
-
-  if (!input.startsWith('/')) {
-    url += '/';
-  }
-
-  url += `/${input}`;
+  const url = new URL(
+    `/api/${input.startsWith('/') ? input.slice(1) : input}`,
+    process.env.NEXT_PUBLIC_API_URL,
+  );
 
   if (params) {
-    url += `?${params}`;
+    url.search = params.toString();
   }
 
   const response = await fetch(url, init);
