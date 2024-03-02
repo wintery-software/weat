@@ -41,7 +41,11 @@ export function SearchDialog({
   }, [query]);
 
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange}>
+    <CommandDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      className="top-[25%] md:top-[50%]"
+    >
       <CommandInput
         value={query}
         onValueChange={setQuery}
@@ -55,28 +59,30 @@ export function SearchDialog({
         {Object.entries(result).map(([type, items]) => (
           <CommandGroup key={type} heading={capitalize(type)} forceMount>
             {items.map((item) => (
-              <CommandItem key={item.id} value={item.id}>
-                <div className="flex gap-2">
-                  <Avatar>
-                    <AvatarImage src={item.images[0]} alt={item.name} />
-                  </Avatar>
-                  <div className="flex flex-col gap-0.5">
-                    <div className="font-semibold">
-                      <span className="mr-2">{item.name}</span>
-                      <span className="inline-flex gap-1">
-                        {item.categories.map((category: string) => (
-                          <Badge key={category} className="px-1 py-0">
-                            {category}
-                          </Badge>
-                        ))}
-                      </span>
+              <a href={`/${type}/${item.id}`} key={item.id}>
+                <CommandItem value={item.id}>
+                  <div className="flex gap-2">
+                    <Avatar>
+                      <AvatarImage src={item.images[0]} alt={item.name} />
+                    </Avatar>
+                    <div className="flex flex-col gap-0.5">
+                      <div className="font-semibold">
+                        <span className="mr-2">{item.name}</span>
+                        <span className="inline-flex gap-1">
+                          {item.categories.map((category: string) => (
+                            <Badge key={category} className="px-1 py-0">
+                              {category}
+                            </Badge>
+                          ))}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {item.address}
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {item.address}
-                    </p>
                   </div>
-                </div>
-              </CommandItem>
+                </CommandItem>
+              </a>
             ))}
           </CommandGroup>
         ))}
