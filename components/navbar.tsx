@@ -10,7 +10,7 @@ export const Navbar = ({ className, ...props }: { className?: string }) => {
     <div {...props}>
       <Button
         variant="outline"
-        className="justify-start w-64 font-normal"
+        className="justify-start w-full font-normal"
         onClick={() => {
           setOpen(true);
         }}
