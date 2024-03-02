@@ -1,13 +1,8 @@
 import Rating from '@/components/rating';
 import SortSelect from '@/components/sort_select';
 import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Carousel,
   CarouselContent,
@@ -17,7 +12,13 @@ import { Separator } from '@/components/ui/separator';
 import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
 import { isGoogleMapsApiEnabled } from '@/lib/google_maps';
 import { isEmpty } from 'lodash';
-import { ClockIcon, Loader2Icon, MapPinnedIcon, RouteIcon } from 'lucide-react';
+import {
+  ClockIcon,
+  FilterIcon,
+  Loader2Icon,
+  MapPinnedIcon,
+  RouteIcon,
+} from 'lucide-react';
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
 
 const sortFields: RestaurantSortFieldsType = {
@@ -40,6 +41,7 @@ export default function Content({
   loading,
   sortBy,
   setSortBy,
+  setSidebarOpen,
 }: {
   restaurants: Restaurant[];
   loading: boolean;
@@ -47,6 +49,7 @@ export default function Content({
   setSortBy: Dispatch<
     SetStateAction<[keyof RestaurantSortFieldsType, keyof SortOrdersType]>
   >;
+  setSidebarOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const [title, setTitle] = useState<string>('RTP 餐厅');
 
@@ -57,7 +60,7 @@ export default function Content({
   useEffect(() => {
     const adjective = titleDescriptor[sortBy.join(':')];
 
-    setTitle(`${adjective}的餐厅`);
+    setTitle(`RTP ${adjective}的餐厅`);
   }, [sortBy]);
 
   const render = () => {
@@ -71,14 +74,14 @@ export default function Content({
 
     return restaurants.map((r, index) => (
       <Fragment key={r.name}>
-        <Card className="border-0 rounded-none shadow-none hover:shadow transition-shadow flex">
+        <Card className="border-0 rounded-none shadow-none hover:shadow transition-shadow flex py-5">
           <Carousel>
             <CarouselContent>
               {r.images.map((image, index) => (
-                <CarouselItem key={index} className="w-48 h-48">
+                <CarouselItem key={index} className="w-36 h-36">
                   <img
                     src={image}
-                    className="object-cover w-full h-full"
+                    className="object-cover w-full h-full rounded-md"
                     alt={`${r.name}-${index}`}
                     width="100%"
                     height="100%"
@@ -90,8 +93,8 @@ export default function Content({
             {/*<CarouselNext className="right-2" />*/}
           </Carousel>
           <a href={r.googleMapsUrl} target="_blank">
-            <CardHeader>
-              <CardTitle>{r.name}</CardTitle>
+            <CardHeader className="pt-1 md:pb-6">
+              <CardTitle className="leading-5">{r.name}</CardTitle>
               <div className="flex gap-2 items-center">
                 <Rating value={r.rating} toggleable={false} />
                 <span className="text-sm font-semibold">
@@ -109,8 +112,7 @@ export default function Content({
                 ))}
               </div>
             </CardHeader>
-            <CardContent></CardContent>
-            <CardFooter>
+            <CardFooter className="pb-0">
               <div className="flex flex-col lg:flex-row gap-1 lg:gap-4 text-xs text-muted-foreground">
                 <span className="flex gap-1 items-center">
                   <MapPinnedIcon size={12} />
@@ -138,15 +140,27 @@ export default function Content({
   };
 
   return (
-    <div className="flex flex-col w-full gap-8">
-      <div className="flex flex-col md:flex-row ">
-        <div className="flex prose gap-4">
-          <h1 className="mb-0">{title}</h1>
+    <div className="flex flex-col w-full gap-2">
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex gap-2">
+          <h1 className="text-xl md:text-2xl font-semibold self-center">
+            {title}
+          </h1>
           {loading && (
-            <Loader2Icon className="animate-spin self-center" size={24} />
+            <Loader2Icon className="animate-spin self-center" size={16} />
           )}
         </div>
-        <div className="md:self-center md:ml-auto">
+        <div className="md:self-center md:ml-auto flex gap-1">
+          <Button
+            className="flex md:hidden"
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              setSidebarOpen(true);
+            }}
+          >
+            <FilterIcon size={14} />
+          </Button>
           <SortSelect
             sortFields={sortFields as unknown as Record<string, string>}
             sortBy={sortBy}

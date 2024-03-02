@@ -48,7 +48,7 @@ export default function Restaurants() {
   const [distance, setDistance] = useState<number>(
     Number(searchParams.getAll('distance')) || 0,
   );
-
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   // Prevent fetching too much when dragging the slider
   const [updatingDistance, setUpdatingDistance] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<
@@ -134,6 +134,8 @@ export default function Restaurants() {
             setSelectedDistance={setDistance}
             setUpdatingDistance={setUpdatingDistance}
             currentLocation={currentLocation}
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
           />
         }
         content={
@@ -142,6 +144,7 @@ export default function Restaurants() {
             loading={loading}
             sortBy={sortBy}
             setSortBy={setSortBy}
+            setSidebarOpen={setSidebarOpen}
           />
         }
       />
