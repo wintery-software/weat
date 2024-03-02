@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 export default function MainLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <Navbar />
+      <Navbar sticky />
       <div className="container h-full py-6">
         <main className="flex flex-row">{children}</main>
       </div>

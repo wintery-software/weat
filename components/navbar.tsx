@@ -1,16 +1,27 @@
 import { SearchDialog } from '@/components/search_dialog';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { SearchIcon } from 'lucide-react';
 import { useState } from 'react';
 
-export const Navbar = ({ className, ...props }: { className?: string }) => {
+export const Navbar = ({
+  className,
+  sticky,
+  ...props
+}: {
+  className?: string;
+  sticky?: boolean;
+}) => {
   const [open, setOpen] = useState<boolean>(false);
 
   return (
-    <div {...props}>
+    <div
+      {...props}
+      className={cn(className, sticky ? 'sticky top-0 z-40' : '')}
+    >
       <Button
         variant="outline"
-        className="justify-start w-full font-normal"
+        className="justify-start w-full font-normal border-none"
         onClick={() => {
           setOpen(true);
         }}
