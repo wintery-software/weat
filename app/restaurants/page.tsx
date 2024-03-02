@@ -31,8 +31,6 @@ const generateSearchParams = (
 const getRestaurants = async (params: URLSearchParams) =>
   await fetchWeatApi('restaurants', params);
 
-export const dynamic = 'force-dynamic';
-
 export default function Restaurants() {
   const router = useRouter();
   const searchParams = useSearchParams();
