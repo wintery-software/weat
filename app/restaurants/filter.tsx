@@ -129,18 +129,20 @@ export default function Filter({
             />
             <div className="flex flex-col gap-1 text-xs text-muted-foreground">
               <p>{selectedDistance ? `${selectedDistance} mi 以内` : '不限'}</p>
-              <p className="flex gap-0.5 items-center">
-                <MapPinIcon size={12} />
+              <p className="inline-flex gap-0.5 items-center">
                 {currentLocation ? (
                   Array.isArray(currentLocation) ? (
-                    <a
-                      href={`https://www.google.com/maps/@${currentLocation.join(',')},15z`}
-                      target="_blank"
-                      title="在 Google 地图中打开"
-                      className="hover:underline"
-                    >
-                      {currentLocation.join(', ')}
-                    </a>
+                    <>
+                      <MapPinIcon size={12} className="self-center" />
+                      <a
+                        href={`https://www.google.com/maps/@${currentLocation.join(',')},15z`}
+                        target="_blank"
+                        title="在 Google 地图中打开"
+                        className="hover:underline"
+                      >
+                        {currentLocation.join(', ')}
+                      </a>
+                    </>
                   ) : (
                     currentLocation
                   )
