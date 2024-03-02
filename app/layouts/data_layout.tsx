@@ -10,7 +10,7 @@ export default function DataLayout({
 }) {
   return (
     <MainLayout>
-      <div className="min-w-64 max-w-64 pr-8">{filter}</div>
+      <div className="min-w-64 max-w-64 pr-8 hidden md:block">{filter}</div>
       {content}
     </MainLayout>
   );
