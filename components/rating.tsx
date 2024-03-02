@@ -40,7 +40,7 @@ export default function Rating({
                   ? 'text-yellow-600 fill-yellow-500'
                   : 'text-muted-foreground',
               )}
-              size={20}
+              size={16}
             />
           </button>
         ))}
