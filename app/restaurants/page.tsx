@@ -71,7 +71,7 @@ export default function Restaurants() {
       sortBy,
     );
     // Update URL without coordinates
-    router.push(`/restaurants?${params}`);
+    router.push(`/restaurants?${params}`, { scroll: false });
     // Only pass coordinates to server
     if (Array.isArray(currentLocation)) {
       params.append('origin', currentLocation.join(','));
