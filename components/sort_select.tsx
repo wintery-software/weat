@@ -34,7 +34,7 @@ export default function SortSelect({
         )
       }
     >
-      <SelectTrigger className="w-40" value={sortBy.join(':')}>
+      <SelectTrigger value={sortBy.join(':')}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
