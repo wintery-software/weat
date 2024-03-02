@@ -1,6 +1,6 @@
 import { prisma } from '@/prisma/client';
 
-export async function GET() {
+export async function GET(request: Request) {
   const result = await prisma.category
     .findMany({
       select: {
