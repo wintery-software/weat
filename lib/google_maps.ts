@@ -1,10 +1,14 @@
+import { upload } from '@/lib/aws-s3';
 import { meterToMile } from '@/lib/constants';
 import {
   Client,
+  PlaceData,
   PlacePhoto,
   UnitSystem,
 } from '@googlemaps/google-maps-services-js';
 import { ResponseData } from '@googlemaps/google-maps-services-js/src/common';
+import { Prisma } from '@prisma/client';
+import RestaurantCreateInput = Prisma.RestaurantCreateInput;
 
 export class GoogleMapsApiError extends Error {
   constructor(message: string, ...args: any[]) {
@@ -82,56 +86,83 @@ export const calculateDistance = async (
   };
 };
 
-export const getPlaceDetails = async (placeId: string) => {
+export const getPlaceDetails = async (
+  placeId: string,
+): Promise<RestaurantCreateInput> => {
   const apiKey = getApiKey();
   const client = getClient();
+
+  const fields: (keyof PlaceData)[] = [
+    'name',
+    'formatted_address',
+    'price_level',
+    'rating',
+    'photos',
+  ];
 
   try {
     const response = await client.placeDetails({
       params: {
         place_id: placeId,
-        fields: [
-          'name',
-          'formatted_address',
-          'geometry',
-          'place_id',
-          'types',
-          'price_level',
-          'rating',
-          'photos',
-        ],
+        fields,
         key: apiKey,
       },
     });
 
     const place = response.data.result;
 
-    // Short URL with zoom level 19 (200 ft)
-    const googleMapsUrl = `https://www.google.com/maps/place/?q=place_id:${placeId}`;
-
+    // First 5 images
     const images = place.photos
       ? place.photos
           .slice(0, 5)
-          .map(
-            (photo: PlacePhoto) =>
-              `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`,
-          )
+          .map((photo: PlacePhoto) => photo.photo_reference)
       : [];
 
     // Format the data
     return {
-      name: place.name,
-      address: place.formatted_address,
-      googleMapsUrl,
-      googleMapsPlaceId: placeId,
-      // categories: place.types.map((type) => type.replace('_', ' ')),
-      price: place.price_level,
-      rating: place.rating,
+      placeId,
+      name: place.name!,
+      address: place.formatted_address!,
+      price: place.price_level || 0,
+      rating: place.rating || 0,
       images,
     };
   } catch (e: any) {
-    const error: ResponseData = e.response.data;
-    console.log(error.error_message);
-    throw new GoogleMapsApiError(error.error_message);
+    if (e.response?.data) {
+      const error: ResponseData = e.response.data;
+      console.log(error.error_message);
+      throw new GoogleMapsApiError(error.error_message);
+    } else {
+      console.log(e.message);
+      throw e;
+    }
   }
+};
+
+export const getPlaceUrl = (placeId: string): string =>
+  `https://www.google.com/maps/place/?q=place_id:${placeId}`;
+
+export const getPlacePhotoUrl = (
+  photoReference: string,
+  maxWidth: number = 1024,
+): string =>
+  `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${maxWidth}&photoreference=${photoReference}&key=${getApiKey()}`;
+
+export const uploadPlacePhotoToS3 = async (
+  placeId: string,
+  photoReference: string,
+) => {
+  const photoUrl = getPlacePhotoUrl(photoReference);
+  const response = await fetch(photoUrl);
+  if (!response.ok) {
+    throw new Error(
+      `Failed to download photo (${response.status} ${response.statusText}): ${photoUrl}`,
+    );
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  const key = `google-maps/${placeId}/${photoReference}.jpg`;
+
+  return upload(key, buffer, 'image/jpeg');
 };

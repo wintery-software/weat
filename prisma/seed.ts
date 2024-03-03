@@ -1,51 +1,59 @@
+import { getPlaceDetails, uploadPlacePhotoToS3 } from '@/lib/google_maps';
 import { prisma } from '@/prisma/client';
-import { omit } from 'lodash';
 import restaurantsData from './seeds/restaurants.json';
 
 const createRestaurants = async () =>
   Promise.all(
-    restaurantsData.map(async (restaurant) =>
-      prisma.restaurant.upsert({
+    restaurantsData.map(async (r) => {
+      const categories = await Promise.all(
+        r.categories.map((name) => {
+          return prisma.category.upsert({
+            where: { name },
+            update: {},
+            create: { name },
+          });
+        }),
+      );
+
+      const place = await getPlaceDetails(r.place_id);
+
+      place.images = await Promise.all(
+        (place.images as string[]).map(async (ref) => {
+          const path = await uploadPlacePhotoToS3(r.place_id, ref);
+          console.log('Uploaded:', path);
+          return path;
+        }),
+      );
+
+      const createInput = {
+        ...place,
+        altName: r.alt_name,
+        // Delete all old categories and create new ones
+        categories: {
+          create: categories.map((c) => ({ categoryId: c.id })),
+        },
+      };
+
+      const updateInput = {
+        ...createInput,
+        categories: {
+          deleteMany: {},
+          ...createInput.categories,
+        },
+      };
+
+      return prisma.restaurant.upsert({
         where: {
-          googleMapsPlaceId: restaurant.googleMapsPlaceId,
+          placeId: r.place_id,
         },
-        update: {
-          ...omit(restaurant, 'categories'),
-          categories: {
-            // Delete old categories
-            deleteMany: {},
-            create: await Promise.all(
-              restaurant.categories.map(async (name) => ({
-                category: {
-                  connectOrCreate: {
-                    where: { name },
-                    create: { name },
-                  },
-                },
-              })),
-            ),
-          },
-        },
-        create: {
-          ...omit(restaurant, 'categories'),
-          categories: {
-            create: await Promise.all(
-              restaurant.categories.map(async (name) => ({
-                category: {
-                  connectOrCreate: {
-                    where: { name },
-                    create: { name },
-                  },
-                },
-              })),
-            ),
-          },
-        },
-      }),
-    ),
+        update: updateInput,
+        create: createInput,
+      });
+    }),
   );
 
 const main = async () => {
+  console.log('Seeding restaurants...');
   const restaurants = await createRestaurants();
 };
 
