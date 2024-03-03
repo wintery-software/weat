@@ -5,6 +5,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const env = (key: string, defaultValue?: string) => {
+  const value = process.env[key];
+  if (value) return value;
+  if (defaultValue) return defaultValue;
+  throw new Error(`Missing environment variable: ${key}`);
+};
+
 export const fetchWeatApi = async (
   input: string,
   params?: URLSearchParams,
