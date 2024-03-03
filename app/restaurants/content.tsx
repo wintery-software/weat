@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/carousel';
 import { Separator } from '@/components/ui/separator';
 import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
-import { isGoogleMapsApiEnabled } from '@/lib/google_maps';
+import { getPlaceUrl, isGoogleMapsApiEnabled } from '@/lib/google_maps';
 import { isEmpty } from 'lodash';
 import {
   ClockIcon,
@@ -72,9 +72,9 @@ export default function Content({
       );
     }
 
-    return restaurants.map((r, index) => (
-      <Fragment key={r.name}>
-        <Card className="border-0 rounded-none shadow-none hover:shadow transition-shadow flex py-5">
+    return restaurants.map((r) => (
+      <Fragment key={r.placeId}>
+        <Card className="border-0 rounded-none shadow-none hover:shadow transition-shadow flex p-5">
           <Carousel>
             <CarouselContent className="w-36 h-36">
               {r.images.map((image, index) => (
@@ -92,9 +92,11 @@ export default function Content({
             {/*<CarouselPrevious className="left-2" />*/}
             {/*<CarouselNext className="right-2" />*/}
           </Carousel>
-          <a href={r.googleMapsUrl} target="_blank">
+          <a href={getPlaceUrl(r.placeId)} target="_blank">
             <CardHeader className="pt-1 md:pb-6">
-              <CardTitle className="leading-5">{r.name}</CardTitle>
+              <CardTitle className="leading-5">
+                {r.name} {r.altName && `(${r.altName})`}
+              </CardTitle>
               <div className="flex gap-2 items-center">
                 <Rating value={r.rating} toggleable={false} />
                 <span className="text-sm font-semibold">
