@@ -76,9 +76,9 @@ export default function Content({
       <Fragment key={r.name}>
         <Card className="border-0 rounded-none shadow-none hover:shadow transition-shadow flex py-5">
           <Carousel>
-            <CarouselContent>
+            <CarouselContent className="w-36 h-36">
               {r.images.map((image, index) => (
-                <CarouselItem key={index} className="w-36 h-36">
+                <CarouselItem key={index}>
                   <img
                     src={image}
                     className="object-cover w-full h-full rounded-md"
