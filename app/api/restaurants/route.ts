@@ -88,7 +88,7 @@ export async function GET(request: Request) {
         const key = `coordinate:${origin.join(',')}`;
 
         try {
-          const cache = await client.hGet(key, restaurant.googleMapsPlaceId);
+          const cache = await client.hGet(key, restaurant.placeId);
 
           // First time fetching distance from this location
           if (cache) {
@@ -103,13 +103,13 @@ export async function GET(request: Request) {
           } else {
             calculated = await calculateDistance(
               origin as [number, number],
-              restaurant.googleMapsPlaceId,
+              restaurant.placeId,
             );
 
             // Cache for 1 day
             await client.hSet(
               key,
-              restaurant.googleMapsPlaceId,
+              restaurant.placeId,
               `${calculated.distance},${calculated.duration}`,
             );
             await client.expire(key, 60 * 60 * 24);
