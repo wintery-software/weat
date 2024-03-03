@@ -9,17 +9,17 @@ datasource db {
 }
 
 model Restaurant {
-  id                String               @id @default(uuid())
-  name              String
-  address           String
-  googleMapsUrl     String               @map("google_maps_url")
-  googleMapsPlaceId String               @unique @map("google_maps_place_id")
-  price             Int
-  rating            Float
-  images            String[]
-  createdAt         DateTime             @default(now()) @map("created_at")
-  updatedAt         DateTime             @updatedAt @map("updated_at")
-  categories        RestaurantCategory[]
+  id         String               @id @default(uuid())
+  name       String
+  altName    String?              @map("alt_name")
+  address    String
+  placeId    String               @unique @map("place_id")
+  price      Int
+  rating     Float
+  images     String[]
+  createdAt  DateTime             @default(now()) @map("created_at")
+  updatedAt  DateTime             @updatedAt @map("updated_at")
+  categories RestaurantCategory[]
 
   @@map("restaurants")
 }
