@@ -1,12 +1,32 @@
 import { env } from '@/lib/utils';
-import { S3Client } from '@aws-sdk/client-s3';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { StreamingBlobPayloadInputTypes } from '@smithy/types';
 
-const s3 = new S3Client({
-  region: env('AWS_S3_REGION'),
-  credentials: {
-    accessKeyId: env('AWS_S3_ACCESS_KEY_ID'),
-    secretAccessKey: env('AWS_S3_SECRET_ACCESS_KEY'),
-  },
-});
+const getClient = () =>
+  new S3Client({
+    region: env('AWS_S3_REGION'),
+    credentials: {
+      accessKeyId: env('AWS_S3_ACCESS_KEY_ID'),
+      secretAccessKey: env('AWS_S3_SECRET_ACCESS_KEY'),
+    },
+  });
 
-export default s3;
+export const upload = async (
+  key: string,
+  body: StreamingBlobPayloadInputTypes,
+  contentType: string,
+) => {
+  const client = getClient();
+  const bucket = env('AWS_S3_BUCKET');
+
+  await client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: body,
+      ContentType: contentType,
+    }),
+  );
+
+  return `https://${bucket}.s3.amazonaws.com/${key}`;
+};
