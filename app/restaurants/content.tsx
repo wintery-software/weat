@@ -11,7 +11,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { getS3PlacePhotoUrl } from '@/lib/aws-s3';
 import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
-import { getPlaceUrl, isGoogleMapsApiEnabled } from '@/lib/google_maps';
+import { getPlaceUrl, isGoogleMapsApiEnabled } from '@/lib/google-maps';
 import { isEmpty } from 'lodash';
 import { ClockIcon, FilterIcon, Loader2Icon, RouteIcon } from 'lucide-react';
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';

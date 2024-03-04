@@ -3,7 +3,7 @@ import {
   calculateDistance,
   DistanceReturnType,
   isGoogleMapsApiEnabled,
-} from '@/lib/google_maps';
+} from '@/lib/google-maps';
 import redis from '@/lib/redis';
 import { prisma } from '@/prisma/client';
 import { Prisma } from '@prisma/client';

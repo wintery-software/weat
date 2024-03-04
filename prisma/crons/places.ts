@@ -1,4 +1,4 @@
-import { getPlaceDetails } from '@/lib/google_maps';
+import { getPlaceDetails } from '@/lib/google-maps';
 import { prisma } from '@/prisma/client';
 import { Prisma } from '@prisma/client';
 

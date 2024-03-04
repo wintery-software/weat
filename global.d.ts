@@ -1,4 +1,4 @@
-import { DistanceReturnType } from '@/lib/google_maps';
+import { DistanceReturnType } from '@/lib/google-maps';
 import { Restaurant as PrismaRestaurant } from '@prisma/client';
 
 export declare global {

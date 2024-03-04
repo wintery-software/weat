@@ -4,7 +4,7 @@ import DataLayout from '@/app/layouts/data_layout';
 import Content from '@/app/restaurants/content';
 import Filter from '@/app/restaurants/filter';
 import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
-import { isGoogleMapsApiEnabled } from '@/lib/google_maps';
+import { isGoogleMapsApiEnabled } from '@/lib/google-maps';
 import { fetchWeatApi } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
