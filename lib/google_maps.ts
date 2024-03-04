@@ -86,19 +86,25 @@ export const calculateDistance = async (
   };
 };
 
+/**
+ * Get place details from Google Maps API.
+ *
+ * @param placeId Place ID
+ * @param fields Fields to get
+ * @returns Place details (placeId, name, address, price, rating, images)
+ */
 export const getPlaceDetails = async (
   placeId: string,
-): Promise<RestaurantCreateInput> => {
-  const apiKey = getApiKey();
-  const client = getClient();
-
-  const fields: (keyof PlaceData)[] = [
+  fields: (keyof PlaceData)[] = [
     'name',
     'formatted_address',
     'price_level',
     'rating',
     'photos',
-  ];
+  ],
+): Promise<RestaurantCreateInput> => {
+  const apiKey = getApiKey();
+  const client = getClient();
 
   try {
     const response = await client.placeDetails({
