@@ -10,10 +10,10 @@ datasource db {
 
 model Restaurant {
   id         String               @id @default(uuid())
+  placeId    String               @unique @map("place_id")
   name       String
   altName    String?              @map("alt_name")
   address    String
-  placeId    String               @unique @map("place_id")
   price      Int?
   rating     Float?
   images     String[]
