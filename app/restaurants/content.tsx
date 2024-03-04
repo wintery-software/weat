@@ -68,7 +68,7 @@ export default function Content({
     }
 
     return restaurants.map((r) => (
-      <a href={`/restaurants/${r.id}`} key={r.placeId} title="查看详细信息">
+      <>
         <Card className="border-0 rounded-none shadow-none hover:shadow transition-shadow flex p-2 md:p-4">
           <Carousel>
             <CarouselContent className="w-[160px] h-[120px]">
@@ -85,7 +85,7 @@ export default function Content({
               ))}
             </CarouselContent>
           </Carousel>
-          <div>
+          <a href={`/restaurants/${r.id}`} key={r.placeId} title="查看详细信息">
             <CardHeader className="pt-0 pb-3 md:pb-6">
               <CardTitle className="leading-5 text-sm md:text-base hover:underline">
                 {r.name} {r.altName && `(${r.altName})`}
@@ -139,10 +139,10 @@ export default function Content({
                 )}
               </div>
             </CardFooter>
-          </div>
+          </a>
         </Card>
         <Separator />
-      </a>
+      </>
     ));
   };
 
