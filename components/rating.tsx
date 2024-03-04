@@ -12,6 +12,7 @@ export default function Rating({
   toggleable = true,
   value,
   onValueChange,
+  size = 16,
 }: {
   className?: string;
   clearable?: boolean;
@@ -19,6 +20,7 @@ export default function Rating({
   toggleable?: boolean;
   value: number;
   onValueChange?: Dispatch<SetStateAction<number>>;
+  size?: number;
 }) {
   const [hover, setHover] = useState<number>();
   value = Math.floor(value);
@@ -40,7 +42,7 @@ export default function Rating({
                   ? 'text-yellow-600 fill-yellow-500'
                   : 'text-muted-foreground',
               )}
-              size={16}
+              size={size}
             />
           </button>
         ))}

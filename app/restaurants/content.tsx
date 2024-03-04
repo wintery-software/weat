@@ -12,13 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
 import { getPlaceUrl, isGoogleMapsApiEnabled } from '@/lib/google_maps';
 import { isEmpty } from 'lodash';
-import {
-  ClockIcon,
-  FilterIcon,
-  Loader2Icon,
-  MapPinnedIcon,
-  RouteIcon,
-} from 'lucide-react';
+import { ClockIcon, FilterIcon, Loader2Icon, RouteIcon } from 'lucide-react';
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
 
 const sortFields: RestaurantSortFieldsType = {
@@ -73,10 +67,10 @@ export default function Content({
     }
 
     return restaurants.map((r) => (
-      <Fragment key={r.placeId}>
-        <Card className="border-0 rounded-none shadow-none hover:shadow transition-shadow flex p-5">
+      <a href={`/restaurants/${r.id}`} key={r.placeId} title="查看详细信息">
+        <Card className="border-0 rounded-none shadow-none hover:shadow transition-shadow flex p-2 md:p-4">
           <Carousel>
-            <CarouselContent className="w-36 h-36">
+            <CarouselContent className="w-[160px] h-[120px]">
               {r.images.map((image, index) => (
                 <CarouselItem key={index}>
                   <img
@@ -89,17 +83,15 @@ export default function Content({
                 </CarouselItem>
               ))}
             </CarouselContent>
-            {/*<CarouselPrevious className="left-2" />*/}
-            {/*<CarouselNext className="right-2" />*/}
           </Carousel>
-          <a href={getPlaceUrl(r.placeId)} target="_blank">
-            <CardHeader className="pt-1 md:pb-6">
-              <CardTitle className="leading-5">
+          <div>
+            <CardHeader className="pt-0 pb-3 md:pb-6">
+              <CardTitle className="leading-5 text-sm md:text-base hover:underline">
                 {r.name} {r.altName && `(${r.altName})`}
               </CardTitle>
               <div className="flex gap-2 items-center">
-                <Rating value={r.rating} toggleable={false} />
-                <span className="text-sm font-semibold">
+                <Rating value={r.rating} toggleable={false} size={14} />
+                <span className="text-xs md:text-sm font-semibold">
                   {r.rating.toFixed(1)}
                 </span>
                 <span className="text-xs text-muted-foreground">
@@ -117,8 +109,14 @@ export default function Content({
             <CardFooter className="pb-0">
               <div className="flex flex-col lg:flex-row gap-1 lg:gap-4 text-xs text-muted-foreground">
                 <span className="flex gap-1 items-center">
-                  <MapPinnedIcon size={12} />
-                  <span className="hover:underline">{r.address}</span>
+                  <a
+                    href={getPlaceUrl(r.placeId)}
+                    className="underline"
+                    title="在 Google Maps 中打开"
+                    target="_blank"
+                  >
+                    {r.address}
+                  </a>
                 </span>
                 {r.distance && (
                   <>
@@ -134,10 +132,10 @@ export default function Content({
                 )}
               </div>
             </CardFooter>
-          </a>
+          </div>
         </Card>
         <Separator />
-      </Fragment>
+      </a>
     ));
   };
 
