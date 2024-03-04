@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "NEXT_PUBLIC_GOOGLE_MAPS_API_ENABLED=true prisma db seed",
+    "seed": "prisma db seed",
     "postinstall": "prisma generate"
   },
   "prisma": {
