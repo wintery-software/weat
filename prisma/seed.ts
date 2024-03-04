@@ -1,60 +1,78 @@
-import { getPlaceDetails, uploadPlacePhotoToS3 } from '@/lib/google_maps';
 import { prisma } from '@/prisma/client';
+import { uniq } from 'lodash';
 import restaurantsData from './seeds/restaurants.json';
 
-const createRestaurants = async () =>
-  Promise.all(
+const checkDuplicate = (arr: any[], key: string): string => {
+  const seen = new Set();
+
+  for (const item of arr) {
+    if (seen.has(item[key])) {
+      return item[key];
+    }
+    seen.add(item[key]);
+  }
+
+  return '';
+};
+
+const createRestaurants = async () => {
+  const duplicate = checkDuplicate(restaurantsData, 'place_id');
+
+  if (duplicate) {
+    throw new Error(`Duplicate place_id in restaurants.json: ${duplicate}`);
+  }
+
+  // Collect unique categories and create them
+  const categories = await Promise.all(
+    uniq(restaurantsData.flatMap((r) => r.categories)).map(async (name) => {
+      console.log('Creating category:', name);
+      return await prisma.category.upsert({
+        where: { name },
+        update: {},
+        create: { name },
+      });
+    }),
+  );
+
+  return Promise.all(
     restaurantsData.map(async (r) => {
-      const categories = await Promise.all(
-        r.categories.map((name) => {
-          return prisma.category.upsert({
-            where: { name },
-            update: {},
-            create: { name },
-          });
-        }),
-      );
-
-      const place = await getPlaceDetails(r.place_id);
-
-      place.images = await Promise.all(
-        (place.images as string[]).map(async (ref) => {
-          const path = await uploadPlacePhotoToS3(r.place_id, ref);
-          console.log('Uploaded:', path);
-          return path;
-        }),
-      );
-
       const createInput = {
-        ...place,
-        altName: r.alt_name,
-        // Delete all old categories and create new ones
+        ...r,
         categories: {
-          create: categories.map((c) => ({ categoryId: c.id })),
+          create: r.categories.map((c) => {
+            return {
+              categoryId: categories.find((cat) => cat.name === c)?.id!,
+            };
+          }),
         },
       };
 
       const updateInput = {
-        ...createInput,
+        ...r,
         categories: {
+          // Delete all old categories and create new ones
           deleteMany: {},
           ...createInput.categories,
         },
       };
 
+      console.log('Creating restaurant:', r.name, `(${r.address})`);
+
       return prisma.restaurant.upsert({
         where: {
-          placeId: r.place_id,
+          placeId: r.placeId,
         },
         update: updateInput,
         create: createInput,
       });
     }),
   );
+};
 
 const main = async () => {
-  console.log('Seeding restaurants...');
+  console.log('Seeding restaurants');
   const restaurants = await createRestaurants();
+  console.log(`${restaurants.length} restaurants seeded`);
 };
 
 main().then(() => {
