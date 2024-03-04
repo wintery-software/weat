@@ -139,8 +139,8 @@ export const getPlaceDetails = async (
   }
 };
 
-export const getPlaceUrl = (placeId: string): string =>
-  `https://www.google.com/maps/place/?q=place_id:${placeId}`;
+export const getPlaceUrl = (address: string, placeId: string): string =>
+  `https://www.google.com/maps/search/?api=1&query=${address}&query_place_id=${placeId}`;
 
 export const getPlacePhotoUrl = (
   photoReference: string,

@@ -110,7 +110,7 @@ export default function Content({
               <div className="flex flex-col lg:flex-row gap-1 lg:gap-4 text-xs text-muted-foreground">
                 <span className="flex gap-1 items-center">
                   <a
-                    href={getPlaceUrl(r.placeId)}
+                    href={getPlaceUrl(r.address, r.placeId)}
                     className="underline"
                     title="在 Google Maps 中打开"
                     target="_blank"
