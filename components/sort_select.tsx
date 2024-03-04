@@ -37,7 +37,7 @@ export default function SortSelect({
       <SelectTrigger value={sortBy.join(':')}>
         <SelectValue />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent position="popper">
         {Object.entries(sortFields).map(([fieldValue, fieldText]) =>
           Object.entries(sortOrders).map(([orderValue, orderText], index) => (
             <SelectItem key={index} value={`${fieldValue}:${orderValue}`}>
