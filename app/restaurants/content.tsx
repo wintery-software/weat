@@ -9,6 +9,7 @@ import {
   CarouselItem,
 } from '@/components/ui/carousel';
 import { Separator } from '@/components/ui/separator';
+import { getS3PlacePhotoUrl } from '@/lib/aws-s3';
 import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
 import { getPlaceUrl, isGoogleMapsApiEnabled } from '@/lib/google_maps';
 import { isEmpty } from 'lodash';
@@ -71,10 +72,10 @@ export default function Content({
         <Card className="border-0 rounded-none shadow-none hover:shadow transition-shadow flex p-2 md:p-4">
           <Carousel>
             <CarouselContent className="w-[160px] h-[120px]">
-              {r.images.map((image, index) => (
+              {r.images.map((ref, index) => (
                 <CarouselItem key={index}>
                   <img
-                    src={image}
+                    src={getS3PlacePhotoUrl(r.placeId, ref)}
                     className="object-cover w-full h-full rounded-md"
                     alt={`${r.name}-${index}`}
                     width="100%"
@@ -90,13 +91,19 @@ export default function Content({
                 {r.name} {r.altName && `(${r.altName})`}
               </CardTitle>
               <div className="flex gap-2 items-center">
-                <Rating value={r.rating} toggleable={false} size={14} />
-                <span className="text-xs md:text-sm font-semibold">
-                  {r.rating.toFixed(1)}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {'$'.repeat(r.price)}
-                </span>
+                {r.rating && (
+                  <>
+                    <Rating value={r.rating} toggleable={false} size={14} />
+                    <span className="text-xs md:text-sm font-semibold">
+                      {r.rating.toFixed(1)}
+                    </span>
+                  </>
+                )}
+                {r.price && (
+                  <span className="text-xs text-muted-foreground">
+                    {'$'.repeat(r.price)}
+                  </span>
+                )}
               </div>
               <div className="flex gap-1">
                 {r.categories.map((c, index) => (

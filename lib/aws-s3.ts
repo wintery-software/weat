@@ -30,3 +30,6 @@ export const upload = async (
 
   return `https://${bucket}.s3.amazonaws.com/${key}`;
 };
+
+export const getS3PlacePhotoUrl = (placeId: string, photoReference: string) =>
+  `https://wintery-software-weat.s3.amazonaws.com/google-maps/${placeId}/${photoReference}.jpg`;
