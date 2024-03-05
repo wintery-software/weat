@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Weat
 
 ## Getting Started
 
-First, run the development server:
+Install packages:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```shell
+yarn install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Services
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### Database
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+The database is managed by Prisma + PostgreSQL.
 
-## Learn More
+Set up the following environment variables:
 
-To learn more about Next.js, take a look at the following resources:
+```shell
+DATABASE_URL=<url>
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### AWS S3
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+AWS S3 is used to store images.
 
-## Deploy on Vercel
+Set up the following environment variables:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```shell
+AWS_ACCESS_KEY_ID=<access_key_id>
+AWS_SECRET_ACCESS_KEY=<secret_access_key>
+AWS_REGION=<region>
+AWS_BUCKET=<bucket>
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+#### Google Maps API
+
+The Google Maps API is used to get place details, the distance between two locations, etc.
+
+Set up the following environment variables:
+
+> Google Maps API can be turned on or off.
+> To enable Google Maps API, the value of
+> `NEXT_PUBLIC_GOOGLE_MAPS_API_ENABLED` must be `true` (case-sensitive).
+
+```shell
+GOOGLE_MAPS_API_KEY=<api_key>
+NEXT_PUBLIC_GOOGLE_MAPS_API_ENABLED=<true_or_false>
+```
+
+#### Redis (Optional)
+
+Redis is used to cache distance matrix data from Google Maps API. If you don't want to enable this feature, you can skip this step.
+
+Set up the following environment variables:
+
+```shell
+REDIS_URL=<url>
+```
+
+### Run
+
+Run the development server:
+
+```shell
+yarn dev
+```
+
+Then open [http://localhost:3000](http://localhost:3000).
+
+## Deployment
+
+The project is currently deployed on Vercel
+([weat - Overview - Vercel](https://vercel.com/wintery-software/weat))
+using [`master`](https://github.com/wintery-software/weat/tree/master) branch.
+
+Previous deployments:
+
+- [Deployments · wintery-software/weat](https://github.com/wintery-software/weat/deployments)
+- [weat – Deployments – Vercel](https://vercel.com/wintery-software/weat/deployments)
+
+## Maintenance
+
+### Cron
+
+To run scripts in `prisma/crons`:
+
+```shell
+tsx prisma/crons/<script>.ts
+```
