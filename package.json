@@ -1,6 +1,11 @@
 {
-  "name": "ci",
-  "version": "0.1.0",
+  "name": "weat",
+  "author": {
+    "name": "Wintery Software",
+    "email": "admin@wintery.io",
+    "url": "https://github.com/wintery-software"
+  },
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
