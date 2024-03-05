@@ -48,7 +48,10 @@ const getApiKey = (): string => {
 
 const getClient = (): Client => {
   if (!isGoogleMapsApiEnabled()) {
-    throw new GoogleMapsApiInitializationError('Google Maps API is disabled');
+    throw new GoogleMapsApiInitializationError(
+      'Google Maps API is disabled. ' +
+        'To enable it, set NEXT_PUBLIC_GOOGLE_MAPS_API_ENABLED=true',
+    );
   }
 
   return new Client({});
