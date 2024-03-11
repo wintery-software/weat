@@ -2,7 +2,7 @@ import { env } from '@/lib/utils';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { StreamingBlobPayloadInputTypes } from '@smithy/types';
 
-const getClient = () =>
+export const getClient = () =>
   new S3Client({
     region: env('AWS_REGION'),
     credentials: {
