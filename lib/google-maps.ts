@@ -2,13 +2,11 @@ import { upload } from '@/lib/aws-s3';
 import { meterToMile } from '@/lib/constants';
 import {
   Client,
+  Place,
   PlaceData,
-  PlacePhoto,
   UnitSystem,
 } from '@googlemaps/google-maps-services-js';
 import { ResponseData } from '@googlemaps/google-maps-services-js/src/common';
-import { Prisma } from '@prisma/client';
-import RestaurantCreateInput = Prisma.RestaurantCreateInput;
 
 export class GoogleMapsApiError extends Error {
   constructor(message: string, ...args: any[]) {
@@ -105,7 +103,7 @@ export const getPlaceDetails = async (
     'rating',
     'photos',
   ],
-): Promise<RestaurantCreateInput> => {
+): Promise<Place> => {
   const apiKey = getApiKey();
   const client = getClient();
 
@@ -118,24 +116,7 @@ export const getPlaceDetails = async (
       },
     });
 
-    const place = response.data.result;
-
-    // First 5 images
-    const images = place.photos
-      ? place.photos
-          .slice(0, 5)
-          .map((photo: PlacePhoto) => photo.photo_reference)
-      : [];
-
-    // Format the data
-    return {
-      placeId,
-      name: place.name!,
-      address: place.formatted_address!,
-      price: place.price_level || 0,
-      rating: place.rating || 0,
-      images,
-    };
+    return response.data.result;
   } catch (e: any) {
     if (e.response?.data) {
       const error: ResponseData = e.response.data;
