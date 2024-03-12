@@ -23,8 +23,8 @@ const sortFields: RestaurantSortFieldsType = {
 };
 
 const titleDescriptor: Record<string, string> = {
-  'rating:asc': '最不受欢迎',
-  'rating:desc': '最受欢迎',
+  'rating:asc': '评分最低',
+  'rating:desc': '评分最高',
   'price:asc': '价格最低',
   'price:desc': '价格最高',
   'distance:asc': '离我最近的',
