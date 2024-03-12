@@ -20,8 +20,25 @@ model Restaurant {
   createdAt  DateTime             @default(now()) @map("created_at")
   updatedAt  DateTime             @updatedAt @map("updated_at")
   categories RestaurantCategory[]
+  items      RestaurantItem[]
 
   @@map("restaurants")
+}
+
+model RestaurantItem {
+  id           String     @id @default(uuid())
+  restaurantId String     @map("restaurant_id")
+  name         String
+  altName      String?    @map("alt_name")
+  description  String?
+  price        Decimal    @db.Decimal(10, 2)
+  image        String?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@index([name, altName, price])
+  @@map("restaurant_items")
 }
 
 model Category {
