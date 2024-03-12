@@ -9,20 +9,38 @@ datasource db {
 }
 
 model Restaurant {
-  id         String               @id @default(uuid())
-  placeId    String               @unique @map("place_id")
+  id         String                 @id @default(uuid())
+  placeId    String                 @unique @map("place_id")
   name       String
-  altName    String?              @map("alt_name")
+  altName    String?                @map("alt_name")
   address    String
   price      Int?
   rating     Float?
   images     String[]
-  createdAt  DateTime             @default(now()) @map("created_at")
-  updatedAt  DateTime             @updatedAt @map("updated_at")
-  categories RestaurantCategory[]
+  createdAt  DateTime               @default(now()) @map("created_at")
+  updatedAt  DateTime               @updatedAt @map("updated_at")
+  categories RestaurantToCategory[]
   items      RestaurantItem[]
 
   @@map("restaurants")
+}
+
+model RestaurantCategory {
+  id          String                 @id @default(uuid())
+  name        String                 @unique
+  restaurants RestaurantToCategory[]
+
+  @@map("restaurant_categories")
+}
+
+model RestaurantToCategory {
+  restaurantId String             @map("restaurant_id")
+  categoryId   String             @map("category_id")
+  category     RestaurantCategory @relation(fields: [categoryId], references: [id])
+  restaurant   Restaurant         @relation(fields: [restaurantId], references: [id])
+
+  @@id([restaurantId, categoryId])
+  @@map("restaurant_to_category")
 }
 
 model RestaurantItem {
@@ -39,22 +57,4 @@ model RestaurantItem {
 
   @@index([name, altName, price])
   @@map("restaurant_items")
-}
-
-model Category {
-  id          String               @id @default(uuid())
-  name        String               @unique
-  restaurants RestaurantCategory[]
-
-  @@map("categories")
-}
-
-model RestaurantCategory {
-  restaurantId String     @map("restaurant_id")
-  categoryId   String     @map("category_id")
-  category     Category   @relation(fields: [categoryId], references: [id])
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-
-  @@id([restaurantId, categoryId])
-  @@map("restaurants_categories")
 }

@@ -1,7 +1,7 @@
 import { prisma } from '@/prisma/client';
 
 export async function GET(request: Request) {
-  const result = await prisma.category
+  const result = await prisma.restaurantCategory
     .findMany({
       select: {
         name: true,

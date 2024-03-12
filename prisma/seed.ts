@@ -26,7 +26,7 @@ const createRestaurants = async () => {
   const categories = await Promise.all(
     uniq(restaurantsData.flatMap((r) => r.categories)).map(async (name) => {
       console.log('Creating category:', name);
-      return await prisma.category.upsert({
+      return await prisma.restaurantCategory.upsert({
         where: { name },
         update: {},
         create: { name },
