@@ -8,6 +8,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import { getS3PlacePhotoUrl } from '@/lib/aws-s3';
 import { search } from '@/lib/utils';
 import { capitalize, isEmpty } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
@@ -63,7 +64,10 @@ export function SearchDialog({
                 <CommandItem value={item.id}>
                   <div className="flex gap-2">
                     <Avatar>
-                      <AvatarImage src={item.images[0]} alt={item.name} />
+                      <AvatarImage
+                        src={getS3PlacePhotoUrl(item.placeId, item.images[0])}
+                        alt={item.name}
+                      />
                     </Avatar>
                     <div className="flex flex-col gap-0.5">
                       <div className="font-semibold">
