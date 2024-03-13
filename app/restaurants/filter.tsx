@@ -13,7 +13,7 @@ import { Slider } from '@/components/ui/slider';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { isGoogleMapsApiEnabled } from '@/lib/google-maps';
 import { fetchWeatApi } from '@/lib/utils';
-import { Category } from '@prisma/client';
+import { RestaurantCategory } from '@prisma/client';
 import { Loader2, MapPinIcon } from 'lucide-react';
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
@@ -50,7 +50,7 @@ export default function Filter({
 }) {
   const [categories, setCategories] = useState<string[]>();
   useEffect(() => {
-    getCategories().then((data: Category[]) =>
+    getCategories().then((data: RestaurantCategory[]) =>
       setCategories(data.map((c) => c.name)),
     );
   }, []);
