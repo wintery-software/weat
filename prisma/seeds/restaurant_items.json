@@ -1,0 +1,140 @@
+[
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Sweet Tea",
+    "altName": "甜茶",
+    "category": "饮料",
+    "price": 2.50
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Un-Sweet Tea",
+    "altName": "无糖茶",
+    "category": "饮料",
+    "price": 2.50
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Coke",
+    "altName": "可乐",
+    "category": "饮料",
+    "price": 2.50
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Diet Coke",
+    "altName": "健怡可乐",
+    "category": "饮料",
+    "price": 2.50
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Sprite",
+    "altName": "雪碧",
+    "category": "饮料",
+    "price": 2.50
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Dr. Pepper",
+    "category": "饮料",
+    "price": 2.50
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Mountain Dew",
+    "category": "饮料",
+    "price": 2.50
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Lemonade",
+    "altName": "柠檬汁",
+    "category": "饮料",
+    "price": 2.50
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Milk",
+    "altName": "牛奶",
+    "category": "饮料",
+    "price": 2.50
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Bottle Green Tea",
+    "altName": "瓶装绿茶",
+    "category": "饮料",
+    "price": 2.95
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Wong Lo Kat",
+    "altName": "王老吉",
+    "category": "饮料",
+    "price": 2.95
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Orange Juice",
+    "altName": "橙汁",
+    "category": "饮料",
+    "price": 2.95
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Apple Juice",
+    "altName": "苹果汁",
+    "category": "饮料",
+    "price": 2.95
+  },
+  {
+    "restaurant": {
+      "name": "Super Wok",
+      "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+    },
+    "name": "Hot Tea",
+    "altName": "热茶",
+    "category": "饮料",
+    "price": 1.49
+  }
+]

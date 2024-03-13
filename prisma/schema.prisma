@@ -9,52 +9,73 @@ datasource db {
 }
 
 model Restaurant {
-  id         String                 @id @default(uuid())
-  placeId    String                 @unique @map("place_id")
-  name       String
-  altName    String?                @map("alt_name")
-  address    String
-  price      Int?
-  rating     Float?
-  images     String[]
-  createdAt  DateTime               @default(now()) @map("created_at")
-  updatedAt  DateTime               @updatedAt @map("updated_at")
-  categories RestaurantToCategory[]
-  items      RestaurantItem[]
+  id        String   @id @default(uuid())
+  placeId   String   @unique @map("place_id")
+  name      String
+  altName   String?  @map("alt_name")
+  address   String
+  price     Int?
+  rating    Float?
+  images    String[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  categories     RestaurantToCategory[]
+  items          RestaurantItem[]
+  itemCategories RestaurantItemCategory[]
 
   @@map("restaurants")
 }
 
 model RestaurantCategory {
-  id          String                 @id @default(uuid())
-  name        String                 @unique
+  id   String @id @default(uuid())
+  name String @unique
+
   restaurants RestaurantToCategory[]
 
   @@map("restaurant_categories")
 }
 
 model RestaurantToCategory {
-  restaurantId String             @map("restaurant_id")
-  categoryId   String             @map("category_id")
-  category     RestaurantCategory @relation(fields: [categoryId], references: [id])
-  restaurant   Restaurant         @relation(fields: [restaurantId], references: [id])
+  restaurantId String @map("restaurant_id")
+  categoryId   String @map("category_id")
+
+  category   RestaurantCategory @relation(fields: [categoryId], references: [id])
+  restaurant Restaurant         @relation(fields: [restaurantId], references: [id])
 
   @@id([restaurantId, categoryId])
   @@map("restaurant_to_category")
 }
 
 model RestaurantItem {
-  id           String     @id @default(uuid())
-  restaurantId String     @map("restaurant_id")
+  id           String   @id @default(uuid())
+  restaurantId String   @map("restaurant_id")
+  categoryId   String   @map("category_id")
   name         String
-  altName      String?    @map("alt_name")
+  altName      String?  @map("alt_name")
   description  String?
-  price        Decimal    @db.Decimal(10, 2)
+  price        Decimal  @db.Decimal(10, 2)
   image        String?
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
+  restaurant Restaurant             @relation(fields: [restaurantId], references: [id])
+  category   RestaurantItemCategory @relation(fields: [categoryId], references: [id])
+
+  @@unique([restaurantId, name])
   @@index([name, altName, price])
   @@map("restaurant_items")
+}
+
+model RestaurantItemCategory {
+  id           String @id @default(uuid())
+  restaurantId String @map("restaurant_id")
+  name         String
+
+  restaurant Restaurant       @relation(fields: [restaurantId], references: [id])
+  items      RestaurantItem[]
+
+  @@unique([restaurantId, name])
+  @@index([name])
+  @@map("restaurant_item_categories")
 }
