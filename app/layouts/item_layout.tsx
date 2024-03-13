@@ -15,14 +15,12 @@ export default function ItemLayout({
 }: AutoBreadcrumbProps) {
   return (
     <MainLayout>
-      <div className="flex flex-col">
-        <AutoBreadcrumb
-          parents={breadcrumbParents}
-          current={breadcrumbCurrent}
-          className="mb-6"
-        />
-        {children}
-      </div>
+      <AutoBreadcrumb
+        parents={breadcrumbParents}
+        current={breadcrumbCurrent}
+        className="mb-4"
+      />
+      {children}
     </MainLayout>
   );
 }
