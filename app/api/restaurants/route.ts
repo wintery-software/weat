@@ -9,7 +9,7 @@ import { prisma } from '@/prisma/client';
 import { Prisma } from '@prisma/client';
 import { compact, uniq } from 'lodash';
 
-export async function GET(request: Request) {
+export const GET = async (request: Request) => {
   const url = new URL(request.url);
   const params = url.searchParams;
 
@@ -144,4 +144,4 @@ export async function GET(request: Request) {
   }
 
   return Response.json(processedResult);
-}
+};
