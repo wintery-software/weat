@@ -15,7 +15,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 type SearchResultType = Record<string, any[]>;
 
-export function SearchDialog({
+export default function SearchDialog({
   placeholder,
   open,
   onOpenChange,

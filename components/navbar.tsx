@@ -1,17 +1,19 @@
-import { SearchDialog } from '@/components/search_dialog';
+'use client';
+
+import SearchDialog from '@/components/search_dialog';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { SearchIcon } from 'lucide-react';
 import { useState } from 'react';
 
-export const Navbar = ({
+export default function Navbar({
   className,
   sticky,
   ...props
 }: {
   className?: string;
   sticky?: boolean;
-}) => {
+}) {
   const [open, setOpen] = useState<boolean>(false);
 
   return (
@@ -32,4 +34,4 @@ export const Navbar = ({
       <SearchDialog open={open} onOpenChange={setOpen} />
     </div>
   );
-};
+}
