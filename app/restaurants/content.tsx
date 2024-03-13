@@ -150,9 +150,7 @@ export default function Content({
     <div className="flex flex-col w-full gap-2">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex gap-2">
-          <h1 className="text-xl md:text-2xl font-semibold self-center">
-            {title}
-          </h1>
+          <h1 className="self-center">{title}</h1>
           {loading && (
             <Loader2Icon className="animate-spin self-center" size={16} />
           )}
