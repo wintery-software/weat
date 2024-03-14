@@ -12,22 +12,18 @@ export const env = (key: string, defaultValue?: string) => {
   throw new Error(`Missing environment variable: ${key}`);
 };
 
-export const fetchWeatApi = async (
-  input: string,
-  params?: URLSearchParams,
-  init?: RequestInit,
-) => {
-  const url = new URL(
-    `/api/${input.startsWith('/') ? input.slice(1) : input}`,
-    process.env.NEXT_PUBLIC_API_URL,
-  );
-
-  if (params) {
-    url.search = params.toString();
+export const getWeatApiUrl = (route: string, params?: URLSearchParams) => {
+  if (route.startsWith('/')) {
+    route = route.slice(1);
   }
 
-  const response = await fetch(url, init);
-  return response.json();
+  const u = new URL(`${process.env.NEXT_PUBLIC_API_URL}/${route}`);
+
+  if (params) {
+    u.search = params.toString();
+  }
+
+  return u;
 };
 
 export const search = async (

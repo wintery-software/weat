@@ -5,7 +5,7 @@ import Content from '@/app/restaurants/content';
 import Filter from '@/app/restaurants/filter';
 import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
 import { isGoogleMapsApiEnabled } from '@/lib/google-maps';
-import { fetchWeatApi } from '@/lib/utils';
+import { getWeatApiUrl } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -28,8 +28,16 @@ const generateSearchParams = (
   return params;
 };
 
-const getRestaurants = async (params: URLSearchParams) =>
-  await fetchWeatApi('restaurants', params);
+const getRestaurants = async (params: URLSearchParams) => {
+  const response = await fetch(getWeatApiUrl('/restaurants', params));
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error);
+  }
+
+  return data;
+};
 
 export default function Restaurants() {
   const router = useRouter();

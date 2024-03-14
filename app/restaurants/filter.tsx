@@ -12,12 +12,21 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Slider } from '@/components/ui/slider';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { isGoogleMapsApiEnabled } from '@/lib/google-maps';
-import { fetchWeatApi } from '@/lib/utils';
+import { getWeatApiUrl } from '@/lib/utils';
 import { RestaurantCategory } from '@prisma/client';
 import { Loader2, MapPinIcon } from 'lucide-react';
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
-const getCategories = async () => await fetchWeatApi('categories');
+const getCategories = async () => {
+  const response = await fetch(getWeatApiUrl('/categories'));
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error);
+  }
+
+  return data;
+};
 
 export default function Filter({
   className,
