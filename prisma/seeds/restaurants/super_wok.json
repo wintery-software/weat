@@ -1,0 +1,177 @@
+{
+  "restaurant": {
+    "name": "Super Wok",
+    "place_id": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
+  },
+  "items": [
+    {
+      "name": "Sweet Tea",
+      "alt_name": "甜茶",
+      "category": "饮料",
+      "price": 2.50
+    },
+    {
+      "name": "Un-Sweet Tea",
+      "alt_name": "无糖茶",
+      "category": "饮料",
+      "price": 2.50
+    },
+    {
+      "name": "Coke",
+      "alt_name": "可乐",
+      "category": "饮料",
+      "price": 2.50
+    },
+    {
+      "name": "Diet Coke",
+      "alt_name": "健怡可乐",
+      "category": "饮料",
+      "price": 2.50
+    },
+    {
+      "name": "Sprite",
+      "alt_name": "雪碧",
+      "category": "饮料",
+      "price": 2.50
+    },
+    {
+      "name": "Dr. Pepper",
+      "category": "饮料",
+      "price": 2.50
+    },
+    {
+      "name": "Mountain Dew",
+      "category": "饮料",
+      "price": 2.50
+    },
+    {
+      "name": "Lemonade",
+      "alt_name": "柠檬汁",
+      "category": "饮料",
+      "price": 2.50
+    },
+    {
+      "name": "Milk",
+      "alt_name": "牛奶",
+      "category": "饮料",
+      "price": 2.50
+    },
+    {
+      "name": "Bottle Green Tea",
+      "alt_name": "瓶装绿茶",
+      "category": "饮料",
+      "price": 2.95
+    },
+    {
+      "name": "Wong Lo Kat",
+      "alt_name": "王老吉",
+      "category": "饮料",
+      "price": 2.95
+    },
+    {
+      "name": "Orange Juice",
+      "alt_name": "橙汁",
+      "category": "饮料",
+      "price": 2.95
+    },
+    {
+      "name": "Apple Juice",
+      "alt_name": "苹果汁",
+      "category": "饮料",
+      "price": 2.95
+    },
+    {
+      "name": "Hot Tea",
+      "alt_name": "热茶",
+      "category": "饮料",
+      "price": 1.49
+    },
+    {
+      "name": "West Lake Style Beef Soup",
+      "alt_name": "西湖牛肉羹",
+      "category": "汤类",
+      "price": 15.95
+    },
+    {
+      "name": "Pork Tripe & Pickled Vegetable Soup",
+      "alt_name": "酸菜肚片汤",
+      "category": "汤类",
+      "price": 15.95
+    },
+    {
+      "name": "Mixed Seafood Soup",
+      "alt_name": "三鲜海鲜汤",
+      "category": "汤类",
+      "price": 15.95
+    },
+    {
+      "name": "Fish Pickled Vegetable Soup",
+      "alt_name": "酸菜鱼片汤",
+      "category": "汤类",
+      "price": 15.95
+    },
+    {
+      "name": "Szechuan Seafood Hot & Sour Soup",
+      "alt_name": "海鲜酸辣汤",
+      "category": "汤类",
+      "price": 15.95
+    },
+    {
+      "name": "Hot & Sour Soup (S)",
+      "alt_name": "酸辣汤(小)",
+      "category": "汤类",
+      "price": 3.95
+    },
+    {
+      "name": "Hot & Sour Soup (L)",
+      "alt_name": "酸辣汤(大)",
+      "category": "汤类",
+      "price": 8.95
+    },
+    {
+      "name": "Wonton Soup (S)",
+      "alt_name": "云吞汤(小)",
+      "category": "汤类",
+      "price": 3.95
+    },
+    {
+      "name": "Wonton Soup (L)",
+      "alt_name": "云吞汤(大)",
+      "category": "汤类",
+      "price": 8.95
+    },
+    {
+      "name": "Egg Drop Soup (S)",
+      "alt_name": "蛋花汤(小)",
+      "category": "汤类",
+      "price": 3.95
+    },
+    {
+      "name": "Egg Drop Soup (L)",
+      "alt_name": "蛋花汤(大)",
+      "category": "汤类",
+      "price": 8.95
+    },
+    {
+      "name": "Tomato Egg Drop Soup",
+      "alt_name": "番茄蛋花汤",
+      "category": "汤类",
+      "price": 13.95
+    },
+    {
+      "name": "Silk Melon Tofu Soup",
+      "alt_name": "丝瓜豆腐浸腐竹",
+      "category": "汤类",
+      "price": 13.95
+    },
+    {
+      "name": "Chicken Noodle Soup",
+      "alt_name": "鸡面汤",
+      "category": "汤类",
+      "price": 13.95
+    },
+    {
+
+    }
+  ]
+}
