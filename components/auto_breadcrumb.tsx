@@ -21,7 +21,7 @@ export default function AutoBreadcrumb({
   current,
   prependHome = true,
 }: AutoBreadcrumbProps) {
-  if (prependHome) {
+  if (prependHome && parents[0]?.url !== '/') {
     parents.unshift({ name: '首页', url: '/' });
   }
 
