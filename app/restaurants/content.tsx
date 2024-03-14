@@ -67,8 +67,8 @@ export default function Content({
       );
     }
 
-    return restaurants.map((r) => (
-      <>
+    return restaurants.map((r, index) => (
+      <Fragment key={index}>
         <Card className="border-0 rounded-none shadow-none hover:shadow transition-shadow flex p-2 md:p-4">
           <Carousel>
             <CarouselContent className="w-[160px] h-[120px]">
@@ -142,7 +142,7 @@ export default function Content({
           </a>
         </Card>
         <Separator />
-      </>
+      </Fragment>
     ));
   };
 
