@@ -4,8 +4,9 @@ import DataLayout from '@/app/layouts/data_layout';
 import Content from '@/app/restaurants/content';
 import Filter from '@/app/restaurants/filter';
 import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
-import { isGoogleMapsApiEnabled } from '@/lib/google-maps';
+import { DistanceReturnType, isGoogleMapsApiEnabled } from '@/lib/google-maps';
 import { getWeatApiUrl } from '@/lib/utils';
+import { Restaurant } from '@prisma/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -39,6 +40,11 @@ const getRestaurants = async (params: URLSearchParams) => {
   return data;
 };
 
+export interface RestaurantType extends Restaurant {
+  categories: string[];
+  distance: DistanceReturnType | null;
+}
+
 export default function Restaurants() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -65,7 +71,7 @@ export default function Restaurants() {
   const [sortBy, setSortBy] = useState<
     [keyof RestaurantSortFieldsType, keyof SortOrdersType]
   >(['rating', 'desc']);
-  const [restaurants, setRestaurants] = useState([]);
+  const [restaurants, setRestaurants] = useState<RestaurantType[]>([]);
 
   useEffect(() => {
     // Prevent fetching too much when dragging the slider

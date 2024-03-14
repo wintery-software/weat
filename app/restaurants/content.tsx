@@ -1,3 +1,4 @@
+import { RestaurantType } from '@/app/restaurants/page';
 import Rating from '@/components/rating';
 import SortSelect from '@/components/sort_select';
 import { Badge } from '@/components/ui/badge';
@@ -38,7 +39,7 @@ export default function Content({
   setSortBy,
   setSidebarOpen,
 }: {
-  restaurants: Restaurant[];
+  restaurants: RestaurantType[];
   loading: boolean;
   sortBy: [keyof RestaurantSortFieldsType, keyof SortOrdersType];
   setSortBy: Dispatch<

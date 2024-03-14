@@ -1,25 +1,32 @@
 import ItemLayout from '@/app/layouts/item_layout';
 import { Separator } from '@/components/ui/separator';
 import { getPlaceUrl } from '@/lib/google-maps';
-import { fetchWeatApi } from '@/lib/utils';
-import { RestaurantItem } from '@prisma/client';
+import { getWeatApiUrl } from '@/lib/utils';
+import { Restaurant, RestaurantItem } from '@prisma/client';
 import { isEmpty } from 'lodash';
-import { notFound } from 'next/navigation';
+
+interface RestaurantType extends Restaurant {
+  categories: string[];
+  items: Record<string, RestaurantItem[]>;
+}
+
+const getRestaurant = async (id: string): Promise<RestaurantType> => {
+  const url = getWeatApiUrl(`/restaurants/${id}`);
+  const response = await fetch(url, {
+    // TODO: remove this once the API is stable
+    cache: 'no-store',
+  });
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error);
+  }
+
+  return data;
+};
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const restaurant: Restaurant = await fetchWeatApi(
-    `/restaurants/${params.id}`,
-  );
-
-  const items: Record<string, RestaurantItem[]> = await fetchWeatApi(
-    `/restaurants/${params.id}/items`,
-    undefined,
-    { cache: 'no-store' },
-  );
-
-  if (!restaurant) {
-    notFound();
-  }
+  const restaurant: RestaurantType = await getRestaurant(params.id);
 
   return (
     <ItemLayout
@@ -39,7 +46,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       </div>
       <div>
         <h2 className="py-3">菜单</h2>
-        {isEmpty(items) ? (
+        {isEmpty(restaurant.items) ? (
           <p className="text-sm md:text-md py-3">
             暂无数据。商家可联系
             <a
@@ -51,34 +58,36 @@ export default async function Page({ params }: { params: { id: string } }) {
             添加。
           </p>
         ) : (
-          Object.entries(items).map(([category, categoryItems], index) => {
-            return (
-              <div key={index}>
-                <h3 className="py-3">
-                  {category} ({categoryItems.length})
-                </h3>
-                <div className="flex flex-col gap-2">
-                  {categoryItems.map((item) => {
-                    return (
-                      <div key={item.id}>
-                        <div className="py-2 flex flex-col gap-0.5">
-                          <p className="text-sm md:text-md font-semibold">
-                            {item.name}
-                            {item.altName && ` (${item.altName})`}
-                          </p>
-                          {item.description && <p>{item.description}</p>}
-                          <p className="text-xs md:text-sm">
-                            ${item.price.toString()}
-                          </p>
+          Object.entries(restaurant.items).map(
+            ([category, categoryItems], index) => {
+              return (
+                <div key={index}>
+                  <h3 className="py-3">
+                    {category} ({categoryItems.length})
+                  </h3>
+                  <div className="flex flex-col gap-2">
+                    {categoryItems.map((item) => {
+                      return (
+                        <div key={item.id}>
+                          <div className="py-2 flex flex-col gap-0.5">
+                            <p className="text-sm md:text-md font-semibold">
+                              {item.name}
+                              {item.altName && ` (${item.altName})`}
+                            </p>
+                            {item.description && <p>{item.description}</p>}
+                            <p className="text-xs md:text-sm">
+                              ${item.price.toString()}
+                            </p>
+                          </div>
+                          <Separator />
                         </div>
-                        <Separator />
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            );
-          })
+              );
+            },
+          )
         )}
       </div>
     </ItemLayout>
