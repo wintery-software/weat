@@ -33,7 +33,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       breadcrumbParents={[{ name: '餐厅', url: '/restaurants' }]}
       breadcrumbCurrent={restaurant.name}
     >
-      <div className="pb-4 md:pb-8">
+      <div className="py-4">
         <h1>{restaurant.name}</h1>
         <a
           href={getPlaceUrl(restaurant.address, restaurant.placeId)}
@@ -58,36 +58,38 @@ export default async function Page({ params }: { params: { id: string } }) {
             添加。
           </p>
         ) : (
-          Object.entries(restaurant.items).map(
-            ([category, categoryItems], index) => {
-              return (
-                <div key={index}>
-                  <h3 className="py-3">
-                    {category} ({categoryItems.length})
-                  </h3>
-                  <div className="flex flex-col gap-2">
-                    {categoryItems.map((item) => {
-                      return (
-                        <div key={item.id}>
-                          <div className="py-2 flex flex-col gap-0.5">
-                            <p className="text-sm md:text-md font-semibold">
-                              {item.name}
-                              {item.altName && ` (${item.altName})`}
-                            </p>
-                            {item.description && <p>{item.description}</p>}
-                            <p className="text-xs md:text-sm">
-                              ${item.price.toString()}
-                            </p>
+          <div className="space-y-4">
+            {Object.entries(restaurant.items).map(
+              ([category, categoryItems], index) => {
+                return (
+                  <div key={index}>
+                    <h3 className="py-3">
+                      {category} ({categoryItems.length})
+                    </h3>
+                    <div className="flex flex-col gap-2">
+                      {categoryItems.map((item) => {
+                        return (
+                          <div key={item.id}>
+                            <div className="py-2 flex flex-col gap-0.5">
+                              <p className="text-sm md:text-md font-semibold">
+                                {item.name}
+                                {item.altName && ` (${item.altName})`}
+                              </p>
+                              {item.description && <p>{item.description}</p>}
+                              <p className="text-xs md:text-sm">
+                                ${item.price.toString()}
+                              </p>
+                            </div>
+                            <Separator />
                           </div>
-                          <Separator />
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              );
-            },
-          )
+                );
+              },
+            )}
+          </div>
         )}
       </div>
     </ItemLayout>
