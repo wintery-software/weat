@@ -64,7 +64,7 @@ model RestaurantItem {
   restaurant Restaurant             @relation(fields: [restaurantId], references: [id])
   category   RestaurantItemCategory @relation(fields: [categoryId], references: [id])
 
-  @@unique([restaurantId, name])
+  @@unique([restaurantId, categoryId, name])
   @@index([name, nameZh, description, price])
   @@map("restaurant_items")
 }
