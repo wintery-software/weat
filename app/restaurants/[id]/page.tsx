@@ -4,6 +4,7 @@ import { getPlaceUrl } from '@/lib/google-maps';
 import { getWeatApiUrl } from '@/lib/utils';
 import { Restaurant, RestaurantItem } from '@prisma/client';
 import { isEmpty } from 'lodash';
+import { notFound } from 'next/navigation';
 
 interface RestaurantType extends Restaurant {
   categories: string[];
@@ -73,7 +74,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                             <div className="py-2 flex flex-col gap-0.5">
                               <p className="text-sm md:text-md font-semibold">
                                 {item.name}
-                                {item.altName && ` (${item.altName})`}
+                                {item.nameZh && ` (${item.nameZh})`}
                               </p>
                               {item.description && <p>{item.description}</p>}
                               <p className="text-xs md:text-sm">

@@ -12,7 +12,7 @@ model Restaurant {
   id        String   @id @default(uuid())
   placeId   String   @unique @map("place_id")
   name      String
-  altName   String?  @map("alt_name")
+  nameZh    String?  @map("name_zh")
   address   String
   price     Int?
   rating    Float?
@@ -24,6 +24,7 @@ model Restaurant {
   items          RestaurantItem[]
   itemCategories RestaurantItemCategory[]
 
+  @@index([name, nameZh, address, price, rating])
   @@map("restaurants")
 }
 
@@ -52,7 +53,7 @@ model RestaurantItem {
   restaurantId String   @map("restaurant_id")
   categoryId   String   @map("category_id")
   name         String
-  altName      String?  @map("alt_name")
+  nameZh       String?  @map("name_zh")
   description  String?
   price        Decimal  @db.Decimal(10, 2)
   image        String?
@@ -63,7 +64,7 @@ model RestaurantItem {
   category   RestaurantItemCategory @relation(fields: [categoryId], references: [id])
 
   @@unique([restaurantId, name])
-  @@index([name, altName, price])
+  @@index([name, nameZh, description, price])
   @@map("restaurant_items")
 }
 

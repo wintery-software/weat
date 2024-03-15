@@ -89,7 +89,8 @@ export default function Content({
           <a href={`/restaurants/${r.id}`} key={r.placeId} title="查看详细信息">
             <CardHeader className="pt-0 pb-3 md:pb-6">
               <CardTitle className="leading-5 text-sm md:text-base hover:underline">
-                {r.name} {r.altName && `(${r.altName})`}
+                {r.name}
+                {r.nameZh && `(${r.nameZh})`}
               </CardTitle>
               <div className="flex gap-2 items-center">
                 {r.rating && (

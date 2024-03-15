@@ -58,9 +58,7 @@ const main = async () => {
 
     await prisma.restaurantItem.create({
       data: {
-        name: item.name,
-        altName: item.alt_name,
-        price: item.price,
+        ...item,
         category: {
           connectOrCreate: {
             where: {
