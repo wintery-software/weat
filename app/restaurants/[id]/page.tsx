@@ -19,11 +19,15 @@ const getRestaurant = async (id: string): Promise<RestaurantType> => {
   });
   const data = await response.json();
 
-  if (!response.ok) {
-    throw new Error(data.error);
+  if (response.ok) {
+    return data;
   }
 
-  return data;
+  if (response.status === 404) {
+    notFound();
+  } else {
+    throw new Error(data.error);
+  }
 };
 
 export default async function Page({ params }: { params: { id: string } }) {

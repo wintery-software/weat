@@ -14,4 +14,5 @@ CREATE INDEX "restaurant_items_name_name_zh_description_price_idx" ON "restauran
 CREATE INDEX "restaurants_name_name_zh_address_price_rating_idx" ON "restaurants"("name", "name_zh", "address", "price", "rating");
 
 -- Update
+-- noinspection SqlWithoutWhere
 UPDATE "restaurants" SET "name_zh" = "alt_name";
