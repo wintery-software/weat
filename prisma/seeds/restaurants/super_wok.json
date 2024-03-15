@@ -184,42 +184,42 @@
       "items": [
         {
           "name": "Spicy Beef & Tripe",
-          "nameZh": "夫妻肺片",
+          "name_zh": "夫妻肺片",
           "price": 12.95
         },
         {
           "name": "Beef Tendon w. Szechuan Chili Oil",
-          "nameZh": "麻辣牛筋",
+          "name_zh": "麻辣牛筋",
           "price": 12.95
         },
         {
           "name": "Spicy Tripe",
-          "nameZh": "麻辣牛肚",
+          "name_zh": "麻辣牛肚",
           "price": 12.95
         },
         {
           "name": "Boiled Chicken with Szechuan Oil",
-          "nameZh": "口水鸡",
+          "name_zh": "口水鸡",
           "price": 12.95
         },
         {
           "name": "Sliced Chicken with Szechuan Oil",
-          "nameZh": "红油鸡片",
+          "name_zh": "红油鸡片",
           "price": 12.95
         },
         {
           "name": "Squid Chicken with Spicy Chili Oil",
-          "nameZh": "麻辣鱿鱼",
+          "name_zh": "麻辣鱿鱼",
           "price": 12.95
         },
         {
           "name": "Chili Oil Pig Ear",
-          "nameZh": "红油猪耳",
+          "name_zh": "红油猪耳",
           "price": 12.95
         },
         {
           "name": "Chicken with Peanut Sauce",
-          "nameZh": "棒棒鸡",
+          "name_zh": "棒棒鸡",
           "price": 12.95
         },
         {

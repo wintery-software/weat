@@ -46,7 +46,9 @@ const main = async () => {
           name: m.category.name,
         },
       },
-      update: {},
+      update: {
+        nameZh: m.category.name_zh,
+      },
       create: {
         name: m.category.name,
         nameZh: m.category.name_zh,
