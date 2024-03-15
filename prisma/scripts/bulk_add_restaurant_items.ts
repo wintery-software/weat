@@ -61,12 +61,15 @@ const main = async () => {
     });
 
     for (const item of m.items) {
-      console.log(`Creating RestaurantItem(name=${item.name})`);
+      console.log(
+        `Creating RestaurantItem(category="${category.name}",name="${item.name}")`,
+      );
 
       await prisma.restaurantItem.upsert({
         where: {
-          restaurantId_name: {
+          restaurantId_categoryId_name: {
             restaurantId: restaurant.id,
+            categoryId: category.id,
             name: item.name,
           },
         },
