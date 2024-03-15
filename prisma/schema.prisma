@@ -29,8 +29,9 @@ model Restaurant {
 }
 
 model RestaurantCategory {
-  id   String @id @default(uuid())
-  name String @unique
+  id     String  @id @default(uuid())
+  name   String  @unique
+  nameZh String? @map("name_zh")
 
   restaurants RestaurantToCategory[]
 
@@ -69,14 +70,14 @@ model RestaurantItem {
 }
 
 model RestaurantItemCategory {
-  id           String @id @default(uuid())
-  restaurantId String @map("restaurant_id")
+  id           String  @id @default(uuid())
+  restaurantId String  @map("restaurant_id")
   name         String
+  nameZh       String? @map("name_zh")
 
   restaurant Restaurant       @relation(fields: [restaurantId], references: [id])
   items      RestaurantItem[]
 
   @@unique([restaurantId, name])
-  @@index([name])
   @@map("restaurant_item_categories")
 }

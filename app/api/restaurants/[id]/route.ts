@@ -20,11 +20,7 @@ export const GET = async (request: Request) => {
       },
       items: {
         include: {
-          category: {
-            select: {
-              name: true,
-            },
-          },
+          category: true,
         },
       },
     },
@@ -46,8 +42,9 @@ export const GET = async (request: Request) => {
         item,
       ) => {
         const { category, restaurantId, categoryId, ...rest } = item;
-        acc[category.name] = acc[category.name] || [];
-        acc[category.name].push(rest);
+        const name = `${category.name}${category.nameZh ? ` ${category.nameZh}` : ''}`;
+        acc[name] = acc[name] || [];
+        acc[name].push(rest);
         return acc;
       },
       {},
