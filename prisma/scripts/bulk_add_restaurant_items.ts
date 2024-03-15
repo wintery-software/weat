@@ -1,15 +1,17 @@
 import { prisma } from '../client';
 
 interface Data {
-  restaurant: {
-    name: string;
-    place_id: string;
-  };
-  items: {
-    name: string;
-    alt_name?: string;
-    category: string;
-    price: number;
+  placeId: string;
+  menu: {
+    category: {
+      name: string;
+      name_zh?: string;
+    };
+    items: {
+      name: string;
+      name_zh?: string;
+      price: number;
+    }[];
   }[];
 }
 
@@ -21,69 +23,72 @@ const main = async () => {
     process.exit(1);
   }
 
-  const { restaurant, items }: Data = JSON.parse(
+  const { placeId, menu }: Data = JSON.parse(
     require('fs').readFileSync(path, 'utf-8'),
   );
 
-  const r = await prisma.restaurant.findUnique({
+  const restaurant = await prisma.restaurant.findUnique({
     where: {
-      name: restaurant.name,
-      placeId: restaurant.place_id,
+      placeId,
     },
   });
 
-  if (!r) {
-    console.error(
-      `Restaurant(name=${restaurant.name},placeId=${restaurant.place_id}) not found`,
-    );
+  if (!restaurant) {
+    console.error(`Restaurant(placeId=${placeId}) not found`);
     process.exit(1);
   }
 
-  for (const item of items) {
-    const i = await prisma.restaurantItem.findUnique({
+  for (const m of menu) {
+    const category = await prisma.restaurantItemCategory.upsert({
       where: {
         restaurantId_name: {
-          restaurantId: r.id,
-          name: item.name,
+          restaurantId: restaurant.id,
+          name: m.category.name,
         },
       },
-    });
-
-    if (i) {
-      console.warn(`RestaurantItem(name=${item.name}) already exists`);
-      continue;
-    }
-
-    console.log(`Creating RestaurantItem(name=${item.name})`);
-
-    await prisma.restaurantItem.create({
-      data: {
-        ...item,
-        category: {
-          connectOrCreate: {
-            where: {
-              restaurantId_name: {
-                restaurantId: r.id,
-                name: item.category,
-              },
-            },
-            create: {
-              name: item.category,
-              restaurant: {
-                connect: {
-                  id: r.id,
-                },
-              },
-            },
-          },
-        },
+      update: {},
+      create: {
+        name: m.category.name,
+        nameZh: m.category.name_zh,
         restaurant: {
           connect: {
-            id: r.id,
+            id: restaurant.id,
           },
         },
       },
     });
+
+    for (const item of m.items) {
+      console.log(`Creating RestaurantItem(name=${item.name})`);
+
+      await prisma.restaurantItem.upsert({
+        where: {
+          restaurantId_name: {
+            restaurantId: restaurant.id,
+            name: item.name,
+          },
+        },
+        update: {
+          nameZh: item.name_zh,
+          price: item.price,
+        },
+        create: {
+          name: item.name,
+          nameZh: item.name_zh,
+          price: item.price,
+          category: {
+            connect: {
+              id: category.id,
+            },
+          },
+          restaurant: {
+            connect: {
+              id: restaurant.id,
+            },
+          },
+        },
+      });
+    }
   }
 };
 

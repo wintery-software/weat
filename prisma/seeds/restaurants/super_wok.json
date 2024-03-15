@@ -1,177 +1,313 @@
 {
-  "restaurant": {
-    "name": "Super Wok",
-    "place_id": "ChIJjSFgrn7zrIkRlGKz10CB4Ec"
-  },
-  "items": [
+  "placeId": "ChIJjSFgrn7zrIkRlGKz10CB4Ec",
+  "menu": [
     {
-      "name": "Sweet Tea",
-      "name_zh": "甜茶",
-      "category": "饮料",
-      "price": 2.50
+      "category": {
+        "name": "Drink"
+      },
+      "items": [
+        {
+          "name": "Sweet Tea",
+          "price": 2.50
+        },
+        {
+          "name": "Un-Sweet Tea",
+          "price": 2.50
+        },
+        {
+          "name": "Coke",
+          "price": 2.50
+        },
+        {
+          "name": "Diet Coke",
+          "price": 2.50
+        },
+        {
+          "name": "Sprite",
+          "price": 2.50
+        },
+        {
+          "name": "Dr. Pepper",
+          "price": 2.50
+        },
+        {
+          "name": "Mountain Dew",
+          "price": 2.50
+        },
+        {
+          "name": "Lemonade",
+          "price": 2.50
+        },
+        {
+          "name": "Milk",
+          "price": 2.50
+        },
+        {
+          "name": "Bottle Green Tea",
+          "price": 2.95
+        },
+        {
+          "name": "Wong Lo Kat",
+          "price": 2.95
+        },
+        {
+          "name": "Orange Juice",
+          "price": 2.95
+        },
+        {
+          "name": "Apple Juice",
+          "price": 2.95
+        },
+        {
+          "name": "Hot Tea",
+          "price": 1.49
+        }
+      ]
     },
     {
-      "name": "Un-Sweet Tea",
-      "name_zh": "无糖茶",
-      "category": "饮料",
-      "price": 2.50
+      "category": {
+        "name": "Beers"
+      },
+      "items": [
+        {
+          "name": "Asahi",
+          "price": 3.95
+        },
+        {
+          "name": "Heineken",
+          "price": 3.95
+        },
+        {
+          "name": "Tsing Tao",
+          "price": 3.95
+        },
+        {
+          "name": "Sapporo",
+          "price": 3.95
+        },
+        {
+          "name": "Milkker Lite",
+          "price": 3.95
+        },
+        {
+          "name": "Bud Light",
+          "price": 3.95
+        },
+        {
+          "name": "Corona",
+          "price": 3.95
+        }
+      ]
     },
     {
-      "name": "Coke",
-      "name_zh": "可乐",
-      "category": "饮料",
-      "price": 2.50
+      "category": {
+        "name": "Soup",
+        "name_zh": "汤类"
+      },
+      "items": [
+        {
+          "name": "West Lake Style Beef Soup",
+          "name_zh": "西湖牛肉羹",
+          "price": 15.95
+        },
+        {
+          "name": "Pork Tripe & Pickled Vegetable Soup",
+          "name_zh": "酸菜肚片汤",
+          "price": 15.95
+        },
+        {
+          "name": "Mixed Seafood Soup",
+          "name_zh": "三鲜海鲜汤",
+          "price": 15.95
+        },
+        {
+          "name": "Fish Pickled Vegetable Soup",
+          "name_zh": "酸菜鱼片汤",
+          "price": 15.95
+        },
+        {
+          "name": "Szechuan Seafood Hot & Sour Soup",
+          "name_zh": "海鲜酸辣汤",
+          "price": 15.95
+        },
+        {
+          "name": "Hot & Sour Soup (S)",
+          "name_zh": "酸辣汤 (小)",
+          "price": 3.95
+        },
+        {
+          "name": "Hot & Sour Soup (L)",
+          "name_zh": "酸辣汤 (大)",
+          "price": 8.95
+        },
+        {
+          "name": "Wonton Soup (S)",
+          "name_zh": "云吞汤 (小)",
+          "price": 3.95
+        },
+        {
+          "name": "Wonton Soup (L)",
+          "name_zh": "云吞汤 (大)",
+          "price": 8.95
+        },
+        {
+          "name": "Egg Drop Soup (S)",
+          "name_zh": "蛋花汤 (小)",
+          "price": 3.95
+        },
+        {
+          "name": "Egg Drop Soup (L)",
+          "name_zh": "蛋花汤 (大)",
+          "price": 8.95
+        },
+        {
+          "name": "Tomato Egg Drop Soup",
+          "name_zh": "番茄蛋花汤",
+          "price": 13.95
+        },
+        {
+          "name": "Silk Melon Tofu Soup",
+          "name_zh": "丝瓜豆腐浸腐竹",
+          "price": 13.95
+        },
+        {
+          "name": "Chicken Noodle Soup",
+          "name_zh": "鸡面汤",
+          "price": 13.95
+        }
+      ]
     },
     {
-      "name": "Diet Coke",
-      "name_zh": "健怡可乐",
-      "category": "饮料",
-      "price": 2.50
-    },
-    {
-      "name": "Sprite",
-      "name_zh": "雪碧",
-      "category": "饮料",
-      "price": 2.50
-    },
-    {
-      "name": "Dr. Pepper",
-      "category": "饮料",
-      "price": 2.50
-    },
-    {
-      "name": "Mountain Dew",
-      "category": "饮料",
-      "price": 2.50
-    },
-    {
-      "name": "Lemonade",
-      "name_zh": "柠檬汁",
-      "category": "饮料",
-      "price": 2.50
-    },
-    {
-      "name": "Milk",
-      "name_zh": "牛奶",
-      "category": "饮料",
-      "price": 2.50
-    },
-    {
-      "name": "Bottle Green Tea",
-      "name_zh": "瓶装绿茶",
-      "category": "饮料",
-      "price": 2.95
-    },
-    {
-      "name": "Wong Lo Kat",
-      "name_zh": "王老吉",
-      "category": "饮料",
-      "price": 2.95
-    },
-    {
-      "name": "Orange Juice",
-      "name_zh": "橙汁",
-      "category": "饮料",
-      "price": 2.95
-    },
-    {
-      "name": "Apple Juice",
-      "name_zh": "苹果汁",
-      "category": "饮料",
-      "price": 2.95
-    },
-    {
-      "name": "Hot Tea",
-      "name_zh": "热茶",
-      "category": "饮料",
-      "price": 1.49
-    },
-    {
-      "name": "West Lake Style Beef Soup",
-      "name_zh": "西湖牛肉羹",
-      "category": "汤类",
-      "price": 15.95
-    },
-    {
-      "name": "Pork Tripe & Pickled Vegetable Soup",
-      "name_zh": "酸菜肚片汤",
-      "category": "汤类",
-      "price": 15.95
-    },
-    {
-      "name": "Mixed Seafood Soup",
-      "name_zh": "三鲜海鲜汤",
-      "category": "汤类",
-      "price": 15.95
-    },
-    {
-      "name": "Fish Pickled Vegetable Soup",
-      "name_zh": "酸菜鱼片汤",
-      "category": "汤类",
-      "price": 15.95
-    },
-    {
-      "name": "Szechuan Seafood Hot & Sour Soup",
-      "name_zh": "海鲜酸辣汤",
-      "category": "汤类",
-      "price": 15.95
-    },
-    {
-      "name": "Hot & Sour Soup (S)",
-      "name_zh": "酸辣汤(小)",
-      "category": "汤类",
-      "price": 3.95
-    },
-    {
-      "name": "Hot & Sour Soup (L)",
-      "name_zh": "酸辣汤(大)",
-      "category": "汤类",
-      "price": 8.95
-    },
-    {
-      "name": "Wonton Soup (S)",
-      "name_zh": "云吞汤(小)",
-      "category": "汤类",
-      "price": 3.95
-    },
-    {
-      "name": "Wonton Soup (L)",
-      "name_zh": "云吞汤(大)",
-      "category": "汤类",
-      "price": 8.95
-    },
-    {
-      "name": "Egg Drop Soup (S)",
-      "name_zh": "蛋花汤(小)",
-      "category": "汤类",
-      "price": 3.95
-    },
-    {
-      "name": "Egg Drop Soup (L)",
-      "name_zh": "蛋花汤(大)",
-      "category": "汤类",
-      "price": 8.95
-    },
-    {
-      "name": "Tomato Egg Drop Soup",
-      "name_zh": "番茄蛋花汤",
-      "category": "汤类",
-      "price": 13.95
-    },
-    {
-      "name": "Silk Melon Tofu Soup",
-      "name_zh": "丝瓜豆腐浸腐竹",
-      "category": "汤类",
-      "price": 13.95
-    },
-    {
-      "name": "Chicken Noodle Soup",
-      "name_zh": "鸡面汤",
-      "category": "汤类",
-      "price": 13.95
-    },
-    {
-
+      "category": {
+        "name": "Appetizers"
+      },
+      "items": [
+        {
+          "name": "Spicy Beef & Tripe",
+          "nameZh": "夫妻肺片",
+          "price": 12.95
+        },
+        {
+          "name": "Beef Tendon w. Szechuan Chili Oil",
+          "nameZh": "麻辣牛筋",
+          "price": 12.95
+        },
+        {
+          "name": "Spicy Tripe",
+          "nameZh": "麻辣牛肚",
+          "price": 12.95
+        },
+        {
+          "name": "Boiled Chicken with Szechuan Oil",
+          "nameZh": "口水鸡",
+          "price": 12.95
+        },
+        {
+          "name": "Sliced Chicken with Szechuan Oil",
+          "nameZh": "红油鸡片",
+          "price": 12.95
+        },
+        {
+          "name": "Squid Chicken with Spicy Chili Oil",
+          "nameZh": "麻辣鱿鱼",
+          "price": 12.95
+        },
+        {
+          "name": "Chili Oil Pig Ear",
+          "nameZh": "红油猪耳",
+          "price": 12.95
+        },
+        {
+          "name": "Chicken with Peanut Sauce",
+          "nameZh": "棒棒鸡",
+          "price": 12.95
+        },
+        {
+          "name": "Fried Eggplants",
+          "name_zh": "韭菜茄盒",
+          "price": 10.95
+        },
+        {
+          "name": "Scallion Pancake",
+          "name_zh": "葱油饼",
+          "price": 8.95
+        },
+        {
+          "name": "Sweet Bean Cake",
+          "name_zh": "红豆饼",
+          "price": 8.95
+        },
+        {
+          "name": "Brown Sugar Sweet Rice Buns",
+          "name_zh": "红糖糍粑",
+          "price": 9.95
+        },
+        {
+          "name": "Dumpling with Spicy Chili Oil",
+          "name_zh": "红油抄手",
+          "price": 8.95
+        },
+        {
+          "name": "Szechuan Style Dan Dan Noodle",
+          "name_zh": "担担面",
+          "price": 8.95
+        },
+        {
+          "name": "Cold Noodle with Peanut Sauce",
+          "name_zh": "四川冷面",
+          "price": 8.95
+        },
+        {
+          "name": "Fried Jumbo Shrimp",
+          "name_zh": "炸虾",
+          "price": 10.95
+        },
+        {
+          "name": "Steamed Dumpling (6)",
+          "name_zh": "水饺 (6)",
+          "price": 8.95
+        },
+        {
+          "name": "Chicken Wings (6)",
+          "name_zh": "炸鸡翅 (6)",
+          "price": 8.95
+        },
+        {
+          "name": "Crab Rangoon (6)",
+          "name_zh": "炸混沌 (6)",
+          "price": 8.95
+        },
+        {
+          "name": "Beef Skewer (4)",
+          "name_zh": "牛肉串 (4)",
+          "price": 9.95
+        },
+        {
+          "name": "Chicken Skewer (4)",
+          "name_zh": "鸡肉串 (4)",
+          "price": 8.95
+        },
+        {
+          "name": "Fried Dumpling (6)",
+          "name_zh": "锅贴 (6)",
+          "price": 8.95
+        },
+        {
+          "name": "Egg Roll (1)",
+          "name_zh": "春卷 (1)",
+          "price": 2.95
+        },
+        {
+          "name": "Spring Roll (2)",
+          "name_zh": "上海卷 (2)",
+          "price": 2.95
+        },
+        {
+          "name": "Shrimp Dumpling",
+          "name_zh": "虾饺",
+          "price": 9.95
+        }
+      ]
     }
   ]
 }
