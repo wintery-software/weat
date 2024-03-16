@@ -25,7 +25,7 @@ export default function AutoBreadcrumb({
     parents.unshift({ name: '首页', url: '/' });
   }
 
-  const fontSize = `text-xs md:text-sm`;
+  const fontSize = `text-sm`;
 
   return (
     <Breadcrumb className={className}>
