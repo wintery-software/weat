@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { Fragment } from 'react';
 import {
   Breadcrumb,
@@ -25,14 +26,14 @@ export default function AutoBreadcrumb({
     parents.unshift({ name: '首页', url: '/' });
   }
 
-  const fontSize = `text-sm`;
+  const fontSize = 'text-sm';
 
   return (
     <Breadcrumb className={className}>
-      <BreadcrumbList>
+      <BreadcrumbList className="flex-nowrap">
         {parents.map((item, index) => (
           <Fragment key={index}>
-            <BreadcrumbItem>
+            <BreadcrumbItem className="flex-shrink-0">
               <BreadcrumbLink className={fontSize} href={item.url}>
                 {item.name}
               </BreadcrumbLink>
@@ -40,8 +41,10 @@ export default function AutoBreadcrumb({
             <BreadcrumbSeparator />
           </Fragment>
         ))}
-        <BreadcrumbItem>
-          <BreadcrumbPage className={fontSize}>{current}</BreadcrumbPage>
+        <BreadcrumbItem className="overflow-hidden">
+          <BreadcrumbPage className={cn(fontSize, 'truncate')}>
+            {current}
+          </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
