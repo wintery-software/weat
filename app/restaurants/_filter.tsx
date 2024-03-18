@@ -7,7 +7,7 @@ import {
   SidebarTitle,
   SidebarToggleGroup,
 } from '@/components/sidebar';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Slider } from '@/components/ui/slider';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -188,7 +188,6 @@ export default function Filter({
     <>
       <div className="block md:hidden">
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-          <SheetTrigger>Open</SheetTrigger>
           <SheetContent side="left">{filtersContent}</SheetContent>
         </Sheet>
       </div>

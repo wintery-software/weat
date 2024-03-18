@@ -1,4 +1,4 @@
-import MainLayout from '@/app/layouts/main_layout';
+import NavbarLayout from '@/app/layouts/navbar_layout';
 import AutoBreadcrumb from '@/components/auto_breadcrumb';
 import { ReactNode } from 'react';
 
@@ -14,13 +14,13 @@ export default function ItemLayout({
   children,
 }: AutoBreadcrumbProps) {
   return (
-    <MainLayout>
+    <NavbarLayout>
       <AutoBreadcrumb
         parents={breadcrumbParents}
         current={breadcrumbCurrent}
-        className="mb-4"
+        className="container py-4"
       />
       {children}
-    </MainLayout>
+    </NavbarLayout>
   );
 }

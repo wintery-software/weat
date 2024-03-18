@@ -1,5 +1,6 @@
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { Fragment } from 'react';
+import { Fragment, ReactNode } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,16 +10,16 @@ import {
   BreadcrumbSeparator,
 } from './ui/breadcrumb';
 
-interface AutoBreadcrumbProps {
+export interface AutoBreadcrumbProps {
   className?: string;
-  parents: { name: string; url: string }[];
-  current: string;
+  parents?: { name: string; url: string }[];
+  current: ReactNode;
   prependHome?: boolean;
 }
 
 export default function AutoBreadcrumb({
   className,
-  parents,
+  parents = [],
   current,
   prependHome = true,
 }: AutoBreadcrumbProps) {
@@ -43,7 +44,13 @@ export default function AutoBreadcrumb({
         ))}
         <BreadcrumbItem className="overflow-hidden">
           <BreadcrumbPage className={cn(fontSize, 'truncate')}>
-            {current}
+            {current ? (
+              current
+            ) : (
+              <div className="flex">
+                <Skeleton className="h-5 w-24" />
+              </div>
+            )}
           </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>

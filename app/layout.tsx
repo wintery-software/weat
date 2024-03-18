@@ -1,17 +1,28 @@
-import { Toaster } from '@/components/ui/toaster';
+import SWRProvider from '@/app/providers/swr-provider';
+import { Toaster } from '@/components/ui/sonner';
+import { cn } from '@/lib/utils';
+
+import { Theme } from '@radix-ui/themes';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
+import '@radix-ui/themes/styles.css';
 import './globals.css';
+import './theme-config.css';
 import { ReactNode, Suspense } from 'react';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   title: '今天吃什么',
   description: '然后你就知道今天吃什么',
 };
 
+// noinspection JSUnusedGlobalSymbols
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -25,11 +36,15 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Suspense>{children}</Suspense>
-        <SpeedInsights />
-        <Toaster />
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn(inter.variable, 'bg-stone-50')}>
+        <Theme>
+          <SWRProvider>
+            <Suspense>{children}</Suspense>
+            <SpeedInsights />
+            <Toaster closeButton richColors />
+          </SWRProvider>
+        </Theme>
       </body>
     </html>
   );

@@ -5,11 +5,13 @@ import {
   isGoogleMapsApiEnabled,
 } from '@/lib/google-maps';
 import redis from '@/lib/redis';
+import { sleep } from '@/lib/utils';
 import { prisma } from '@/prisma/client';
 import { Prisma } from '@prisma/client';
 import { compact, uniq } from 'lodash';
 
 export const GET = async (request: Request) => {
+  await sleep(1000);
   const url = new URL(request.url);
   const params = url.searchParams;
 

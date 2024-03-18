@@ -12,6 +12,25 @@ export const env = (key: string, defaultValue?: string) => {
   throw new Error(`Missing environment variable: ${key}`);
 };
 
+export const fetcher = async (input: string, init?: RequestInit) => {
+  if (input.startsWith('/')) {
+    input = input.slice(1);
+  }
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${input}`, init);
+
+  if (!res.ok) {
+    const error = new Error('An error occurred while fetching the data.');
+    // @ts-ignore
+    error.info = await res.json();
+    // @ts-ignore
+    error.status = res.status;
+    throw error;
+  }
+
+  return res.json();
+};
+
 export const getWeatApiUrl = (route: string, params?: URLSearchParams) => {
   if (route.startsWith('/')) {
     route = route.slice(1);

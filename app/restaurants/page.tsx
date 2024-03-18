@@ -1,14 +1,24 @@
 'use client';
 
-import DataLayout from '@/app/layouts/data_layout';
-import Content from '@/app/restaurants/content';
-import Filter from '@/app/restaurants/filter';
+import {
+  StandardLayout,
+  StandardLayoutBradcrumb,
+  StandardLayoutContent,
+  StandardLayoutDescription,
+  StandardLayoutHeader,
+  StandardLayoutNoResult,
+  StandardLayoutTitle,
+} from '@/app/layouts/standard_layout';
+import Content from '@/app/restaurants/_content';
+import Filter from '@/app/restaurants/_filter';
+import Sort from '@/app/restaurants/_sort';
 import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
 import { DistanceReturnType, isGoogleMapsApiEnabled } from '@/lib/google-maps';
-import { getWeatApiUrl } from '@/lib/utils';
 import { Restaurant } from '@prisma/client';
+import { isEmpty } from 'lodash';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 const generateSearchParams = (
   categories: string[],
@@ -29,15 +39,12 @@ const generateSearchParams = (
   return params;
 };
 
-const getRestaurants = async (params: URLSearchParams) => {
-  const response = await fetch(getWeatApiUrl('/restaurants', params));
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error);
-  }
-
-  return data;
+const useRestaurants = (params: URLSearchParams) => {
+  return useSWR(`/restaurants?${params}`, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    refreshInterval: 0,
+  });
 };
 
 export interface RestaurantType extends Restaurant {
@@ -45,10 +52,19 @@ export interface RestaurantType extends Restaurant {
   distance: DistanceReturnType | null;
 }
 
+const titleDescriptor: Record<string, string> = {
+  'rating:asc': '评分最低',
+  'rating:desc': '评分最高',
+  'price:asc': '价格最低',
+  'price:desc': '价格最高',
+  'distance:asc': '离我最近的',
+  'distance:desc': '离我最远的',
+};
+
 export default function Restaurants() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [loading, setLoading] = useState(true);
+  const { data, error, isLoading } = useRestaurants(searchParams);
 
   const [categories, setCategories] = useState<string[]>(
     searchParams.getAll('category').filter(Boolean),
@@ -71,7 +87,6 @@ export default function Restaurants() {
   const [sortBy, setSortBy] = useState<
     [keyof RestaurantSortFieldsType, keyof SortOrdersType]
   >(['rating', 'desc']);
-  const [restaurants, setRestaurants] = useState<RestaurantType[]>([]);
 
   useEffect(() => {
     // Prevent fetching too much when dragging the slider
@@ -90,21 +105,15 @@ export default function Restaurants() {
     if (Array.isArray(currentLocation)) {
       params.append('origin', currentLocation.join(','));
     }
-    setLoading(true);
-
-    getRestaurants(params).then((data) => {
-      setRestaurants(data);
-      setLoading(false);
-    });
   }, [
     categories,
-    distance,
-    updatingDistance,
     currentLocation,
+    distance,
     prices,
     rating,
     router,
     sortBy,
+    updatingDistance,
   ]);
 
   // Only fetch current location once, on mount
@@ -113,13 +122,10 @@ export default function Restaurants() {
       return;
     }
 
-    setLoading(true);
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         setCurrentLocation([latitude, longitude]);
-        setLoading(false);
       },
       (error) => {
         setCurrentLocation(`无法定位: ${error.message}`);
@@ -134,10 +140,16 @@ export default function Restaurants() {
   }, []);
 
   return (
-    <>
-      <DataLayout
-        filter={
+    <StandardLayout>
+      <StandardLayoutHeader>
+        <StandardLayoutBradcrumb current="餐厅" />
+        <StandardLayoutTitle>RTP 餐厅</StandardLayoutTitle>
+        <StandardLayoutDescription>test</StandardLayoutDescription>
+      </StandardLayoutHeader>
+      <div className="md:container md:grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="col-span-1 md:mt-4">
           <Filter
+            className="md:bg-white md:p-4 md:rounded-md md:shadow-md"
             selectedCategories={categories}
             setSelectedCategories={setCategories}
             selectedPrices={prices}
@@ -151,17 +163,24 @@ export default function Restaurants() {
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
           />
-        }
-        content={
-          <Content
-            restaurants={restaurants}
-            loading={loading}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            setSidebarOpen={setSidebarOpen}
-          />
-        }
-      />
-    </>
+        </div>
+        <div className="md:col-span-2 lg:col-span-4 space-y-4">
+          <div className="mx-8 mt-4">
+            <Sort
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              setSidebarOpen={setSidebarOpen}
+            />
+          </div>
+          <StandardLayoutContent isLoading={isLoading}>
+            {isEmpty(data) ? (
+              <StandardLayoutNoResult />
+            ) : (
+              <Content restaurants={data} />
+            )}
+          </StandardLayoutContent>
+        </div>
+      </div>
+    </StandardLayout>
   );
 }

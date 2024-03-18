@@ -13,39 +13,41 @@ const sortOrders = {
   desc: '从高到低',
 };
 
-export default function SortSelect({
+const SortSelect = ({
   sortFields,
   sortBy,
   setSortBy,
+  className = 'w-48',
 }: {
   sortFields: Record<string, string>;
   sortBy: [keyof typeof sortFields, keyof SortOrdersType];
   setSortBy: Dispatch<
     SetStateAction<[keyof typeof sortFields, keyof SortOrdersType]>
   >;
-}) {
-  return (
-    <Select
-      required
-      value={sortBy.join(':')}
-      onValueChange={(value) =>
-        setSortBy(
-          value.split(':') as [keyof typeof sortFields, keyof SortOrdersType],
-        )
-      }
-    >
-      <SelectTrigger value={sortBy.join(':')}>
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent position="popper">
-        {Object.entries(sortFields).map(([fieldValue, fieldText]) =>
-          Object.entries(sortOrders).map(([orderValue, orderText], index) => (
-            <SelectItem key={index} value={`${fieldValue}:${orderValue}`}>
-              {fieldText}: {orderText} {orderValue === 'asc' ? '↑' : '↓'}
-            </SelectItem>
-          )),
-        )}
-      </SelectContent>
-    </Select>
-  );
-}
+  className?: string;
+}) => (
+  <Select
+    required
+    value={sortBy.join(':')}
+    onValueChange={(value) =>
+      setSortBy(
+        value.split(':') as [keyof typeof sortFields, keyof SortOrdersType],
+      )
+    }
+  >
+    <SelectTrigger value={sortBy.join(':')} className={className}>
+      <SelectValue />
+    </SelectTrigger>
+    <SelectContent position="popper">
+      {Object.entries(sortFields).map(([fieldValue, fieldText]) =>
+        Object.entries(sortOrders).map(([orderValue, orderText], index) => (
+          <SelectItem key={index} value={`${fieldValue}:${orderValue}`}>
+            {fieldText}: {orderText} {orderValue === 'asc' ? '↑' : '↓'}
+          </SelectItem>
+        )),
+      )}
+    </SelectContent>
+  </Select>
+);
+
+export default SortSelect;

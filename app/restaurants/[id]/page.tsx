@@ -1,61 +1,87 @@
-import ItemLayout from '@/app/layouts/item_layout';
-import { Separator } from '@/components/ui/separator';
-import { getPlaceUrl } from '@/lib/google-maps';
-import { getWeatApiUrl } from '@/lib/utils';
-import { Restaurant, RestaurantItem } from '@prisma/client';
-import { isEmpty } from 'lodash';
-import { notFound } from 'next/navigation';
+'use client';
 
-interface RestaurantType extends Restaurant {
+import {
+  StandardLayout,
+  StandardLayoutBradcrumb,
+  StandardLayoutContent,
+  StandardLayoutDescription,
+  StandardLayoutHeader,
+  StandardLayoutTitle,
+} from '@/app/layouts/standard_layout';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { getPlaceUrl } from '@/lib/google-maps';
+import { Restaurant, RestaurantItem } from '@prisma/client';
+import { Text } from '@radix-ui/themes';
+import { isEmpty } from 'lodash';
+import { toast } from 'sonner';
+import useSWR from 'swr';
+
+interface RestaurantReturnType extends Restaurant {
   categories: string[];
   items: Record<string, RestaurantItem[]>;
 }
 
-const getRestaurant = async (id: string): Promise<RestaurantType> => {
-  const url = getWeatApiUrl(`/restaurants/${id}`);
-  const response = await fetch(url, {
-    // TODO: remove this once the API is stable
-    cache: 'no-store',
-  });
-  const data = await response.json();
+const useRestaurant = (id: string) => {
+  const { data, error, isLoading } = useSWR<RestaurantReturnType>(
+    `/restaurants/${id}`,
+  );
 
-  if (response.ok) {
-    return data;
-  }
-
-  if (response.status === 404) {
-    notFound();
-  } else {
-    throw new Error(data.error);
-  }
+  return {
+    restaurant: data,
+    error,
+    isLoading,
+  };
 };
 
-export default async function Page({ params }: { params: { id: string } }) {
-  const restaurant: RestaurantType = await getRestaurant(params.id);
+const Page = ({ params }: { params: { id: string } }) => {
+  const { restaurant, error, isLoading } = useRestaurant(params.id);
+
+  if (error) {
+    toast.error('餐厅加载失败', {
+      description: error.info.error,
+    });
+  }
 
   return (
-    <ItemLayout
-      breadcrumbParents={[{ name: '餐厅', url: '/restaurants' }]}
-      breadcrumbCurrent={restaurant.name}
-    >
-      <div className="py-4">
-        <h1>{restaurant.name}</h1>
-        <a
-          href={getPlaceUrl(restaurant.address, restaurant.placeId)}
-          className="text-xs text-muted-foreground hover:underline"
-          title="在 Google 地图中打开"
-          target="_blank"
-        >
-          {restaurant.address}
-        </a>
-      </div>
-      <div>
-        <h2 className="py-3">菜单</h2>
-        {isEmpty(restaurant.items) ? (
+    <StandardLayout>
+      <StandardLayoutHeader>
+        <StandardLayoutBradcrumb
+          parents={[{ name: '餐厅', url: '/restaurants' }]}
+          current={restaurant?.name}
+        />
+        <div>
+          <StandardLayoutTitle isLoading={isLoading || error}>
+            {restaurant?.name}
+          </StandardLayoutTitle>
+          <StandardLayoutDescription isLoading={isLoading || error}>
+            <a
+              href={
+                restaurant &&
+                getPlaceUrl(restaurant.address, restaurant.placeId)
+              }
+              className="hover:underline"
+              title="在 Google 地图中打开"
+              target="_blank"
+            >
+              {restaurant?.address}
+            </a>
+          </StandardLayoutDescription>
+        </div>
+      </StandardLayoutHeader>
+      <StandardLayoutContent isLoading={isLoading || error}>
+        {isEmpty(restaurant?.items) ? (
           <p className="text-sm md:text-md py-3">
             暂无数据。商家可联系
             <a
-              href={`mailto:admin@wintery.io?subject=添加餐厅菜单: ${encodeURIComponent(restaurant.name)}`}
+              href={
+                restaurant &&
+                `mailto:admin@wintery.io?subject=添加餐厅菜单: ${encodeURIComponent(restaurant.name)}`
+              }
               className="text-sky-500 hover:underline"
             >
               管理员
@@ -63,40 +89,47 @@ export default async function Page({ params }: { params: { id: string } }) {
             添加。
           </p>
         ) : (
-          <div className="space-y-4">
+          <Accordion
+            type="multiple"
+            // defaultValue={Object.keys(restaurant.items)}
+          >
             {Object.entries(restaurant.items).map(
               ([category, categoryItems], index) => {
                 return (
-                  <div key={index}>
-                    <h3 className="py-3">
-                      {category} ({categoryItems.length})
-                    </h3>
-                    <div className="flex flex-col gap-2">
+                  <AccordionItem value={category} key={index}>
+                    <AccordionTrigger>
+                      <Text size="3" weight="bold">
+                        {category} ({categoryItems.length})
+                      </Text>
+                    </AccordionTrigger>
+                    <AccordionContent className="divide-y divide-gray-200">
                       {categoryItems.map((item) => {
                         return (
-                          <div key={item.id}>
-                            <div className="py-2 flex flex-col gap-0.5">
-                              <p className="text-sm md:text-md font-semibold">
-                                {item.name}
-                                {item.nameZh && ` (${item.nameZh})`}
-                              </p>
-                              {item.description && <p>{item.description}</p>}
-                              <p className="text-xs md:text-sm">
-                                ${item.price.toString()}
-                              </p>
-                            </div>
-                            <Separator />
+                          <div
+                            key={item.id}
+                            className="flex flex-col gap-0.5 py-3"
+                          >
+                            <Text size="2" weight="bold">
+                              {item.name}
+                              {item.nameZh && ` (${item.nameZh})`}
+                            </Text>
+                            {item.description && <p>{item.description}</p>}
+                            <Text size="1" color="gray">
+                              ${item.price.toString()}
+                            </Text>
                           </div>
                         );
                       })}
-                    </div>
-                  </div>
+                    </AccordionContent>
+                  </AccordionItem>
                 );
               },
             )}
-          </div>
+          </Accordion>
         )}
-      </div>
-    </ItemLayout>
+      </StandardLayoutContent>
+    </StandardLayout>
   );
-}
+};
+
+export default Page;
