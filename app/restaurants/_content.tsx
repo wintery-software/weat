@@ -10,6 +10,7 @@ import {
 import { getS3PlacePhotoUrl } from '@/lib/aws-s3';
 import { getPlaceUrl } from '@/lib/google-maps';
 import { ClockIcon, RouteIcon } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 const Content = ({ restaurants }: { restaurants: RestaurantType[] }) => (
@@ -21,17 +22,21 @@ const Content = ({ restaurants }: { restaurants: RestaurantType[] }) => (
       >
         <Carousel>
           <CarouselContent className="w-[160px] h-[120px]">
-            {r.images.map((ref, index) => (
-              <CarouselItem key={index}>
-                <img
-                  src={getS3PlacePhotoUrl(r.placeId, ref)}
-                  className="object-cover w-full h-full rounded-md"
-                  alt={`${r.name}-${index}`}
-                  width="100%"
-                  height="100%"
-                />
-              </CarouselItem>
-            ))}
+            {r.images.map((ref, index) => {
+              const url = getS3PlacePhotoUrl(r.placeId, ref);
+              return (
+                <CarouselItem key={index}>
+                  <Image
+                    src={url}
+                    loader={() => url}
+                    className="object-cover w-full h-full rounded-md"
+                    alt={`${r.name}-${index}`}
+                    width={512}
+                    height={512}
+                  />
+                </CarouselItem>
+              );
+            })}
           </CarouselContent>
         </Carousel>
         <Link
