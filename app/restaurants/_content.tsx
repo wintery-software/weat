@@ -10,6 +10,7 @@ import {
 import { getS3PlacePhotoUrl } from '@/lib/aws-s3';
 import { getPlaceUrl } from '@/lib/google-maps';
 import { ClockIcon, RouteIcon } from 'lucide-react';
+import Link from 'next/link';
 
 const Content = ({ restaurants }: { restaurants: RestaurantType[] }) => (
   <div>
@@ -33,7 +34,11 @@ const Content = ({ restaurants }: { restaurants: RestaurantType[] }) => (
             ))}
           </CarouselContent>
         </Carousel>
-        <a href={`/restaurants/${r.id}`} key={r.placeId} title="查看详细信息">
+        <Link
+          href={`/restaurants/${r.id}`}
+          key={r.placeId}
+          title="查看详细信息"
+        >
           <CardHeader className="pt-0 pb-3 md:pb-6">
             <CardTitle className="leading-5 text-sm md:text-base hover:underline">
               {r.name}
@@ -65,14 +70,14 @@ const Content = ({ restaurants }: { restaurants: RestaurantType[] }) => (
           <CardFooter className="pb-0">
             <div className="flex flex-col lg:flex-row gap-1 lg:gap-4 text-xs text-muted-foreground">
               <span className="flex gap-1 items-center">
-                <a
+                <Link
                   href={getPlaceUrl(r.address, r.placeId)}
                   className="underline"
                   title="在 Google Maps 中打开"
                   target="_blank"
                 >
                   {r.address}
-                </a>
+                </Link>
               </span>
               {r.distance && (
                 <>
@@ -88,7 +93,7 @@ const Content = ({ restaurants }: { restaurants: RestaurantType[] }) => (
               )}
             </div>
           </CardFooter>
-        </a>
+        </Link>
       </Card>
     ))}
   </div>

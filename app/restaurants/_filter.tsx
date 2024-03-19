@@ -15,6 +15,7 @@ import { isGoogleMapsApiEnabled } from '@/lib/google-maps';
 import { getWeatApiUrl } from '@/lib/utils';
 import { RestaurantCategory } from '@prisma/client';
 import { Loader2, MapPinIcon } from 'lucide-react';
+import Link from 'next/link';
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
 const getCategories = async () => {
@@ -143,14 +144,14 @@ export default function Filter({
                   Array.isArray(currentLocation) ? (
                     <>
                       <MapPinIcon size={12} className="self-center" />
-                      <a
+                      <Link
                         href={`https://www.google.com/maps/@${currentLocation.join(',')},15z`}
                         target="_blank"
                         title="在 Google 地图中打开"
                         className="hover:underline"
                       >
                         {currentLocation.join(', ')}
-                      </a>
+                      </Link>
                     </>
                   ) : (
                     currentLocation

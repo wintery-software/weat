@@ -11,6 +11,7 @@ import {
 import { getS3PlacePhotoUrl } from '@/lib/aws-s3';
 import { search } from '@/lib/utils';
 import { capitalize, isEmpty } from 'lodash';
+import Link from 'next/link';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 type SearchResultType = Record<string, any[]>;
@@ -60,7 +61,7 @@ export default function SearchDialog({
         {Object.entries(result).map(([type, items]) => (
           <CommandGroup key={type} heading={capitalize(type)} forceMount>
             {items.map((item) => (
-              <a href={`/${type}/${item.id}`} key={item.id}>
+              <Link href={`/${type}/${item.id}`} key={item.id}>
                 <CommandItem value={item.id}>
                   <div className="flex gap-2">
                     <Avatar>
@@ -86,7 +87,7 @@ export default function SearchDialog({
                     </div>
                   </div>
                 </CommandItem>
-              </a>
+              </Link>
             ))}
           </CommandGroup>
         ))}

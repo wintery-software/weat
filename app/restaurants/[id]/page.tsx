@@ -18,6 +18,7 @@ import { getPlaceUrl } from '@/lib/google-maps';
 import { Restaurant, RestaurantItem } from '@prisma/client';
 import { Text } from '@radix-ui/themes';
 import { isEmpty } from 'lodash';
+import Link from 'next/link';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 
@@ -59,17 +60,18 @@ const Page = ({ params }: { params: { id: string } }) => {
             {restaurant?.name}
           </StandardLayoutTitle>
           <StandardLayoutDescription isLoading={isLoading || error}>
-            <a
+            <Link
               href={
-                restaurant &&
-                getPlaceUrl(restaurant.address, restaurant.placeId)
+                restaurant
+                  ? getPlaceUrl(restaurant.address, restaurant.placeId)
+                  : ''
               }
               className="hover:underline"
               title="在 Google 地图中打开"
               target="_blank"
             >
               {restaurant?.address}
-            </a>
+            </Link>
           </StandardLayoutDescription>
         </div>
       </StandardLayoutHeader>
@@ -77,15 +79,16 @@ const Page = ({ params }: { params: { id: string } }) => {
         {isEmpty(restaurant?.items) ? (
           <p className="text-sm md:text-md py-3">
             暂无数据。商家可联系
-            <a
+            <Link
               href={
-                restaurant &&
-                `mailto:admin@wintery.io?subject=添加餐厅菜单: ${encodeURIComponent(restaurant.name)}`
+                restaurant
+                  ? `mailto:admin@wintery.io?subject=添加餐厅菜单: ${encodeURIComponent(restaurant.name)}`
+                  : ''
               }
               className="text-sky-500 hover:underline"
             >
               管理员
-            </a>
+            </Link>
             添加。
           </p>
         ) : (
