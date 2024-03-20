@@ -51,8 +51,7 @@ const Content = ({ restaurants }: { restaurants: RestaurantType[] }) => (
                   key={r.placeId}
                   title="查看详细信息"
                 >
-                  {r.name}
-                  {r.nameZh && `(${r.nameZh})`}
+                  {r.name} {r.nameZh && `(${r.nameZh})`}
                 </Link>
               </CardTitle>
               <div className="flex gap-2 items-center">
