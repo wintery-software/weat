@@ -1,30 +1,41 @@
-import SortSelect from '@/components/sort_select';
+import { SortKeyProps, SortOrder, SortSelect } from '@/components/sort_select';
 import { Button } from '@/components/ui/button';
-import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
 import { isGoogleMapsApiEnabled } from '@/lib/google-maps';
 import { IconFilter } from '@tabler/icons-react';
 import { Dispatch, SetStateAction } from 'react';
 
-const sortFields: RestaurantSortFieldsType = {
-  rating: '评分',
-  price: '价格',
-  distance: '距离',
+export type RestaurantSortKey = 'relevance' | 'rating' | 'price' | 'distance';
+
+export const sortFields: Record<RestaurantSortKey, SortKeyProps> = {
+  relevance: {
+    value: '菜品数量',
+    order: ['desc'],
+  },
+  rating: {
+    value: '评分',
+    order: ['asc', 'desc'],
+  },
+  price: {
+    value: '价格',
+    order: ['asc', 'desc'],
+  },
+  distance: {
+    value: '距离',
+    order: ['asc', 'desc'],
+  },
 };
 
-
 const Sort = ({
-  sortBy,
-  setSortBy,
+  current,
+  setCurrent,
   setSidebarOpen,
 }: {
-  sortBy: [keyof RestaurantSortFieldsType, keyof SortOrdersType];
-  setSortBy: Dispatch<
-    SetStateAction<[keyof RestaurantSortFieldsType, keyof SortOrdersType]>
-  >;
+  current: [keyof typeof sortFields, SortOrder];
+  setCurrent: Dispatch<SetStateAction<[keyof typeof sortFields, SortOrder]>>;
   setSidebarOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   if (!isGoogleMapsApiEnabled()) {
-    delete sortFields.distance;
+    delete sortFields['distance' as RestaurantSortKey];
   }
 
   return (
@@ -40,11 +51,9 @@ const Sort = ({
         <IconFilter size={14} />
       </Button>
       <SortSelect
-        sortFields={sortFields as unknown as Record<string, string>}
-        sortBy={sortBy}
-        setSortBy={
-          setSortBy as Dispatch<SetStateAction<[string, keyof SortOrdersType]>>
-        }
+        items={sortFields}
+        current={current}
+        setCurrent={setCurrent as Dispatch<SetStateAction<[string, SortOrder]>>}
       />
     </div>
   );

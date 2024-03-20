@@ -11,8 +11,8 @@ import {
 } from '@/app/layouts/standard_layout';
 import Content from '@/app/restaurants/_content';
 import Filter from '@/app/restaurants/_filter';
-import Sort from '@/app/restaurants/_sort';
-import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
+import Sort, { RestaurantSortKey, sortFields } from '@/app/restaurants/_sort';
+import { SortOrder } from '@/components/sort_select';
 import { DistanceReturnType, isGoogleMapsApiEnabled } from '@/lib/google-maps';
 import { Restaurant } from '@prisma/client';
 import { isEmpty } from 'lodash';
@@ -25,16 +25,20 @@ const generateSearchParams = (
   prices: string[],
   rating: number,
   distance: number,
-  sortBy: [string, string],
+  sortBy: [RestaurantSortKey, SortOrder],
 ): URLSearchParams => {
   const params = new URLSearchParams();
 
+  // Filter
   categories.forEach((category) => params.append('category', category));
   prices.forEach((price) => params.append('price', price));
   rating && params.append('rating', rating.toString());
   distance && params.append('distance', distance.toString());
-  sortBy[0] !== 'rating' && params.append('sort', sortBy[0]);
-  sortBy[1] !== 'desc' && params.append('order', sortBy[1]);
+
+  // Sort
+  const defaultSort = Object.entries(sortFields)[0];
+  sortBy[0] !== defaultSort[0] && params.append('sort', sortBy[0]);
+  sortBy[1] !== defaultSort[1].order[0] && params.append('order', sortBy[1]);
 
   return params;
 };
@@ -51,15 +55,6 @@ export interface RestaurantType extends Restaurant {
   categories: string[];
   distance: DistanceReturnType | null;
 }
-
-const titleDescriptor: Record<string, string> = {
-  'rating:asc': '评分最低',
-  'rating:desc': '评分最高',
-  'price:asc': '价格最低',
-  'price:desc': '价格最高',
-  'distance:asc': '离我最近的',
-  'distance:desc': '离我最远的',
-};
 
 export default function Restaurants() {
   const router = useRouter();
@@ -84,9 +79,10 @@ export default function Restaurants() {
   const [currentLocation, setCurrentLocation] = useState<
     [number, number] | string | null
   >(null);
-  const [sortBy, setSortBy] = useState<
-    [keyof RestaurantSortFieldsType, keyof SortOrdersType]
-  >(['rating', 'desc']);
+  const [sortBy, setSortBy] = useState<[RestaurantSortKey, SortOrder]>([
+    'relevance',
+    'desc',
+  ]);
 
   useEffect(() => {
     // Prevent fetching too much when dragging the slider
@@ -167,8 +163,8 @@ export default function Restaurants() {
         <div className="md:col-span-2 lg:col-span-4 space-y-4">
           <div className="mx-8 mt-4">
             <Sort
-              sortBy={sortBy}
-              setSortBy={setSortBy}
+              current={sortBy}
+              setCurrent={setSortBy}
               setSidebarOpen={setSidebarOpen}
             />
           </div>

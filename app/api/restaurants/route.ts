@@ -1,4 +1,5 @@
-import { RestaurantSortFieldsType, SortOrdersType } from '@/lib/constants';
+import { RestaurantSortKey } from '@/app/restaurants/_sort';
+import { SortOrder } from '@/components/sort_select';
 import {
   calculateDistance,
   DistanceReturnType,
@@ -8,7 +9,7 @@ import redis from '@/lib/redis';
 import { sleep } from '@/lib/utils';
 import { prisma } from '@/prisma/client';
 import { Prisma } from '@prisma/client';
-import { compact, uniq } from 'lodash';
+import { compact, omit, uniq } from 'lodash';
 
 export const GET = async (request: Request) => {
   await sleep(1000);
@@ -22,9 +23,8 @@ export const GET = async (request: Request) => {
   const origin = params.get('origin')?.split(',').map(Number);
 
   const limit = Number(params.get('limit'));
-  const sortBy =
-    (params.get('sort') as keyof RestaurantSortFieldsType) || 'rating';
-  const order = (params.get('order') as keyof SortOrdersType) || 'desc';
+  const sortBy = (params.get('sort') as RestaurantSortKey) || 'relevance';
+  const order = (params.get('order') as SortOrder) || 'desc';
 
   const where: Prisma.RestaurantWhereInput = {};
 
@@ -52,28 +52,38 @@ export const GET = async (request: Request) => {
     };
   }
 
-  const result = await prisma.restaurant.findMany({
-    where,
-    include: {
-      categories: {
-        include: {
-          category: true,
+  const result = (
+    await prisma.restaurant.findMany({
+      where,
+      include: {
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+        items: {
+          select: {
+            id: true,
+          },
         },
       },
-    },
-    // LIMIT is optional
-    ...(limit ? { take: limit } : {}),
-    ...(sortBy !== 'distance'
-      ? {
-          orderBy: [
-            { [sortBy]: order },
-            { rating: 'desc' },
-            { price: 'asc' },
-            { name: 'asc' },
-          ],
-        }
-      : {}),
-  });
+      // LIMIT is optional
+      ...(limit ? { take: limit } : {}),
+      ...(sortBy !== 'distance'
+        ? {
+            orderBy: [
+              sortBy === 'relevance' ? {} : { [sortBy]: order },
+              { rating: 'desc' },
+              { price: 'asc' },
+              { name: 'asc' },
+            ],
+          }
+        : {}),
+    })
+  ).map((r) => ({
+    ...r,
+    images: r.images.slice(0, 1),
+  }));
 
   const googleMapsApiEnabled = isGoogleMapsApiEnabled();
 
@@ -136,13 +146,27 @@ export const GET = async (request: Request) => {
   }
 
   if (googleMapsApiEnabled && sortBy === 'distance') {
-    processedResult = processedResult.sort((a, b) => {
-      if (!a.distance || !b.distance) return 0;
+    return Response.json(
+      processedResult.sort((a, b) => {
+        if (!a.distance || !b.distance) return 0;
 
-      return order === 'asc'
-        ? a.distance.distance - b.distance.distance
-        : b.distance.distance - a.distance.distance;
-    });
+        return order === 'asc'
+          ? a.distance.distance - b.distance.distance
+          : b.distance.distance - a.distance.distance;
+      }),
+    );
+  } else if (sortBy === 'relevance') {
+    return Response.json(
+      processedResult
+        .sort((a, b) => {
+          if (a.items.length === b.items.length) return 0;
+
+          return order === 'asc'
+            ? a.items.length - b.items.length
+            : b.items.length - a.items.length;
+        })
+        .map((r) => omit(r, 'items')),
+    );
   }
 
   return Response.json(processedResult);
