@@ -5,6 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 import { Dispatch, SetStateAction } from 'react';
 
 export interface SortKeyProps {
@@ -23,7 +24,7 @@ export const SortSelect = ({
   items,
   current,
   setCurrent,
-  className = 'w-48',
+  className,
 }: {
   items: Record<string, SortKeyProps>;
   current: [keyof typeof items, SortOrder];
@@ -37,7 +38,7 @@ export const SortSelect = ({
       setCurrent(value.split(':') as [keyof typeof items, SortOrder])
     }
   >
-    <SelectTrigger value={current.join(':')} className={className}>
+    <SelectTrigger value={current.join(':')} className={cn('w-64', className)}>
       <SelectValue />
     </SelectTrigger>
     <SelectContent>

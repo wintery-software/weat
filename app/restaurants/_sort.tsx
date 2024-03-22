@@ -39,9 +39,9 @@ const Sort = ({
   }
 
   return (
-    <div className="md:self-center flex gap-1">
+    <div className="flex gap-1 justify-end">
       <Button
-        className="flex md:hidden bg-transparent"
+        className="flex md:hidden"
         variant="outline"
         size="icon"
         onClick={() => {
@@ -51,6 +51,7 @@ const Sort = ({
         <IconFilter size={14} />
       </Button>
       <SortSelect
+        className="bg-white max-w-1/2 md:w-64"
         items={sortFields}
         current={current}
         setCurrent={setCurrent as Dispatch<SetStateAction<[string, SortOrder]>>}
