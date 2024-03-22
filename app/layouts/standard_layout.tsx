@@ -77,7 +77,7 @@ export const StandardLayoutContent = ({
         ))}
       </div>
     ) : (
-      <div>{children}</div>
+      children
     )}
   </div>
 );
