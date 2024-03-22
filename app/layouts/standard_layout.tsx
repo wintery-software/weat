@@ -63,7 +63,7 @@ export const StandardLayoutContent = ({
 }: {
   children: ReactNode;
   isLoading?: boolean;
-  skeletonCount?: numbe;
+  skeletonCount?: number;
   skeletonWrapperClassName?: string;
   skeletonClassName?: string;
 }) => (
