@@ -4,6 +4,7 @@ import AutoBreadcrumb, {
 } from '@/components/auto_breadcrumb';
 import { H1 } from '@/components/heading';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 import { Text } from '@radix-ui/themes';
 import { ReactNode } from 'react';
 
@@ -56,13 +57,13 @@ export const StandardLayoutDescription = ({
 export const StandardLayoutContent = ({
   children,
   isLoading = false,
-  skeletonCount = 8,
+  skeletonCount = 10,
   skeletonWrapperClassName = 'py-4 border-b',
-  skeletonClassName = 'h-6 w-full',
+  skeletonClassName = 'h-6',
 }: {
   children: ReactNode;
   isLoading?: boolean;
-  skeletonCount?: number;
+  skeletonCount?: numbe;
   skeletonWrapperClassName?: string;
   skeletonClassName?: string;
 }) => (
@@ -71,7 +72,7 @@ export const StandardLayoutContent = ({
       <div>
         {Array.from({ length: skeletonCount }).map((_, index) => (
           <div key={index} className={skeletonWrapperClassName}>
-            <Skeleton className={skeletonClassName} />
+            <Skeleton className={cn('w-full', skeletonClassName)} />
           </div>
         ))}
       </div>

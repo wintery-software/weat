@@ -168,7 +168,11 @@ export default function Restaurants() {
               setSidebarOpen={setSidebarOpen}
             />
           </div>
-          <StandardLayoutContent isLoading={isLoading}>
+          <StandardLayoutContent
+            isLoading={isLoading}
+            skeletonWrapperClassName="p-4 border-b"
+            skeletonClassName="h-[102px]"
+          >
             {isEmpty(data) ? (
               <StandardLayoutNoResult />
             ) : (
