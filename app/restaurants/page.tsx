@@ -13,8 +13,10 @@ import Content from '@/app/restaurants/_content';
 import Filter from '@/app/restaurants/_filter';
 import Sort, { RestaurantSortKey, sortFields } from '@/app/restaurants/_sort';
 import { SortOrder } from '@/components/sort_select';
+import { Button } from '@/components/ui/button';
 import { DistanceReturnType, isGoogleMapsApiEnabled } from '@/lib/google-maps';
 import { Restaurant } from '@prisma/client';
+import { IconFilter } from '@tabler/icons-react';
 import { isEmpty } from 'lodash';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -161,16 +163,23 @@ export default function Restaurants() {
           />
         </div>
         <div className="md:col-span-2 lg:col-span-4">
-          <div className="mx-8 mt-4">
-            <Sort
-              current={sortBy}
-              setCurrent={setSortBy}
-              setSidebarOpen={setSidebarOpen}
-            />
-          </div>
+          {!isEmpty(data) && (
+            <div className="flex gap-1 md:justify-end mx-8 mt-4">
+              <Button
+                className="flex md:hidden"
+                variant="outline"
+                size="icon"
+                onClick={() => {
+                  setSidebarOpen(true);
+                }}
+              >
+                <IconFilter size={14} />
+              </Button>
+              <Sort current={sortBy} setCurrent={setSortBy} />
+            </div>
+          )}
           <StandardLayoutContent
             isLoading={isLoading}
-            skeletonWrapperClassName="p-4 border-b"
             skeletonClassName="h-[102px]"
           >
             {isEmpty(data) ? (
