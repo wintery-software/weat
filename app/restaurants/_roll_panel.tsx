@@ -19,13 +19,11 @@ import {
 } from '@/components/ui/drawer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getS3PlacePhotoUrl } from '@/lib/aws-s3';
-import { IconCoin, IconDice3, IconLoader2 } from '@tabler/icons-react';
+import { IconCoin, IconLoader2, IconSoup } from '@tabler/icons-react';
 import { isEmpty } from 'lodash';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
-
-const TriggerIcon = () => <IconDice3 size={16} />;
 
 const RollPanel = ({ items }: { items: any[] }) => {
   const [selected, setSelected] = useState<RestaurantType | null>();
@@ -109,11 +107,9 @@ const RollPanel = ({ items }: { items: any[] }) => {
   return isDesktop ? (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          className="flex-none bg-orange-600 hover:bg-orange-600/90"
-          size="icon"
-        >
-          <TriggerIcon />
+        <Button className="flex gap-1 bg-orange-600 hover:bg-orange-600/90">
+          <IconSoup size={16} />
+          今天吃什么
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -129,11 +125,9 @@ const RollPanel = ({ items }: { items: any[] }) => {
   ) : (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button
-          className="flex-none bg-orange-600 hover:bg-orange-600/90"
-          size="icon"
-        >
-          <TriggerIcon />
+        <Button className="flex gap-1 bg-orange-600 hover:bg-orange-600/90">
+          <IconSoup size={16} />
+          今天吃什么
         </Button>
       </DrawerTrigger>
       <DrawerContent>
