@@ -91,10 +91,7 @@ export default function Filter({
             onValueChange={setSelectedCategories}
           />
         ) : (
-          <div className="flex flex-col gap-2">
-            <Skeleton className="h-8" />
-            <Skeleton className="h-8 w-3/4" />
-          </div>
+          <Skeleton className="h-8" />
         )}
         <SidebarSeparator />
 
