@@ -83,7 +83,7 @@ export const StandardLayoutContent = ({
 );
 
 export const StandardLayoutNoResult = () => (
-  <div className="flex items-center justify-center">
+  <div className="flex items-center justify-center h-[50dvh]">
     <span className="text-muted-foreground">没有结果</span>
   </div>
 );
