@@ -163,21 +163,19 @@ export default function Restaurants() {
           />
         </div>
         <div className="md:col-span-2 lg:col-span-4">
-          {!isEmpty(data) && (
-            <div className="flex gap-1 md:justify-end mx-8 mt-4">
-              <Button
-                className="flex md:hidden"
-                variant="outline"
-                size="icon"
-                onClick={() => {
-                  setSidebarOpen(true);
-                }}
-              >
-                <IconFilter size={14} />
-              </Button>
-              <Sort current={sortBy} setCurrent={setSortBy} />
-            </div>
-          )}
+          <div className="flex gap-1 md:justify-end mx-8 mt-4">
+            <Button
+              className="flex md:hidden"
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                setSidebarOpen(true);
+              }}
+            >
+              <IconFilter size={14} />
+            </Button>
+            <Sort current={sortBy} setCurrent={setSortBy} />
+          </div>
           <StandardLayoutContent
             isLoading={isLoading}
             skeletonClassName="h-[102px]"
