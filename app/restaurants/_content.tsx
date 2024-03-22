@@ -21,12 +21,13 @@ const Content = ({ restaurants }: { restaurants: RestaurantType[] }) => (
         >
           {/* width: (86 + 16) * 4 / 3 = 136px */}
           <div className="flex-shrink-0 w-[136px]">
-            <AspectRatio ratio={4 / 3}>
-              <Link
-                href={`/restaurants/${r.id}`}
-                key={r.placeId}
-                title="查看详细信息"
-              >
+            <Link
+              href={`/restaurants/${r.id}`}
+              key={r.placeId}
+              title="查看详细信息"
+              className="relative"
+            >
+              <AspectRatio ratio={4 / 3}>
                 <Image
                   src={imageUrl}
                   loader={({ src }) => {
@@ -38,10 +39,11 @@ const Content = ({ restaurants }: { restaurants: RestaurantType[] }) => (
                   className="object-cover rounded"
                   alt={`${r.name}-${index}`}
                   fill
-                  priority={false}
+                  priority={index < 10}
+                  unoptimized
                 />
-              </Link>
-            </AspectRatio>
+              </AspectRatio>
+            </Link>
           </div>
           <div className="flex flex-col w-full">
             <CardHeader className="pt-0 pb-2">
