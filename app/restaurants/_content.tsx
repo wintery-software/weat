@@ -17,7 +17,7 @@ const Content = ({ restaurants }: { restaurants: RestaurantType[] }) => (
       return (
         <Card
           key={index}
-          className="flex border-0 border-b rounded-none shadow-none p-2 md:p-4 bg-transparent"
+          className="flex border-0 border-b rounded-none shadow-none py-4 bg-transparent"
         >
           {/* width: (86 + 16) * 4 / 3 = 136px */}
           <div className="flex-shrink-0 w-[136px]">
