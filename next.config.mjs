@@ -20,11 +20,17 @@ const nextConfig = {
       }
     ],
   images: {
-    remotePatterns: [{
-      protocol: 'https',
-      hostname: 'wintery-software-weat.s3.amazonaws.com',
-      pathname: '/**/*'
-    }]
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'wintery-software-weat.s3.amazonaws.com',
+        pathname: '/**/*'
+      }, {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+        pathname: '/*'
+      }
+    ]
   },
   logging: {
     fetches: {
