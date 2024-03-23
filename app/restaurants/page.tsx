@@ -7,7 +7,7 @@ import {
   StandardLayoutDescription,
   StandardLayoutHeader,
   StandardLayoutNoResult,
-  StandardLayoutTitle
+  StandardLayoutTitle,
 } from '@/app/layouts/standard_layout';
 import Content from '@/app/restaurants/_content';
 import Filter from '@/app/restaurants/_filter';
@@ -28,7 +28,7 @@ const generateSearchParams = (
   prices: string[],
   rating: number,
   distance: number,
-  sortBy: [RestaurantSortKey, SortOrder]
+  sortBy: [RestaurantSortKey, SortOrder],
 ): URLSearchParams => {
   const params = new URLSearchParams();
 
@@ -50,7 +50,7 @@ const useRestaurants = (params: URLSearchParams) => {
   return useSWR(`/restaurants?${params}`, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
-    refreshInterval: 0
+    refreshInterval: 0,
   });
 };
 
@@ -65,16 +65,16 @@ export default function Restaurants() {
   const { data, error, isLoading } = useRestaurants(searchParams);
 
   const [categories, setCategories] = useState<string[]>(
-    searchParams.getAll('category').filter(Boolean)
+    searchParams.getAll('category').filter(Boolean),
   );
   const [prices, setPrices] = useState<string[]>(
-    searchParams.getAll('price').filter(Boolean)
+    searchParams.getAll('price').filter(Boolean),
   );
   const [rating, setRating] = useState<number>(
-    Number(searchParams.get('rating')) || 0
+    Number(searchParams.get('rating')) || 0,
   );
   const [distance, setDistance] = useState<number>(
-    Number(searchParams.getAll('distance')) || 0
+    Number(searchParams.getAll('distance')) || 0,
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
   // Prevent fetching too much when dragging the slider
@@ -84,7 +84,7 @@ export default function Restaurants() {
   >(null);
   const [sortBy, setSortBy] = useState<[RestaurantSortKey, SortOrder]>([
     'relevance',
-    'desc'
+    'desc',
   ]);
 
   useEffect(() => {
@@ -96,7 +96,7 @@ export default function Restaurants() {
       prices,
       rating,
       distance,
-      sortBy
+      sortBy,
     );
     // Update URL without coordinates
     router.push(`/restaurants?${params}`, { scroll: false });
@@ -112,7 +112,7 @@ export default function Restaurants() {
     rating,
     router,
     sortBy,
-    updatingDistance
+    updatingDistance,
   ]);
 
   // Only fetch current location once, on mount
@@ -133,8 +133,8 @@ export default function Restaurants() {
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 0
-      }
+        maximumAge: 0,
+      },
     );
   }, []);
 

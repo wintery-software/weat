@@ -1,14 +1,11 @@
 import SWRProvider from '@/app/providers/swr-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
-
-import { Theme } from '@radix-ui/themes';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import '@radix-ui/themes/styles.css';
 import './globals.css';
-import './theme-config.css';
+import './weat.css';
 import { ReactNode, Suspense } from 'react';
 
 const inter = Inter({
@@ -37,14 +34,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(inter.variable, 'bg-stone-50')}>
-        <Theme>
-          <SWRProvider>
-            <Suspense>{children}</Suspense>
-            <SpeedInsights />
-            <Toaster closeButton richColors />
-          </SWRProvider>
-        </Theme>
+      <body
+        className={cn(inter.className, 'bg-stone-50 min-h-screen antialiased')}
+      >
+        <SWRProvider>
+          <Suspense>{children}</Suspense>
+          <SpeedInsights />
+          <Toaster closeButton richColors />
+        </SWRProvider>
       </body>
     </html>
   );

@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/accordion';
 import { getPlaceUrl } from '@/lib/google-maps';
 import { Restaurant, RestaurantItem } from '@prisma/client';
-import { Text } from '@radix-ui/themes';
 import { isEmpty } from 'lodash';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -55,25 +54,23 @@ const Page = ({ params }: { params: { id: string } }) => {
           parents={[{ name: '餐厅', url: '/restaurants' }]}
           current={restaurant?.name}
         />
-        <div>
-          <StandardLayoutTitle isLoading={isLoading || error}>
-            {restaurant?.name}
-          </StandardLayoutTitle>
-          <StandardLayoutDescription isLoading={isLoading || error}>
-            <Link
-              href={
-                restaurant
-                  ? getPlaceUrl(restaurant.address, restaurant.placeId)
-                  : ''
-              }
-              className="hover:underline"
-              title="在 Google 地图中打开"
-              target="_blank"
-            >
-              {restaurant?.address}
-            </Link>
-          </StandardLayoutDescription>
-        </div>
+        <StandardLayoutTitle isLoading={isLoading || error}>
+          {restaurant?.name}
+        </StandardLayoutTitle>
+        <StandardLayoutDescription isLoading={isLoading || error}>
+          <Link
+            href={
+              restaurant
+                ? getPlaceUrl(restaurant.address, restaurant.placeId)
+                : ''
+            }
+            className="hover:underline"
+            title="在 Google 地图中打开"
+            target="_blank"
+          >
+            {restaurant?.address}
+          </Link>
+        </StandardLayoutDescription>
       </StandardLayoutHeader>
       <StandardLayoutContent isLoading={isLoading || error}>
         {isEmpty(restaurant?.items) ? (
@@ -101,9 +98,9 @@ const Page = ({ params }: { params: { id: string } }) => {
                 return (
                   <AccordionItem value={category} key={index}>
                     <AccordionTrigger>
-                      <Text size="3" weight="bold">
+                      <p className="text-lg font-bold">
                         {category} ({categoryItems.length})
-                      </Text>
+                      </p>
                     </AccordionTrigger>
                     <AccordionContent className="divide-y divide-gray-200">
                       {categoryItems.map((item) => {
@@ -112,14 +109,14 @@ const Page = ({ params }: { params: { id: string } }) => {
                             key={item.id}
                             className="flex flex-col gap-0.5 py-3"
                           >
-                            <Text size="2" weight="bold">
+                            <p className="font-semibold">
                               {item.name}
                               {item.nameZh && ` (${item.nameZh})`}
-                            </Text>
+                            </p>
                             {item.description && <p>{item.description}</p>}
-                            <Text size="1" color="gray">
+                            <p className="text-gray-500">
                               ${item.price.toString()}
-                            </Text>
+                            </p>
                           </div>
                         );
                       })}
