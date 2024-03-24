@@ -4,8 +4,8 @@ import { cn } from '@/lib/utils';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
-import './weat.css';
+import './styles/globals.css';
+import './styles/weat.css';
 import { ReactNode, Suspense } from 'react';
 
 const inter = Inter({
