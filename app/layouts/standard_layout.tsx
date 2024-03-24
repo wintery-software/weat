@@ -47,7 +47,7 @@ export const StandardLayoutDescription = ({
       <Skeleton className="h-3 w-3/4" />
     </div>
   ) : (
-    <p className="text-xs text-gray-500">{children}</p>
+    <p className="text-sm text-gray-500">{children}</p>
   );
 
 export const StandardLayoutContent = ({
@@ -75,6 +75,19 @@ export const StandardLayoutContent = ({
     ) : (
       children
     )}
+  </div>
+);
+
+export const StandardLayoutContentSection = ({
+  title,
+  children,
+}: {
+  title?: string;
+  children: ReactNode;
+}) => (
+  <div className="py-8">
+    {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
+    {children}
   </div>
 );
 

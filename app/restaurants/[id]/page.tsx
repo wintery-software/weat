@@ -1,51 +1,41 @@
-'use client';
-
 import {
   StandardLayout,
   StandardLayoutBradcrumb,
   StandardLayoutContent,
+  StandardLayoutContentSection,
   StandardLayoutDescription,
   StandardLayoutHeader,
   StandardLayoutTitle,
 } from '@/app/layouts/standard_layout';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 import { getPlaceUrl } from '@/lib/google-maps';
-import { Restaurant, RestaurantItem } from '@prisma/client';
-import { isEmpty } from 'lodash';
+import { getLocaleHourMinute, getLocaleWeekdaysString } from '@/lib/i18n/time';
+import { getWeatApiUrl } from '@/lib/utils';
+import { IconExternalLink, IconNotebook } from '@tabler/icons-react';
 import Link from 'next/link';
-import { toast } from 'sonner';
-import useSWR from 'swr';
 
-interface RestaurantReturnType extends Restaurant {
-  categories: string[];
-  items: Record<string, RestaurantItem[]>;
-}
+const useRestaurant = async (id: string) => {
+  const res = await fetch(getWeatApiUrl(`/restaurants/${id}`));
 
-const useRestaurant = (id: string) => {
-  const { data, error, isLoading } = useSWR<RestaurantReturnType>(
-    `/restaurants/${id}`,
-  );
+  if (!res.ok) {
+    throw new Error('Failed to fetch data');
+  }
 
-  return {
-    restaurant: data,
-    error,
-    isLoading,
-  };
+  return res.json();
 };
 
-const Page = ({ params }: { params: { id: string } }) => {
-  const { restaurant, error, isLoading } = useRestaurant(params.id);
+const businessHours = {
+  '1': ['11:00', '21:00'],
+  '2': ['11:00', '21:00'],
+  '3': ['11:00', '21:00'],
+  '4': ['11:00', '21:00'],
+  '5': ['11:00', '21:00'],
+  '6': ['11:00', '21:00'],
+  '7': ['11:00', '21:00'],
+};
 
-  if (error) {
-    toast.error('餐厅加载失败', {
-      description: error.info.error,
-    });
-  }
+const Page = async ({ params }: { params: { id: string } }) => {
+  const restaurant = await useRestaurant(params.id);
 
   return (
     <StandardLayout>
@@ -54,10 +44,8 @@ const Page = ({ params }: { params: { id: string } }) => {
           parents={[{ name: '餐厅', url: '/restaurants' }]}
           current={restaurant?.name}
         />
-        <StandardLayoutTitle isLoading={isLoading || error}>
-          {restaurant?.name}
-        </StandardLayoutTitle>
-        <StandardLayoutDescription isLoading={isLoading || error}>
+        <StandardLayoutTitle>{restaurant.name}</StandardLayoutTitle>
+        <StandardLayoutDescription>
           <Link
             href={
               restaurant
@@ -68,65 +56,50 @@ const Page = ({ params }: { params: { id: string } }) => {
             title="在 Google 地图中打开"
             target="_blank"
           >
-            {restaurant?.address}
+            {restaurant.address}
           </Link>
         </StandardLayoutDescription>
       </StandardLayoutHeader>
-      <StandardLayoutContent isLoading={isLoading || error}>
-        {isEmpty(restaurant?.items) ? (
-          <p className="text-sm md:text-md py-3">
-            暂无数据。商家可联系
-            <Link
-              href={
-                restaurant
-                  ? `mailto:admin@wintery.io?subject=添加餐厅菜单: ${encodeURIComponent(restaurant.name)}`
-                  : ''
-              }
-              className="text-sky-500 hover:underline"
-            >
-              管理员
-            </Link>
-            添加。
-          </p>
-        ) : (
-          <Accordion
-            type="multiple"
-            // defaultValue={Object.keys(restaurant.items)}
-          >
-            {Object.entries(restaurant.items).map(
-              ([category, categoryItems], index) => {
+      <StandardLayoutContent>
+        <div className="divide-y">
+          <StandardLayoutContentSection title="菜单">
+            <div className="flex gap-1">
+              <Button asChild className="flex gap-1">
+                <Link href={restaurant.url || '#'}>
+                  <IconExternalLink size={16} />
+                  查看商家网站
+                </Link>
+              </Button>
+              <Button variant="outline" asChild className="flex gap-1">
+                <Link href={`/restaurants/${restaurant.id}/menu`}>
+                  <IconNotebook size={16} />
+                  查看菜单
+                </Link>
+              </Button>
+            </div>
+          </StandardLayoutContentSection>
+          <StandardLayoutContentSection title="营业信息">
+            <div className="flex flex-col gap-2">
+              {Object.entries(businessHours).map(([day, hours]) => {
+                const weekday = getLocaleWeekdaysString('zh-CN');
+
                 return (
-                  <AccordionItem value={category} key={index}>
-                    <AccordionTrigger>
-                      <p className="text-lg font-bold">
-                        {category} ({categoryItems.length})
-                      </p>
-                    </AccordionTrigger>
-                    <AccordionContent className="divide-y divide-gray-200">
-                      {categoryItems.map((item) => {
-                        return (
-                          <div
-                            key={item.id}
-                            className="flex flex-col gap-0.5 py-3"
-                          >
-                            <p className="font-semibold">
-                              {item.name}
-                              {item.nameZh && ` (${item.nameZh})`}
-                            </p>
-                            {item.description && <p>{item.description}</p>}
-                            <p className="text-gray-500">
-                              ${item.price.toString()}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </AccordionContent>
-                  </AccordionItem>
+                  <div
+                    key={day}
+                    className="flex justify-between hover:bg-stone-200 transition-all px-1 rounded"
+                  >
+                    <span className="font-bold">
+                      {weekday[day as keyof typeof weekday]}
+                    </span>
+                    <span>
+                      {hours.map((h) => getLocaleHourMinute(h)).join(' - ')}
+                    </span>
+                  </div>
                 );
-              },
-            )}
-          </Accordion>
-        )}
+              })}
+            </div>
+          </StandardLayoutContentSection>
+        </div>
       </StandardLayoutContent>
     </StandardLayout>
   );
