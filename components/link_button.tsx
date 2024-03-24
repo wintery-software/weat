@@ -13,7 +13,10 @@ export default function LinkButton({
 }) {
   return (
     <Button
-      className={cn(className, 'p-0 h-auto justify-start text-xs font-semibold text-sky-600 hover:underline-offset-1')}
+      className={cn(
+        className,
+        'p-0 h-auto justify-start text-xs font-semibold text-link hover:underline-offset-1',
+      )}
       variant="link"
       onClick={onClick}
     >
