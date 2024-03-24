@@ -27,22 +27,22 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: ReactNode;
-}>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(inter.className, 'bg-stone-50 min-h-screen antialiased')}
-      >
-        <SWRProvider>
-          <Suspense>{children}</Suspense>
-          <SpeedInsights />
-          <Toaster closeButton richColors />
-        </SWRProvider>
-      </body>
-    </html>
-  );
-}
+}>) => (
+  <html lang="en" suppressHydrationWarning>
+    <body
+      className={cn(inter.className, 'bg-stone-50 min-h-screen antialiased')}
+    >
+      <SWRProvider>
+        <Suspense>{children}</Suspense>
+        <SpeedInsights />
+        <Toaster closeButton richColors />
+      </SWRProvider>
+    </body>
+  </html>
+);
+
+export default RootLayout;
