@@ -37,7 +37,7 @@ export default function Navbar({
   return (
     <div
       {...props}
-      className={cn(className, sticky ? 'flex sticky top-0 z-40' : '')}
+      className={cn(className, sticky ? 'flex sticky top-0 z-40 bg-white' : '')}
     >
       <Button
         variant="outline"
