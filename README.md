@@ -33,6 +33,12 @@ AWS_REGION=<region>
 AWS_BUCKET=<bucket>
 ```
 
+If you need to load images from the bucket in development, set `NEXT_PUBLIC_AWS_S3_ENABLED_DEV` to `true`:
+
+```shell
+NEXT_PUBLIC_AWS_S3_ENABLED_DEV=true
+```
+
 #### Google Maps API
 
 The Google Maps API is used to get place details, the distance between two locations, etc.
@@ -78,13 +84,3 @@ Previous deployments:
 
 - [Deployments · wintery-software/weat](https://github.com/wintery-software/weat/deployments)
 - [weat – Deployments – Vercel](https://vercel.com/wintery-software/weat/deployments)
-
-## Maintenance
-
-### Cron
-
-To run scripts in `prisma/crons`:
-
-```shell
-tsx prisma/crons/<script>.ts
-```
