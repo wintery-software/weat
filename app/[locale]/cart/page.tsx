@@ -6,7 +6,7 @@ import {
   StandardLayoutDescription,
   StandardLayoutHeader,
   StandardLayoutTitle,
-} from '@/app/layouts/standard_layout';
+} from '@/app/[locale]/layouts/standard_layout';
 import { RestaurantItem } from '@prisma/client';
 import { useState } from 'react';
 

@@ -5,7 +5,7 @@ import {
   StandardLayoutDescription,
   StandardLayoutHeader,
   StandardLayoutTitle,
-} from '@/app/layouts/standard_layout';
+} from '@/app/[locale]/layouts/standard_layout';
 import {
   Accordion,
   AccordionContent,

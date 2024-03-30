@@ -1,4 +1,4 @@
-import { RestaurantType } from '@/app/restaurants/page';
+import { RestaurantType } from '@/app/[locale]/restaurants/page';
 import Rating from '@/components/rating';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Badge } from '@/components/ui/badge';

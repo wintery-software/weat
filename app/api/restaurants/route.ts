@@ -1,4 +1,4 @@
-import { RestaurantSortKey } from '@/app/restaurants/_sort';
+import { RestaurantSortKey } from '@/app/[locale]/restaurants/_sort';
 import { SortOrder } from '@/components/sort_select';
 import {
   calculateDistance,

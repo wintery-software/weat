@@ -8,11 +8,14 @@ import {
   StandardLayoutHeader,
   StandardLayoutNoResult,
   StandardLayoutTitle,
-} from '@/app/layouts/standard_layout';
-import Content from '@/app/restaurants/_content';
-import Filter from '@/app/restaurants/_filter';
-import RollPanel from '@/app/restaurants/_roll_panel';
-import Sort, { RestaurantSortKey, sortFields } from '@/app/restaurants/_sort';
+} from '@/app/[locale]/layouts/standard_layout';
+import Content from '@/app/[locale]/restaurants/_content';
+import Filter from '@/app/[locale]/restaurants/_filter';
+import RollPanel from '@/app/[locale]/restaurants/_roll_panel';
+import Sort, {
+  RestaurantSortKey,
+  sortFields,
+} from '@/app/[locale]/restaurants/_sort';
 import { SortOrder } from '@/components/sort_select';
 import { Button } from '@/components/ui/button';
 import { DistanceReturnType, isGoogleMapsApiEnabled } from '@/lib/google-maps';

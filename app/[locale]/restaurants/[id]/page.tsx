@@ -6,7 +6,7 @@ import {
   StandardLayoutDescription,
   StandardLayoutHeader,
   StandardLayoutTitle,
-} from '@/app/layouts/standard_layout';
+} from '@/app/[locale]/layouts/standard_layout';
 import { Button } from '@/components/ui/button';
 import { getPlaceUrl } from '@/lib/google-maps';
 import { getLocaleHourMinute, getLocaleWeekdaysString } from '@/lib/i18n/time';

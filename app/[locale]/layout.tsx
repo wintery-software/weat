@@ -2,10 +2,11 @@ import SWRProvider from '@/app/providers/swr-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import type { Metadata, Viewport } from 'next';
+import type { Viewport } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { Inter } from 'next/font/google';
-import './styles/globals.css';
-import './styles/weat.css';
+import '../styles/globals.css';
+import '../styles/weat.css';
 import { ReactNode, Suspense } from 'react';
 
 const inter = Inter({
@@ -14,9 +15,21 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-export const metadata: Metadata = {
-  title: '今天吃什么',
-  description: '然后你就知道今天吃什么',
+export interface I18nProps {
+  locale: string;
+}
+
+export const generateMetadata = async ({
+  params: { locale },
+}: {
+  params: I18nProps;
+}) => {
+  const t = await getTranslations({ locale, namespace: 'metadata' });
+
+  return {
+    title: t('title'),
+    description: t('description'),
+  };
 };
 
 // noinspection JSUnusedGlobalSymbols
@@ -29,10 +42,12 @@ export const viewport: Viewport = {
 
 const RootLayout = ({
   children,
+  params: { locale },
 }: Readonly<{
   children: ReactNode;
+  params: I18nProps;
 }>) => (
-  <html lang="en" suppressHydrationWarning>
+  <html lang={locale} suppressHydrationWarning>
     <body
       className={cn(inter.className, 'bg-stone-50 min-h-screen antialiased')}
     >

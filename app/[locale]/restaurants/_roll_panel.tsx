@@ -1,6 +1,6 @@
 'use client';
 
-import { RestaurantType } from '@/app/restaurants/page';
+import { RestaurantType } from '@/app/[locale]/restaurants/page';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,

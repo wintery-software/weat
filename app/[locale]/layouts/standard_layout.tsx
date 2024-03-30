@@ -1,4 +1,4 @@
-import NavbarLayout from '@/app/layouts/navbar_layout';
+import NavbarLayout from '@/app/[locale]/layouts/navbar_layout';
 import AutoBreadcrumb, {
   AutoBreadcrumbProps,
 } from '@/components/auto_breadcrumb';
