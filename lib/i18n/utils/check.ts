@@ -55,5 +55,6 @@ translations.forEach((f) => {
     removed.forEach((key) => console.log(chalk.red(`- ${key}`)));
     console.log('---');
     added.forEach((key) => console.log(chalk.green(`+ ${key}`)));
+    process.exit(1);
   }
 });
