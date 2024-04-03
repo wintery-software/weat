@@ -1,7 +1,21 @@
 {
   "metadata": {
     "description": "An App to help you decide what to eat today",
+    "name": "Weat",
     "title": "Weat - What to Eat Today"
   },
-  "in": {}
+  "navbar": {
+    "links": {
+      "groceries": "Groceries",
+      "marketplace": "Marketplace",
+      "restaurants": "Restaurants"
+    },
+    "search": "Search",
+    "user": {
+      "my_account": "My Account",
+      "settings": "Settings",
+      "sign_out": "Sign Out",
+      "support": "Support"
+    }
+  }
 }

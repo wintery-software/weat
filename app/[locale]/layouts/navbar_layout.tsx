@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 export default function NavbarLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <Navbar sticky />
+      <Navbar />
       <main>{children}</main>
     </>
   );

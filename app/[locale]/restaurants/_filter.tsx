@@ -14,7 +14,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { isGoogleMapsApiEnabled } from '@/lib/google-maps';
 import { getWeatApiUrl } from '@/lib/utils';
 import { RestaurantCategory } from '@prisma/client';
-import { Loader2, MapPinIcon } from 'lucide-react';
+import { IconLoader2, IconMapPin } from '@tabler/icons-react';
 import Link from 'next/link';
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
@@ -140,7 +140,7 @@ export default function Filter({
                 {currentLocation ? (
                   Array.isArray(currentLocation) ? (
                     <>
-                      <MapPinIcon size={12} className="self-center" />
+                      <IconMapPin size={12} className="self-center" />
                       <Link
                         href={`https://www.google.com/maps/@${currentLocation.join(',')},15z`}
                         target="_blank"
@@ -156,7 +156,7 @@ export default function Filter({
                 ) : (
                   <>
                     定位中
-                    <Loader2 className="animate-spin" size={12} />
+                    <IconLoader2 className="animate-spin" size={12} />
                   </>
                 )}
               </p>

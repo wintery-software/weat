@@ -2,7 +2,7 @@
 
 import LinkButton from '@/components/link_button';
 import { cn } from '@/lib/utils';
-import { StarIcon } from 'lucide-react';
+import { IconStar } from '@tabler/icons-react';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 export default function Rating({
@@ -36,7 +36,7 @@ export default function Rating({
             onMouseEnter={() => toggleable && setHover(star)}
             onMouseLeave={() => toggleable && setHover(value)}
           >
-            <StarIcon
+            <IconStar
               className={cn(
                 star <= (hover || value)
                   ? 'text-yellow-600 fill-yellow-500'

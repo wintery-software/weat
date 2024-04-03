@@ -1,91 +1,150 @@
-'use client';
-
-import SearchDialog from '@/components/search_dialog';
+import {
+  LanguageSwitchIcon,
+  LanguageSwitchSelect,
+} from '@/components/navbar/language_switch';
 import { Button } from '@/components/ui/button';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { ScrollArea } from '@/components/ui/scroll-area';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Link, usePathname } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/utils';
-import { IconShoppingCart } from '@tabler/icons-react';
-import { SearchIcon } from 'lucide-react';
+import {
+  IconGhost2,
+  IconMenu2,
+  IconSearch,
+  IconUserCircle,
+} from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
+const links = ['restaurants', 'groceries', 'marketplace'];
 
-const d = Array.from({ length: 10 }, (_, i) => ({
-  id: i,
-  name: `Item ${i}`,
-  price: i + 0.99,
-  image: 'https://via.placeholder.com/36',
-}));
-
-export default function Navbar({
-  className,
-  sticky,
-  ...props
-}: {
-  className?: string;
-  sticky?: boolean;
-}) {
-  const [open, setOpen] = useState<boolean>(false);
-  const [cartItems, setCartItems] = useState<any[]>(d);
+const Navbar = () => {
+  const t = useTranslations();
+  const pathname = usePathname();
 
   return (
-    <div
-      {...props}
-      className={cn(className, sticky ? 'flex sticky top-0 z-40 bg-white' : '')}
-    >
-      <Button
-        variant="outline"
-        className="flex-1 justify-start font-normal border-none"
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        <SearchIcon className="mr-2" size={14} />
-        搜索...
-      </Button>
-      <SearchDialog open={open} onOpenChange={setOpen} />
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="ghost" asChild>
-            <p className="flex gap-1 items-center">
-              <IconShoppingCart size={16} />
-              {cartItems.length}
-            </p>
+    <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+      <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:shrink-0 md:items-center md:gap-5 md:text-sm lg:gap-6">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-lg font-semibold md:text-base"
+        >
+          <IconGhost2 size={24} />
+          <span>{t('metadata.name')}</span>
+        </Link>
+        {links.map((link, index) => {
+          const href = `/${link}`;
+
+          return (
+            <Link
+              key={index}
+              href={href}
+              className={cn(
+                'transition-colors hover:text-foreground',
+                pathname === href ? 'text-foreground' : 'text-muted-foreground',
+              )}
+            >
+              {/* @ts-ignore */}
+              {t(`navbar.links.${link}`)}
+            </Link>
+          );
+        })}
+      </nav>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="outline" size="icon" className="shrink-0 md:hidden">
+            <IconMenu2 size={20} />
           </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-80">
-          <div className="flex flex-col gap-4">
-            <ScrollArea className="w-full h-60">
-              <div className="flex flex-col gap-1">
-                {cartItems.map((item, index) => (
-                  <div key={index} className="flex gap-2 h-9">
-                    <Image
-                      src={item.image}
-                      className="w-9 h-9 object-cover rounded-md"
-                      alt={item.name}
-                      width={36}
-                      height={36}
-                    />
-                    <div className="flex flex-col">
-                      <p className="text-sm font-bold">{item.name}</p>
-                      <p className="text-xs text-gray-500">${item.price}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-            <Button asChild>
-              <Link href="/cart">打开购物车</Link>
-            </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="flex flex-col">
+          <nav className="grid gap-6 text-lg font-medium">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-lg font-semibold"
+            >
+              <IconGhost2 size={24} />
+              <span>{t('metadata.name')}</span>
+            </Link>
+            {links.map((link) => {
+              const href = `/${link}`;
+
+              return (
+                <Link
+                  key={link}
+                  href={href}
+                  className={cn(
+                    'hover:text-foreground',
+                    pathname === href ? '' : 'text-muted-foreground',
+                  )}
+                >
+                  {/* @ts-ignore */}
+                  {t(`navbar.links.${link}`)}
+                </Link>
+              );
+            })}
+          </nav>
+          <SheetFooter className="mt-auto">
+            <LanguageSwitchSelect />
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+        <form className="ml-auto flex-1 sm:flex-initial">
+          <div className="relative">
+            <IconSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder={t('navbar.search')}
+              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
+            />
           </div>
-        </PopoverContent>
-      </Popover>
-    </div>
+        </form>
+        <div className="hidden md:flex">
+          <LanguageSwitchIcon />
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <IconUserCircle size={20} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>{`{user.email}`}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild className="hover:cursor-pointer">
+              <Link href="/settings">{t('navbar.user.settings')}</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="hover:cursor-pointer">
+              <Link href="/support">{t('navbar.user.support')}</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              asChild
+              className="hover:cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                alert('Not implemented');
+              }}
+            >
+              <Link href="/logout">{t('navbar.user.sign_out')}</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </header>
   );
-}
+};
+
+export default Navbar;

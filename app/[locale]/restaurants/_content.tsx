@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { getS3PlacePhotoUrl } from '@/lib/aws-s3';
 import { getPlaceUrl } from '@/lib/google-maps';
-import { ClockIcon, RouteIcon } from 'lucide-react';
+import { IconClock, IconRoute } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -92,11 +92,11 @@ const Content = ({ restaurants }: { restaurants: RestaurantType[] }) => (
                 {r.distance && (
                   <>
                     <span className="flex gap-1 items-center">
-                      <RouteIcon size={12} />
+                      <IconRoute size={12} />
                       {r.distance.distance.toFixed(1)} mi
                     </span>
                     <span className="flex gap-1 items-center">
-                      <ClockIcon size={12} />
+                      <IconClock size={12} />
                       {r.distance.duration.toFixed(0)} min
                     </span>
                   </>

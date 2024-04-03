@@ -26,11 +26,7 @@
       "@/*": [
         "./*"
       ]
-    },
-    "typeRoots": [
-      "./node_modules",
-      "./node_modules/@types"
-    ]
+    }
   },
   "include": [
     "next-env.d.ts",

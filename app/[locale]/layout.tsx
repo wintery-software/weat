@@ -3,6 +3,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Viewport } from 'next';
+import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { Inter } from 'next/font/google';
 import '../styles/globals.css';
@@ -24,11 +25,11 @@ export const generateMetadata = async ({
 }: {
   params: I18nProps;
 }) => {
-  const t = await getTranslations({ locale, namespace: 'metadata' });
+  const t = await getTranslations({ locale });
 
   return {
-    title: t('title'),
-    description: t('description'),
+    title: t('metadata.title'),
+    description: t('metadata.description'),
   };
 };
 
@@ -46,18 +47,26 @@ const RootLayout = ({
 }: Readonly<{
   children: ReactNode;
   params: I18nProps;
-}>) => (
-  <html lang={locale} suppressHydrationWarning>
-    <body
-      className={cn(inter.className, 'bg-stone-50 min-h-screen antialiased')}
-    >
-      <SWRProvider>
-        <Suspense>{children}</Suspense>
+}>) => {
+  const messages = useMessages();
+
+  return (
+    <html lang={locale} suppressHydrationWarning>
+      <body
+        className={cn(inter.className, 'bg-stone-50 min-h-screen antialiased')}
+      >
+        <Suspense>
+          <SWRProvider>
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              {children}
+            </NextIntlClientProvider>
+          </SWRProvider>
+        </Suspense>
         <SpeedInsights />
         <Toaster closeButton richColors />
-      </SWRProvider>
-    </body>
-  </html>
-);
+      </body>
+    </html>
+  );
+};
 
 export default RootLayout;
