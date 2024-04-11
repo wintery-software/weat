@@ -30,7 +30,11 @@ import {
 } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 
-const links = ['restaurants', 'groceries', 'marketplace'];
+const links: (keyof IntlMessages['components']['navbar']['links'])[] = [
+  'restaurants',
+  'groceries',
+  'marketplace',
+];
 
 const Navbar = () => {
   const t = useTranslations();
@@ -61,8 +65,7 @@ const Navbar = () => {
                     : 'text-muted-foreground',
                 )}
               >
-                {/* @ts-ignore */}
-                {t(`navbar.links.${link}`)}
+                {t(`components.navbar.links.${link}`)}
               </Link>
             );
           })}
@@ -98,8 +101,7 @@ const Navbar = () => {
                       pathname === href ? '' : 'text-muted-foreground',
                     )}
                   >
-                    {/* @ts-ignore */}
-                    {t(`navbar.links.${link}`)}
+                    {t(`components.navbar.links.${link}`)}
                   </Link>
                 );
               })}
