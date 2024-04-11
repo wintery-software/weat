@@ -25,7 +25,6 @@ const nextConfig = {
     },
   ],
   images: {
-    domains: ['https://wintery-software-weat.s3.amazonaws.com'],
     remotePatterns: [
       {
         protocol: 'https',
