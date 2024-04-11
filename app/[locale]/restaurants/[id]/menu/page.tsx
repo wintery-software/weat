@@ -1,10 +1,8 @@
+import { I18nProps } from '@/app/[locale]/layout';
 import {
   StandardLayout,
   StandardLayoutBradcrumb,
   StandardLayoutContent,
-  StandardLayoutDescription,
-  StandardLayoutHeader,
-  StandardLayoutTitle,
 } from '@/app/[locale]/layouts/standard_layout';
 import {
   Accordion,
@@ -12,57 +10,61 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { getPlaceUrl } from '@/lib/google-maps';
-import { getWeatApiUrl } from '@/lib/utils';
-import { Restaurant, RestaurantItem } from '@prisma/client';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getRestaurant, getRestaurantItems } from '@/lib/data';
+import { generateMetadataTitle } from '@/lib/utils';
 import { isEmpty } from 'lodash';
-import { LoremIpsum } from 'lorem-ipsum';
+import { Metadata } from 'next';
+import { useLocale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 
-interface RestaurantReturnType extends Restaurant {
-  categories: string[];
-  items: Record<string, RestaurantItem[]>;
-}
+export const generateMetadata = async ({
+  params: { id, locale },
+}: {
+  params: { id: string } & I18nProps;
+}) => {
+  const restaurant = await getRestaurant(id, locale);
+  const t = await getTranslations({ locale });
 
-const useRestaurant = async (id: string): Promise<RestaurantReturnType> => {
-  const res = await fetch(getWeatApiUrl(`/restaurants/${id}`));
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch data');
-  }
-
-  return res.json();
+  return {
+    title: generateMetadataTitle(
+      restaurant.name,
+      t('pages.restaurant.menu.metadata.title'),
+    ),
+  } as Metadata;
 };
 
 const Page = async ({ params }: { params: { id: string } }) => {
-  const restaurant = await useRestaurant(params.id);
+  const locale = useLocale();
+  const restaurant = await getRestaurant(params.id, locale);
+  const items = await getRestaurantItems(params.id, locale);
+  const categorizedItems = items.reduce(
+    (acc, item) => {
+      if (!acc[item.category.name]) {
+        acc[item.category.name] = [];
+      }
+      acc[item.category.name].push(item);
+      return acc;
+    },
+    {} as Record<string, typeof items>,
+  );
+  const t = await getTranslations();
 
   return (
     <StandardLayout>
-      <StandardLayoutHeader>
-        <StandardLayoutBradcrumb
-          parents={[
-            { name: '餐厅', url: '/restaurants' },
-            { name: restaurant.name, url: `/restaurants/${restaurant.id}` },
-          ]}
-          current="菜单"
-        />
-        <StandardLayoutTitle>{restaurant.name}</StandardLayoutTitle>
-        <StandardLayoutDescription>
-          <Link
-            href={getPlaceUrl(restaurant.address, restaurant.placeId)}
-            className="hover:underline"
-            title="在 Google 地图中打开"
-            target="_blank"
-          >
-            {restaurant.address}
-          </Link>
-        </StandardLayoutDescription>
-      </StandardLayoutHeader>
+      <StandardLayoutBradcrumb
+        items={[
+          { name: t('pages.restaurants.metadata.title'), url: '/restaurants' },
+          { name: restaurant.name, url: `/restaurants/${restaurant.id}` },
+          { name: t('pages.restaurant.menu.metadata.title') },
+        ]}
+      />
       <StandardLayoutContent>
-        {isEmpty(restaurant.items) ? (
-          <p className="text-sm md:text-md py-3">
-            暂无数据。商家可联系
+        {isEmpty(items) ? (
+          <p className="text-md py-3">
+            没有数据。商家可联系
             <Link
               href={`mailto:admin@wintery.io?subject=添加餐厅菜单: ${encodeURIComponent(restaurant.name)}`}
               className="text-sky-500 hover:underline"
@@ -72,59 +74,70 @@ const Page = async ({ params }: { params: { id: string } }) => {
             添加。
           </p>
         ) : (
-          <>
-            <p className="text-gray-500 text-xs mb-4">
-              菜单内容有误？
-              <Link
-                href="mailto:support@wintery.io"
-                className="text-link hover:underline"
-              >
-                提交更改
-              </Link>
-              。
-            </p>
-            <Accordion
-              type="multiple"
-              defaultValue={Object.keys(restaurant.items)}
-            >
-              {Object.entries(restaurant.items).map(
-                ([category, categoryItems], index) => {
-                  return (
-                    <AccordionItem value={category} key={index}>
-                      <AccordionTrigger>
-                        <p className="text-lg font-bold">
-                          {category} ({categoryItems.length})
-                        </p>
-                      </AccordionTrigger>
-                      <AccordionContent className="divide-y divide-gray-200">
-                        {categoryItems.map((item) => {
-                          return (
-                            <div key={item.id} className="flex py-3">
-                              <div className="flex-1 flex flex-col gap-1 min-w-0 pr-8">
-                                <p className="font-bold">
-                                  {item.name}
-                                  {item.nameZh && ` (${item.nameZh})`}
-                                </p>
-                                <p className="text-xs text-gray-500 break-words">
-                                  {item.description ||
-                                    new LoremIpsum().generateSentences(1)}
-                                </p>
-                              </div>
-                              <div className="flex-shrink-0">
-                                <p className="font-bold">
-                                  ${item.price.toString()}
-                                </p>
-                              </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('pages.restaurant.menu.metadata.title')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col gap-4">
+                <Accordion
+                  type="multiple"
+                  defaultValue={Object.keys(categorizedItems)}
+                >
+                  {Object.entries(categorizedItems).map(
+                    ([category, categoryItems], index) => {
+                      return (
+                        <AccordionItem value={category} key={index}>
+                          <AccordionTrigger>
+                            <div className="flex items-center gap-2">
+                              <p className="font-bold"> {category}</p>
+                              <Badge variant="outline">
+                                {categoryItems.length}
+                              </Badge>
                             </div>
-                          );
-                        })}
-                      </AccordionContent>
-                    </AccordionItem>
-                  );
-                },
-              )}
-            </Accordion>
-          </>
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            {categoryItems.map((item) => (
+                              <div
+                                key={item.id}
+                                className="flex p-3 rounded-md hover:bg-stone-100 transition-all"
+                              >
+                                <div className="flex-1 flex flex-col gap-1 min-w-0 pr-8">
+                                  <p className="font-semibold">{item.name}</p>
+                                  {item.description && (
+                                    <p className="text-xs text-gray-500 break-words">
+                                      {item.description}
+                                    </p>
+                                  )}
+                                </div>
+                                <div className="flex-shrink-0">
+                                  <p className="text-sm">
+                                    ${item.price.toString()}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </AccordionContent>
+                        </AccordionItem>
+                      );
+                    },
+                  )}
+                </Accordion>
+                <p className="text-gray-500 text-xs">
+                  {t('pages.restaurant.menu.menuIncorrect')}
+                  {t('lang.punctuation.questionMark')}
+                  {t('lang.sentenceSeparator')}
+                  <Link
+                    href="mailto:support@wintery.io"
+                    className="text-link hover:underline"
+                  >
+                    {t('pages.restaurant.menu.submitCorrections')}
+                  </Link>
+                  {t('lang.punctuation.period')}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         )}
       </StandardLayoutContent>
     </StandardLayout>

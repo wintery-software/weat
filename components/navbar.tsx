@@ -45,7 +45,7 @@ const Navbar = () => {
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
           >
             <IconGhost2 size={24} />
-            <span>{t('metadata.name')}</span>
+            <span>{t('pages.home.metadata.name')}</span>
           </Link>
           {links.map((link, index) => {
             const href = `/${link}`;
@@ -84,7 +84,7 @@ const Navbar = () => {
                 className="flex items-center gap-2 text-lg font-semibold"
               >
                 <IconGhost2 size={24} />
-                <span>{t('metadata.name')}</span>
+                <span>{t('pages.home.metadata.name')}</span>
               </Link>
               {links.map((link) => {
                 const href = `/${link}`;
@@ -115,7 +115,7 @@ const Navbar = () => {
               <IconSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder={t('navbar.search')}
+                placeholder={t('components.navbar.search')}
                 className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
               />
             </div>
@@ -133,10 +133,14 @@ const Navbar = () => {
               <DropdownMenuLabel>{`{user.email}`}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild className="hover:cursor-pointer">
-                <Link href="/settings">{t('navbar.user.settings')}</Link>
+                <Link href="/settings">
+                  {t('components.navbar.user.settings')}
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild className="hover:cursor-pointer">
-                <Link href="/support">{t('navbar.user.support')}</Link>
+                <Link href="/support">
+                  {t('components.navbar.user.support')}
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -147,7 +151,9 @@ const Navbar = () => {
                   alert('Not implemented');
                 }}
               >
-                <Link href="/logout">{t('navbar.user.sign_out')}</Link>
+                <Link href="/logout">
+                  {t('components.navbar.user.signOut')}
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

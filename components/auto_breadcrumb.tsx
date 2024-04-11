@@ -1,6 +1,6 @@
-import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
-import { Fragment, ReactNode } from 'react';
+import { Link } from '@/lib/i18n/navigation';
+import { useTranslations } from 'next-intl';
+import { Fragment } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,48 +12,44 @@ import {
 
 export interface AutoBreadcrumbProps {
   className?: string;
-  parents?: { name: string; url: string }[];
-  current: ReactNode;
-  prependHome?: boolean;
+  base?: keyof IntlMessages['components']['breadcrumb'];
+  items: { name: string; url?: string }[];
 }
 
-export default function AutoBreadcrumb({
+const AutoBreadcrumb = ({
   className,
-  parents = [],
-  current,
-  prependHome = true,
-}: AutoBreadcrumbProps) {
-  if (prependHome && parents[0]?.url !== '/') {
-    parents.unshift({ name: '首页', url: '/' });
-  }
-
-  const fontSize = 'text-sm';
+  base = 'home',
+  items = [],
+}: AutoBreadcrumbProps) => {
+  const t = useTranslations();
+  items.unshift({ name: t(`components.breadcrumb.${base}`), url: '/' });
+  const current = items.pop()!;
 
   return (
     <Breadcrumb className={className}>
-      <BreadcrumbList className="flex-nowrap">
-        {parents.map((item, index) => (
-          <Fragment key={index}>
-            <BreadcrumbItem className="flex-shrink-0">
-              <BreadcrumbLink className={fontSize} href={item.url}>
-                {item.name}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-          </Fragment>
-        ))}
-        <BreadcrumbItem className="overflow-hidden">
-          <BreadcrumbPage className={cn(fontSize, 'truncate')}>
-            {current ? (
-              current
-            ) : (
-              <div className="flex">
-                <Skeleton className="h-5 w-24" />
-              </div>
-            )}
-          </BreadcrumbPage>
+      <BreadcrumbList>
+        {items.map((item, index) => {
+          if (!item.url) {
+            throw new Error(`Breadcrumb item "${item.name}" is missing URL`);
+          }
+
+          return (
+            <Fragment key={index}>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href={item.url!}>{item.name}</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+            </Fragment>
+          );
+        })}
+        <BreadcrumbItem>
+          <BreadcrumbPage>{current.name}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
   );
-}
+};
+
+export default AutoBreadcrumb;

@@ -1,27 +1,17 @@
-'use client';
-
 import {
   StandardLayout,
-  StandardLayoutBradcrumb,
-  StandardLayoutDescription,
   StandardLayoutHeader,
-  StandardLayoutTitle,
 } from '@/app/[locale]/layouts/standard_layout';
-import { RestaurantItem } from '@prisma/client';
-import { useState } from 'react';
+import { getTranslations } from 'next-intl/server';
 
-const Page = () => {
-  const [items, setItems] = useState<RestaurantItem[]>([]);
+const Page = async () => {
+  const t = await getTranslations();
 
   return (
     <StandardLayout>
-      <StandardLayoutHeader>
-        <StandardLayoutBradcrumb current="购物车" />
-        <StandardLayoutTitle>购物车</StandardLayoutTitle>
-        <StandardLayoutDescription>
-          {items.length} 件商品
-        </StandardLayoutDescription>
-      </StandardLayoutHeader>
+      <StandardLayoutHeader
+        title={t('pages.cart.metadata.title')}
+      ></StandardLayoutHeader>
     </StandardLayout>
   );
 };

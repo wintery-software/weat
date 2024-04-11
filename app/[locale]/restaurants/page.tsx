@@ -1,198 +1,183 @@
-'use client';
-
+import { I18nProps } from '@/app/[locale]/layout';
 import {
   StandardLayout,
   StandardLayoutBradcrumb,
   StandardLayoutContent,
-  StandardLayoutDescription,
-  StandardLayoutHeader,
-  StandardLayoutNoResult,
-  StandardLayoutTitle,
 } from '@/app/[locale]/layouts/standard_layout';
-import Content from '@/app/[locale]/restaurants/_content';
-import Filter from '@/app/[locale]/restaurants/_filter';
 import RollPanel from '@/app/[locale]/restaurants/_roll_panel';
-import Sort, {
-  RestaurantSortKey,
-  sortFields,
-} from '@/app/[locale]/restaurants/_sort';
-import { SortOrder } from '@/components/sort_select';
 import { Button } from '@/components/ui/button';
-import { DistanceReturnType, isGoogleMapsApiEnabled } from '@/lib/google-maps';
-import { Restaurant } from '@prisma/client';
-import { IconFilter } from '@tabler/icons-react';
-import { isEmpty } from 'lodash';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import useSWR from 'swr';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { getS3PlacePhotoUrl } from '@/lib/aws-s3';
+import { getRestaurants } from '@/lib/data';
+import { Link } from '@/lib/i18n/navigation';
+import { generateMetadataTitle } from '@/lib/utils';
+import { Metadata } from 'next';
+import { useLocale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+import Image from 'next/image';
 
-const generateSearchParams = (
-  categories: string[],
-  prices: string[],
-  rating: number,
-  distance: number,
-  sortBy: [RestaurantSortKey, SortOrder],
-): URLSearchParams => {
-  const params = new URLSearchParams();
+export const generateMetadata = async ({
+  params: { locale },
+}: {
+  params: I18nProps;
+}) => {
+  const t = await getTranslations({ locale });
 
-  // Filter
-  categories.forEach((category) => params.append('category', category));
-  prices.forEach((price) => params.append('price', price));
-  rating && params.append('rating', rating.toString());
-  distance && params.append('distance', distance.toString());
-
-  // Sort
-  const defaultSort = Object.entries(sortFields)[0];
-  sortBy[0] !== defaultSort[0] && params.append('sort', sortBy[0]);
-  sortBy[1] !== defaultSort[1].order[0] && params.append('order', sortBy[1]);
-
-  return params;
+  return {
+    title: generateMetadataTitle(t('pages.restaurants.metadata.title')),
+    description: t('pages.restaurants.metadata.description'),
+  } as Metadata;
 };
 
-const useRestaurants = (params: URLSearchParams) => {
-  return useSWR(`/restaurants?${params}`, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-    refreshInterval: 0,
-  });
-};
-
-export interface RestaurantType extends Restaurant {
-  categories: string[];
-  distance: DistanceReturnType | null;
+interface PageProps {
+  searchParams?: SearchParams;
 }
 
-export default function Restaurants() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { data, error, isLoading } = useRestaurants(searchParams);
-
-  const [categories, setCategories] = useState<string[]>(
-    searchParams.getAll('category').filter(Boolean),
+const Page = async ({ searchParams }: PageProps) => {
+  const locale = useLocale();
+  const t = await getTranslations();
+  const breadcrumbItems = [
+    {
+      name: t('pages.restaurants.metadata.title'),
+    },
+  ];
+  const result = await getRestaurants(
+    locale,
+    new URLSearchParams(searchParams),
   );
-  const [prices, setPrices] = useState<string[]>(
-    searchParams.getAll('price').filter(Boolean),
-  );
-  const [rating, setRating] = useState<number>(
-    Number(searchParams.get('rating')) || 0,
-  );
-  const [distance, setDistance] = useState<number>(
-    Number(searchParams.getAll('distance')) || 0,
-  );
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  // Prevent fetching too much when dragging the slider
-  const [updatingDistance, setUpdatingDistance] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<
-    [number, number] | string | null
-  >(null);
-  const [sortBy, setSortBy] = useState<[RestaurantSortKey, SortOrder]>([
-    'relevance',
-    'desc',
-  ]);
-
-  useEffect(() => {
-    // Prevent fetching too much when dragging the slider
-    if (updatingDistance) return;
-
-    const params = generateSearchParams(
-      categories,
-      prices,
-      rating,
-      distance,
-      sortBy,
-    );
-    // Update URL without coordinates
-    router.push(`/restaurants?${params}`, { scroll: false });
-    // Only pass coordinates to server
-    if (Array.isArray(currentLocation)) {
-      params.append('origin', currentLocation.join(','));
-    }
-  }, [
-    categories,
-    currentLocation,
-    distance,
-    prices,
-    rating,
-    router,
-    sortBy,
-    updatingDistance,
-  ]);
-
-  // Only fetch current location once, on mount
-  useEffect(() => {
-    if (!isGoogleMapsApiEnabled()) {
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setCurrentLocation([latitude, longitude]);
-      },
-      (error) => {
-        setCurrentLocation(`无法定位: ${error.message}`);
-        throw error;
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      },
-    );
-  }, []);
+  const restaurants = result.data;
 
   return (
     <StandardLayout>
-      <StandardLayoutHeader>
-        <StandardLayoutBradcrumb current="餐厅" />
-        <StandardLayoutTitle>RTP 餐厅</StandardLayoutTitle>
-        <StandardLayoutDescription>test</StandardLayoutDescription>
-      </StandardLayoutHeader>
-      <div className="md:container md:grid md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <div className="col-span-1 md:mt-4">
-          <Filter
-            className="md:bg-white md:p-4 md:rounded-md md:shadow-md"
-            selectedCategories={categories}
-            setSelectedCategories={setCategories}
-            selectedPrices={prices}
-            setSelectedPrices={setPrices}
-            selectedRating={rating}
-            setSelectedRating={setRating}
-            selectedDistance={distance}
-            setSelectedDistance={setDistance}
-            setUpdatingDistance={setUpdatingDistance}
-            currentLocation={currentLocation}
-            sidebarOpen={sidebarOpen}
-            setSidebarOpen={setSidebarOpen}
-          />
-        </div>
-        <div className="md:col-span-2 lg:col-span-4">
-          <div className="flex gap-1 md:justify-end mx-8 mt-4">
-            <RollPanel items={data} />
-            <Button
-              className="flex flex-shrink-0 md:hidden"
-              variant="outline"
-              size="icon"
-              onClick={() => {
-                setSidebarOpen(true);
-              }}
-            >
-              <IconFilter size={16} />
-            </Button>
-            <Sort current={sortBy} setCurrent={setSortBy} />
+      <StandardLayoutBradcrumb items={breadcrumbItems} />
+      <StandardLayoutContent>
+        <div className="flex flex-col gap-2 md:gap-4">
+          <div className="grid gap-4 grid-cols-2 lg:grid-cols-5">
+            <Card className="col-span-full md:col-span-1 lg:col-span-2">
+              <CardHeader>
+                <CardTitle>
+                  {t('pages.restaurants.whatToEatToday.title')}
+                </CardTitle>
+                <CardDescription>
+                  {t('pages.restaurants.whatToEatToday.description')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RollPanel items={restaurants}>
+                  <Button>
+                    {t('pages.restaurants.whatToEatToday.launch')}
+                  </Button>
+                </RollPanel>
+              </CardContent>
+            </Card>
           </div>
-          <StandardLayoutContent
-            isLoading={isLoading}
-            skeletonClassName="h-[102px]"
-          >
-            {isEmpty(data) ? (
-              <StandardLayoutNoResult />
-            ) : (
-              <Content restaurants={data} />
-            )}
-          </StandardLayoutContent>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                {t('pages.restaurants.trendingRestaurants.title')}
+                <Button variant="link" className="text-link p-0 h-auto" asChild>
+                  <Link href="/restaurants/trending">
+                    {t('pages.restaurants.trendingFood.viewMore')}
+                  </Link>
+                </Button>
+              </CardTitle>
+              <CardDescription>
+                {t('pages.restaurants.trendingRestaurants.description')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="w-full pb-4">
+                <div className="flex gap-4">
+                  {restaurants.slice(0, 10).map((r, index) => (
+                    <figure
+                      key={index}
+                      className="flex flex-col shrink-0 gap-1 w-40 md:w-60 lg:w-80"
+                    >
+                      <Link href={`/restaurants/${r.id}`}>
+                        <Image
+                          src={getS3PlacePhotoUrl(
+                            r.google_place_id,
+                            r.images[0],
+                            '1024x768',
+                          )}
+                          alt={r.name}
+                          width={320}
+                          height={240}
+                          sizes="100vw"
+                          className="aspect-auto object-cover rounded"
+                        />
+                      </Link>
+                      <figcaption className="text-sm font-medium hover:underline truncate">
+                        <Link key={index} href={`/restaurants/${r.id}`}>
+                          {r.name}
+                        </Link>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                {t('pages.restaurants.trendingFood.title')}
+                <Button variant="link" className="text-link p-0 h-auto" asChild>
+                  <Link href="/restaurants/items/trending">
+                    {t('pages.restaurants.trendingFood.viewMore')}
+                  </Link>
+                </Button>
+              </CardTitle>
+              <CardDescription>
+                {t('pages.restaurants.trendingFood.description')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="w-full pb-4">
+                <div className="flex gap-4">
+                  {restaurants.slice(0, 10).map((r, index) => (
+                    <figure
+                      key={index}
+                      className="flex flex-col shrink-0 gap-1 w-40 md:w-60 lg:w-80"
+                    >
+                      <Link href={`/restaurants/${r.id}`}>
+                        <Image
+                          src={getS3PlacePhotoUrl(
+                            r.google_place_id,
+                            r.images[0],
+                            '400x300',
+                          )}
+                          alt={r.name}
+                          width={320}
+                          height={240}
+                          sizes="100vw"
+                          className="aspect-auto object-cover rounded"
+                        />
+                      </Link>
+                      <figcaption className="text-sm font-medium hover:underline truncate">
+                        <Link key={index} href={`/restaurants/${r.id}`}>
+                          {r.name}
+                        </Link>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+            </CardContent>
+          </Card>
         </div>
-      </div>
+      </StandardLayoutContent>
     </StandardLayout>
   );
-}
+};
+
+export default Page;

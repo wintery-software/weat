@@ -1,21 +1,94 @@
 {
-  "metadata": {
-    "description": "An App to help you decide what to eat today",
-    "name": "Weat",
-    "title": "Weat - What to Eat Today"
-  },
-  "navbar": {
-    "links": {
-      "groceries": "Groceries",
-      "marketplace": "Marketplace",
-      "restaurants": "Restaurants"
+  "components": {
+    "breadcrumb": {
+      "dashboard": "Dashboard",
+      "home": "Home"
     },
-    "search": "Search",
-    "user": {
-      "my_account": "My Account",
-      "settings": "Settings",
-      "sign_out": "Sign Out",
-      "support": "Support"
+    "navbar": {
+      "links": {
+        "groceries": "Groceries",
+        "marketplace": "Marketplace",
+        "restaurants": "Restaurants"
+      },
+      "search": "Search",
+      "user": {
+        "myAccount": "My Account",
+        "settings": "Settings",
+        "signOut": "Sign Out",
+        "support": "Support"
+      }
+    },
+    "pagination": {
+      "next": "Next",
+      "previous": "Previous"
+    }
+  },
+  "lang": {
+    "punctuation": {
+      "colon": ":",
+      "comma": ",",
+      "exclamationMark": "!",
+      "period": ".",
+      "questionMark": "?"
+    },
+    "sentenceSeparator": " "
+  },
+  "messages": {
+    "noData": "No data"
+  },
+  "pages": {
+    "cart": {
+      "metadata": {
+        "title": "Cart"
+      }
+    },
+    "home": {
+      "metadata": {
+        "description": "An App to help you decide what to eat today",
+        "name": "Weat"
+      }
+    },
+    "restaurant": {
+      "businessHours": "Business Hours",
+      "location": {
+        "distance": "Distance",
+        "title": "Location"
+      },
+      "menu": {
+        "addToCart": "Add to Cart",
+        "menuIncorrect": "Menu incorrect",
+        "metadata": {
+          "title": "Menu"
+        },
+        "popularDishes": "Popular Dishes",
+        "submitCorrections": "Submit corrections",
+        "viewMore": "View More"
+      },
+      "status": {
+        "closed": "Closed",
+        "open": "Open"
+      }
+    },
+    "restaurants": {
+      "metadata": {
+        "description": "Find restaurants near you",
+        "title": "Restaurants"
+      },
+      "trendingFood": {
+        "description": "Find the most popular food near you",
+        "title": "Trending Food",
+        "viewMore": "View More"
+      },
+      "trendingRestaurants": {
+        "description": "Find the best restaurants near you",
+        "title": "Trending Restaurants",
+        "viewMore": "View More"
+      },
+      "whatToEatToday": {
+        "description": "Let us help you decide what to eat today",
+        "launch": "Launch!",
+        "title": "What to eat today?"
+      }
     }
   }
 }

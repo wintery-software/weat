@@ -1,21 +1,94 @@
 {
-  "metadata": {
-    "description": "一个帮你决定今天吃什么的 App",
-    "name": "Weat",
-    "title": "Weat - 今天吃什么"
-  },
-  "navbar": {
-    "links": {
-      "groceries": "买菜",
-      "marketplace": "二手",
-      "restaurants": "餐馆"
+  "components": {
+    "breadcrumb": {
+      "dashboard": "仪表盘",
+      "home": "首页"
     },
-    "search": "搜索",
-    "user": {
-      "my_account": "我的账户",
-      "settings": "设置",
-      "sign_out": "登出",
-      "support": "支持"
+    "navbar": {
+      "links": {
+        "groceries": "买菜",
+        "marketplace": "二手",
+        "restaurants": "餐馆"
+      },
+      "search": "搜索",
+      "user": {
+        "myAccount": "我的账户",
+        "settings": "设置",
+        "signOut": "登出",
+        "support": "支持"
+      }
+    },
+    "pagination": {
+      "next": "下一页",
+      "previous": "上一页"
+    }
+  },
+  "lang": {
+    "punctuation": {
+      "colon": "：",
+      "comma": "，",
+      "exclamationMark": "！",
+      "period": "。",
+      "questionMark": "？"
+    },
+    "sentenceSeparator": ""
+  },
+  "messages": {
+    "noData": "没有数据"
+  },
+  "pages": {
+    "cart": {
+      "metadata": {
+        "title": "购物车"
+      }
+    },
+    "home": {
+      "metadata": {
+        "description": "一个帮你决定今天吃什么的 App",
+        "name": "Weat"
+      }
+    },
+    "restaurant": {
+      "businessHours": "营业时间",
+      "location": {
+        "distance": "距离",
+        "title": "位置"
+      },
+      "menu": {
+        "addToCart": "加入购物车",
+        "menuIncorrect": "菜单内容有误",
+        "metadata": {
+          "title": "菜单"
+        },
+        "popularDishes": "热门菜品",
+        "submitCorrections": "提交更正",
+        "viewMore": "查看更多"
+      },
+      "status": {
+        "closed": "歇业",
+        "open": "营业"
+      }
+    },
+    "restaurants": {
+      "metadata": {
+        "description": "发现附近的餐馆",
+        "title": "餐馆"
+      },
+      "trendingFood": {
+        "description": "发现附近最受欢迎的食物",
+        "title": "热门食物",
+        "viewMore": "查看更多"
+      },
+      "trendingRestaurants": {
+        "description": "发现附近最受欢迎的餐馆",
+        "title": "热门餐馆",
+        "viewMore": "查看更多"
+      },
+      "whatToEatToday": {
+        "description": "让我们帮你决定今天吃什么",
+        "launch": "启动!",
+        "title": "今天吃什么?"
+      }
     }
   }
 }

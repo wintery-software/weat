@@ -1,6 +1,5 @@
 'use client';
 
-import { RestaurantType } from '@/app/[locale]/restaurants/page';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -19,14 +18,20 @@ import {
 } from '@/components/ui/drawer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getS3PlacePhotoUrl } from '@/lib/aws-s3';
-import { IconCoin, IconLoader2, IconSoup } from '@tabler/icons-react';
-import { isEmpty } from 'lodash';
-import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { Link } from '@/lib/i18n/navigation';
+import { IconCoin, IconLoader2 } from '@tabler/icons-react';
+import { isEmpty, sample } from 'lodash';
+import Image from 'next/image';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
 
-const RollPanel = ({ items }: { items: any[] }) => {
-  const [selected, setSelected] = useState<RestaurantType | null>();
+interface RollPanelProps {
+  items: any[];
+  children: ReactNode;
+}
+
+const RollPanel = ({ items, children }: RollPanelProps) => {
+  const [selected, setSelected] = useState<Restaurant | null>();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const defaultTimeout = 1000;
 
@@ -34,51 +39,63 @@ const RollPanel = ({ items }: { items: any[] }) => {
     setSelected(null);
 
     setTimeout(() => {
-      const r = items[Math.floor(Math.random() * items.length)];
-      setSelected(r);
+      setSelected(sample(items));
     }, timeout);
   };
 
   useEffect(() => {
-    if (isEmpty(items)) {
-      return;
-    }
-
+    if (isEmpty(items)) return;
     random(items, defaultTimeout);
   }, [items]);
 
   const content = useMemo(() => {
     return (
-      <Link
-        href={`/restaurants/${selected?.id}`}
-        className="flex flex-col items-center mx-auto gap-2 w-64 min-h-64"
-      >
-        {selected ? (
-          <img
-            src={getS3PlacePhotoUrl(selected.placeId, selected.images?.[0])}
-            alt={selected.name}
-            className="w-64 h-64 rounded-sm object-cover"
-          />
-        ) : (
-          <Skeleton className="w-full h-64" />
-        )}
-        <div className="self-start w-full">
+      <figure className="flex flex-col shrink-0 gap-1">
+        <Link href={`/restaurants/${selected?.id}`}>
           {selected ? (
-            <p className="text-sm font-bold">{selected.name}</p>
+            <Image
+              src={getS3PlacePhotoUrl(
+                selected.google_place_id,
+                selected.images?.[0],
+                '1024x768',
+              )}
+              alt={selected.name}
+              width={320}
+              height={180}
+              sizes="100vw"
+              className="aspect-video object-cover rounded"
+            />
           ) : (
-            <div className="h-5">
-              <Skeleton className="h-4" />
+            <Skeleton className="aspect-video w-80" />
+          )}
+        </Link>
+        <figcaption className="flex flex-col w-80">
+          {selected ? (
+            <Link
+              href={`/restaurants/${selected.id}`}
+              className="text-sm font-medium hover:underline truncate"
+            >
+              {selected.name}
+            </Link>
+          ) : (
+            <div className="flex items-center h-5">
+              <Skeleton className="w-1/2 h-[14px]" />
             </div>
           )}
           {selected ? (
-            <p className="text-xs text-gray-500">{selected.address}</p>
+            <Link
+              href={`#`}
+              className="text-xs text-muted-foreground hover:underline truncate"
+            >
+              {selected.address}
+            </Link>
           ) : (
-            <div className="h-4">
-              <Skeleton className="h-3" />
+            <div className="flex items-center h-4">
+              <Skeleton className="w-3/4 h-[12px]" />
             </div>
           )}
-        </div>
-      </Link>
+        </figcaption>
+      </figure>
     );
   }, [selected]);
 
@@ -106,13 +123,8 @@ const RollPanel = ({ items }: { items: any[] }) => {
 
   return isDesktop ? (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button className="flex gap-1 bg-orange-600 hover:bg-orange-600/90">
-          <IconSoup size={16} />
-          今天吃什么
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="w-auto">
         <DialogHeader>
           <DrawerTitle>今天吃...</DrawerTitle>
         </DialogHeader>
@@ -124,17 +136,10 @@ const RollPanel = ({ items }: { items: any[] }) => {
     </Dialog>
   ) : (
     <Drawer>
-      <DrawerTrigger asChild>
-        <Button className="flex gap-1 bg-orange-600 hover:bg-orange-600/90">
-          <IconSoup size={16} />
-          今天吃什么
-        </Button>
-      </DrawerTrigger>
+      <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>今天吃...</DrawerTitle>
-        </DrawerHeader>
-        {content}
+        <DrawerHeader>{/* Intentionally leave blank */}</DrawerHeader>
+        <div className="flex justify-center">{content}</div>
         <DrawerFooter className="pb-8">
           <RollButton />
         </DrawerFooter>

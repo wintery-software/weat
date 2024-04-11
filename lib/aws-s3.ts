@@ -31,13 +31,17 @@ export const upload = async (
   return `https://${bucket}.s3.amazonaws.com/${key}`;
 };
 
-export const getS3PlacePhotoUrl = (placeId: string, photoReference: string) => {
+export const getS3PlacePhotoUrl = (
+  placeId: string,
+  photoReference: string,
+  placeholderSize: number | string = 256,
+) => {
   // Save money in development
   if (
     process.env.NODE_ENV === 'development' &&
     process.env.NEXT_PUBLIC_AWS_S3_ENABLED_DEV !== 'true'
   ) {
-    return `https://via.placeholder.com/256`;
+    return `https://via.placeholder.com/${placeholderSize}`;
   }
 
   return `https://wintery-software-weat.s3.amazonaws.com/google-maps/${placeId}/${photoReference}.jpg`;

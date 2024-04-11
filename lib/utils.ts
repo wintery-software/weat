@@ -31,37 +31,37 @@ export const fetcher = async (input: string, init?: RequestInit) => {
   return res.json();
 };
 
-export const getWeatApiUrl = (route: string, params?: URLSearchParams) => {
-  if (route.startsWith('/')) {
-    route = route.slice(1);
-  }
-
+export const getWeatApiUrl = (
+  route: string,
+  locale: string,
+  params?: URLSearchParams,
+) => {
+  if (route.startsWith('/')) route = route.slice(1);
   const u = new URL(`${process.env.NEXT_PUBLIC_API_URL}/${route}`);
-
-  if (params) {
-    u.search = params.toString();
-  }
-
+  params ||= new URLSearchParams({ locale });
+  u.search = params.toString();
   return u;
 };
 
-export const search = async (
-  query: string,
-  limit?: number,
-  ...props: any[]
+export const fetchWeatApi = async <T>(
+  route: string,
+  locale: string,
+  params?: URLSearchParams,
 ) => {
-  const params = new URLSearchParams();
-  params.append('q', query);
-  if (limit) params.append('limit', limit.toString());
-
-  const url = `/api/search?${params}`;
-  const response = await fetch(url, ...props);
-
-  return response.json();
+  const response = await fetch(getWeatApiUrl(route, locale, params));
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error);
+  return data as T;
 };
-
-export const normalize = (str: string) =>
-  str.toLowerCase().replaceAll(/\W/g, '');
 
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+export const generateMetadataTitle = (...values: string[]) =>
+  `${values.join(' | ')} - Weat`;
+
+export const getPlaceholderImage = (width: number, height?: number) => {
+  let size = width.toString();
+  if (height) size += `x${height}`;
+  return `https://via.placeholder.com/${size}`;
+};

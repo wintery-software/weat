@@ -12,18 +12,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "prisma db seed",
-    "postinstall": "prisma generate",
-    "i18n:check": "tsx lib/i18n/utils/check.ts lib/i18n/translations",
-    "i18n:sort": "tsx lib/i18n/utils/sort.ts lib/i18n/translations"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "i18n:diff": "tsx lib/i18n/utils/diff.ts lib/i18n/translations",
+    "i18n:lint": "tsx lib/i18n/utils/lint.ts lib/i18n/translations"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.42",
     "@hookform/resolvers": "^3.3.4",
-    "@prisma/client": "^5.11.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -53,11 +47,9 @@
     "next-themes": "^0.3.0",
     "pinyin-pro": "^3.19.6",
     "prettier": "^3.2.5",
-    "prisma": "^5.11.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.51.0",
-    "redis": "^4.6.13",
     "shadcn-ui": "^0.8.0",
     "sonner": "^1.4.3",
     "swr": "^2.2.5",
