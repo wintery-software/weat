@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation';
 export const locales = ['en', 'zh-CN'] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = 'en';
-export const localePrefix: LocalePrefix = 'as-needed';
+export const localePrefix: LocalePrefix = 'always';
 export const languages: Record<Locale, string> = {
   en: 'English',
   'zh-CN': '中文 (简体)',
