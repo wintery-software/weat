@@ -1,4 +1,3 @@
-import { upload } from '@/lib/aws-s3';
 import { meterToMile } from '@/lib/constants';
 import {
   Client,
@@ -137,22 +136,3 @@ export const getPlacePhotoUrl = (
   maxWidth: number = 1024,
 ): string =>
   `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${maxWidth}&photoreference=${photoReference}&key=${getApiKey()}`;
-
-export const uploadPlacePhotoToS3 = async (
-  placeId: string,
-  photoReference: string,
-) => {
-  const photoUrl = getPlacePhotoUrl(photoReference);
-  const response = await fetch(photoUrl);
-  if (!response.ok) {
-    throw new Error(
-      `Failed to download photo (${response.status} ${response.statusText}): ${photoUrl}`,
-    );
-  }
-
-  const arrayBuffer = await response.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
-  const key = `google-maps/${placeId}/${photoReference}.jpg`;
-
-  return upload(key, buffer, 'image/jpeg');
-};

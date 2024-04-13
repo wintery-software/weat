@@ -14,7 +14,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { getS3PlacePhotoUrl } from '@/lib/aws-s3';
 import { getRestaurants } from '@/lib/data';
 import { Link } from '@/lib/i18n/navigation';
 import { generateMetadataTitle } from '@/lib/utils';
@@ -102,11 +101,7 @@ const Page = async ({ searchParams }: PageProps) => {
                     >
                       <Link href={`/restaurants/${r.id}`}>
                         <Image
-                          src={getS3PlacePhotoUrl(
-                            r.google_place_id,
-                            r.images[0],
-                            '1024x768',
-                          )}
+                          src={r.images[0]}
                           alt={r.name}
                           width={320}
                           height={240}
@@ -150,11 +145,7 @@ const Page = async ({ searchParams }: PageProps) => {
                     >
                       <Link href={`/restaurants/${r.id}`}>
                         <Image
-                          src={getS3PlacePhotoUrl(
-                            r.google_place_id,
-                            r.images[0],
-                            '400x300',
-                          )}
+                          src={r.images[0]}
                           alt={r.name}
                           width={320}
                           height={240}

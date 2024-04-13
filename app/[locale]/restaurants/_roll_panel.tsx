@@ -17,7 +17,6 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getS3PlacePhotoUrl } from '@/lib/aws-s3';
 import { Link } from '@/lib/i18n/navigation';
 import { IconCoin, IconLoader2 } from '@tabler/icons-react';
 import { isEmpty, sample } from 'lodash';
@@ -54,11 +53,7 @@ const RollPanel = ({ items, children }: RollPanelProps) => {
         <Link href={`/restaurants/${selected?.id}`}>
           {selected ? (
             <Image
-              src={getS3PlacePhotoUrl(
-                selected.google_place_id,
-                selected.images?.[0],
-                '1024x768',
-              )}
+              src={selected.images?.[0]}
               alt={selected.name}
               width={320}
               height={180}
