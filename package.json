@@ -16,6 +16,7 @@
     "i18n:lint": "tsx lib/i18n/utils/lint.ts lib/i18n/translations"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.554.0",
     "@googlemaps/google-maps-services-js": "^3.3.42",
     "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-accordion": "^1.1.2",
@@ -58,7 +59,6 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.525.0",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.11.20",
     "@types/react": "^18",
