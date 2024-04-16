@@ -92,24 +92,22 @@ const Page = async ({ searchParams }: PageProps) => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ScrollArea className="w-full pb-4">
-                <div className="flex gap-4">
+              <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+                <div className="flex gap-4 p-4">
                   {restaurants.slice(0, 10).map((r, index) => (
-                    <figure
-                      key={index}
-                      className="flex flex-col shrink-0 gap-1 w-40 md:w-60 lg:w-80"
-                    >
-                      <Link href={`/restaurants/${r.id}`}>
-                        <Image
-                          src={r.images[0]}
-                          alt={r.name}
-                          width={320}
-                          height={240}
-                          sizes="100vw"
-                          className="aspect-auto object-cover rounded"
-                        />
-                      </Link>
-                      <figcaption className="text-sm font-medium hover:underline truncate">
+                    <figure key={index} className="shrink-0 w-40 md:w-60">
+                      <div className="overflow-hidden rounded-md">
+                        <Link href={`/restaurants/${r.id}`}>
+                          <Image
+                            src={r.images[0]}
+                            alt={r.name}
+                            className="aspect-square h-fit w-fit object-cover"
+                            width={240}
+                            height={240}
+                          />
+                        </Link>
+                      </div>
+                      <figcaption className="pt-2 text-xs hover:underline truncate">
                         <Link key={index} href={`/restaurants/${r.id}`}>
                           {r.name}
                         </Link>
@@ -136,24 +134,22 @@ const Page = async ({ searchParams }: PageProps) => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ScrollArea className="w-full pb-4">
-                <div className="flex gap-4">
+              <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+                <div className="flex gap-4 p-4">
                   {restaurants.slice(0, 10).map((r, index) => (
-                    <figure
-                      key={index}
-                      className="flex flex-col shrink-0 gap-1 w-40 md:w-60 lg:w-80"
-                    >
-                      <Link href={`/restaurants/${r.id}`}>
-                        <Image
-                          src={r.images[0]}
-                          alt={r.name}
-                          width={320}
-                          height={240}
-                          sizes="100vw"
-                          className="aspect-auto object-cover rounded"
-                        />
-                      </Link>
-                      <figcaption className="text-sm font-medium hover:underline truncate">
+                    <figure key={index} className="shrink-0 w-40 md:w-60">
+                      <div className="overflow-hidden rounded-md">
+                        <Link href={`/restaurants/${r.id}`}>
+                          <Image
+                            src={r.images[0]}
+                            alt={r.name}
+                            className="aspect-square h-fit w-fit object-cover"
+                            width={240}
+                            height={240}
+                          />
+                        </Link>
+                      </div>
+                      <figcaption className="pt-2 text-xs hover:underline truncate">
                         <Link key={index} href={`/restaurants/${r.id}`}>
                           {r.name}
                         </Link>
