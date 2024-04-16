@@ -5,6 +5,7 @@ import {
   StandardLayoutContent,
 } from '@/app/[locale]/layouts/standard_layout';
 import RollPanel from '@/app/[locale]/restaurants/_roll_panel';
+import ImageGallery from '@/components/image_gallery';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -13,14 +14,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { getRestaurants } from '@/lib/data';
 import { Link } from '@/lib/i18n/navigation';
 import { generateMetadataTitle } from '@/lib/utils';
 import { Metadata } from 'next';
 import { useLocale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
-import Image from 'next/image';
 
 export const generateMetadata = async ({
   params: { locale },
@@ -92,31 +91,13 @@ const Page = async ({ searchParams }: PageProps) => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ScrollArea className="w-full whitespace-nowrap rounded-md border">
-                <div className="flex gap-4 p-4">
-                  {restaurants.slice(0, 10).map((r, index) => (
-                    <figure key={index} className="shrink-0 w-40 md:w-60">
-                      <div className="overflow-hidden rounded-md">
-                        <Link href={`/restaurants/${r.id}`}>
-                          <Image
-                            src={r.images[0]}
-                            alt={r.name}
-                            className="aspect-square h-fit w-fit object-cover"
-                            width={240}
-                            height={240}
-                          />
-                        </Link>
-                      </div>
-                      <figcaption className="pt-2 text-xs hover:underline truncate">
-                        <Link key={index} href={`/restaurants/${r.id}`}>
-                          {r.name}
-                        </Link>
-                      </figcaption>
-                    </figure>
-                  ))}
-                </div>
-                <ScrollBar orientation="horizontal" />
-              </ScrollArea>
+              <ImageGallery
+                images={restaurants.slice(0, 10).map((r) => ({
+                  src: r.images[0],
+                  alt: r.name,
+                  href: `/restaurants/${r.id}`,
+                }))}
+              />
             </CardContent>
           </Card>
           <Card>
@@ -134,31 +115,13 @@ const Page = async ({ searchParams }: PageProps) => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ScrollArea className="w-full whitespace-nowrap rounded-md border">
-                <div className="flex gap-4 p-4">
-                  {restaurants.slice(0, 10).map((r, index) => (
-                    <figure key={index} className="shrink-0 w-40 md:w-60">
-                      <div className="overflow-hidden rounded-md">
-                        <Link href={`/restaurants/${r.id}`}>
-                          <Image
-                            src={r.images[0]}
-                            alt={r.name}
-                            className="aspect-square h-fit w-fit object-cover"
-                            width={240}
-                            height={240}
-                          />
-                        </Link>
-                      </div>
-                      <figcaption className="pt-2 text-xs hover:underline truncate">
-                        <Link key={index} href={`/restaurants/${r.id}`}>
-                          {r.name}
-                        </Link>
-                      </figcaption>
-                    </figure>
-                  ))}
-                </div>
-                <ScrollBar orientation="horizontal" />
-              </ScrollArea>
+              <ImageGallery
+                images={restaurants.slice(0, 10).map((r) => ({
+                  src: r.images[0],
+                  alt: r.name,
+                  href: `/restaurants/${r.id}`,
+                }))}
+              />
             </CardContent>
           </Card>
         </div>
