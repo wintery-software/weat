@@ -33,19 +33,20 @@ export const fetcher = async (input: string, init?: RequestInit) => {
 
 export const getWeatApiUrl = (
   route: string,
-  locale: string,
+  locale?: string,
   params?: URLSearchParams,
 ) => {
   if (route.startsWith('/')) route = route.slice(1);
   const u = new URL(`${process.env.NEXT_PUBLIC_API_URL}/${route}`);
-  params ||= new URLSearchParams({ locale });
+  params ||= new URLSearchParams();
+  if (locale) params.set('locale', locale);
   u.search = params.toString();
   return u;
 };
 
 export const fetchWeatApi = async <T>(
   route: string,
-  locale: string,
+  locale?: string,
   params?: URLSearchParams,
 ) => {
   const response = await fetch(getWeatApiUrl(route, locale, params));
