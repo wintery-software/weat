@@ -22,7 +22,7 @@ const AutoBreadcrumb = ({
   items = [],
 }: AutoBreadcrumbProps) => {
   const t = useTranslations();
-  items.unshift({ name: t(`components.breadcrumb.${base}`), url: '/' });
+  items.unshift({ name: t(`components.breadcrumb.${base}`), url: `/${base}` });
   const current = items.pop()!;
 
   return (
@@ -37,7 +37,7 @@ const AutoBreadcrumb = ({
             <Fragment key={index}>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href={item.url!}>{item.name}</Link>
+                  <Link href={item.url}>{item.name}</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
