@@ -54,7 +54,7 @@ const RootLayout = ({
       <body
         className={cn(
           inter.className,
-          'flex min-h-screen w-full flex-col bg-muted/40',
+          'flex min-h-screen w-full flex-col bg-muted/40 antialiased',
         )}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
