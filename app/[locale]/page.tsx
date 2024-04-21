@@ -1,5 +1,5 @@
-import Page from '@/app/[locale]/restaurants/page';
+import { redirect } from '@/lib/i18n/navigation';
 
 export default function Home() {
-  return <Page />;
+  redirect('/restaurants');
 }
