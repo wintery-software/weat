@@ -1,30 +1,4 @@
-import { fetchWeatApi, getWeatApiUrl } from '@/lib/utils';
-
-/**
- * Check if the API is healthy.
- *
- * @param timeout The request timeout in milliseconds.
- * @returns A promise that resolves to `true` if the API is healthy, otherwise `false`.
- */
-export const checkApiHealth = async (timeout = 10000) => {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-
-  try {
-    const response = await fetch(getWeatApiUrl('/health'), {
-      cache: 'no-store',
-      signal: controller.signal,
-    });
-    return response.ok;
-  } catch (error: any) {
-    if (error.name === 'AbortError') {
-      throw new Error('Request timed out');
-    }
-    throw error;
-  } finally {
-    clearTimeout(id);
-  }
-};
+import { fetchWeatApi } from '@/lib/utils';
 
 export const getRestaurant = (
   id: string,
@@ -63,6 +37,12 @@ export const getRestaurantItems = (
     locale,
     params,
   );
+
+export const getTrendingRestaurants = (locale: string) =>
+  fetchWeatApi<Restaurant[]>('/trending/restaurants', locale);
+
+export const getTrendingRestaurantItems = (locale: string) =>
+  fetchWeatApi<RestaurantItem[]>('/trending/restaurant-items', locale);
 
 export const search = (q: string, locale: string) =>
   fetchWeatApi(`/search`, locale, new URLSearchParams({ q }));

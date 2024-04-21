@@ -1,3 +1,4 @@
+import SWRProvider from '@/app/providers/swr-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -58,7 +59,7 @@ const RootLayout = ({
         )}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+          <SWRProvider>{children}</SWRProvider>
         </NextIntlClientProvider>
         <SpeedInsights />
         <Toaster closeButton richColors />
