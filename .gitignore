@@ -41,3 +41,6 @@ next-env.d.ts
 
 # Temporary files
 /tmp
+
+# Sentry Config File
+.sentryclirc
