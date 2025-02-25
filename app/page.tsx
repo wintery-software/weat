@@ -74,16 +74,13 @@ export default function Page() {
         return [];
       }
 
-      const limitedData = data.filter(
+      return data.filter(
         (r) =>
           r.latitude >= bounds.getSouthWest().lat() &&
           r.latitude <= bounds.getNorthEast().lat() &&
           r.longitude >= bounds.getSouthWest().lng() &&
           r.longitude <= bounds.getNorthEast().lng(),
       );
-
-      console.log(limitedData.length);
-      return limitedData;
     },
     [],
   );
