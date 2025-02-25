@@ -127,7 +127,7 @@ export default function Page() {
     setMapTypeId((current) =>
       current === google.maps.MapTypeId.ROADMAP
         ? google.maps.MapTypeId.SATELLITE
-        : google.maps.MapTypeI.ROADMAP,
+        : google.maps.MapTypeId.ROADMAP,
     );
   }, []);
 
@@ -289,7 +289,7 @@ export default function Page() {
                           currentLocation.lng,
                           r.latitude,
                           r.longitude,
-                          "m",
+                          "mi",
                         ).toFixed(2)}
                         &nbsp;mi away (approx.)
                       </p>
