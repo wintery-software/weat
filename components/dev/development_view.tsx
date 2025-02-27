@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-const DevelopmentOnly = ({ children }: { children?: ReactNode }) => {
+const DevelopmentView = ({ children }: { children?: ReactNode }) => {
   if (process.env.NODE_ENV !== "development") {
     return null;
   }
@@ -8,4 +8,4 @@ const DevelopmentOnly = ({ children }: { children?: ReactNode }) => {
   return children;
 };
 
-export default DevelopmentOnly;
+export default DevelopmentView;
