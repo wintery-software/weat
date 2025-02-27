@@ -1,7 +1,7 @@
 "use client";
 
 import { SearchBar } from "@/app/_search_bar";
-import DevelopmentOnly from "@/components/development_only";
+import DevelopmentBanner from "@/components/dev/development_banner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getCurrentLocation } from "@/lib/maps";
+import { getCurrentPosition } from "@/lib/maps";
 import {
   cn,
   fetcher,
@@ -32,37 +32,46 @@ import {
   MapCameraChangedEvent,
   MapCameraProps,
   MapControl,
+  MapProps,
   useMap,
 } from "@vis.gl/react-google-maps";
-import { Braces, Earth, Locate, User, Utensils } from "lucide-react";
+import { Earth, Locate, User, Utensils } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CustomView, isIOS, isSafari } from "react-device-detect";
 import { toast } from "sonner";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 
 // Apple Park :)
-const DEFAULT_CENTER = { lat: 37.3346, lng: -122.009 };
-const DEFAULT_ZOOM = 14;
+const DEFAULT_CAMERA_PROPS: Required<
+  Pick<MapProps, "defaultCenter" | "defaultZoom">
+> = {
+  defaultCenter: { lat: 37.3346, lng: -122.009 },
+  defaultZoom: 14,
+};
 
 export default function Page() {
-  const map = useMap();
+  const showIOSSafariBanner = useRef(false);
 
   useEffect(() => {
-    if (!map) return;
-  }, [map]);
+    if (isIOS && isSafari) {
+      showIOSSafariBanner.current = true;
+    }
+  }, []);
 
+  const map = useMap();
+  // Required to use AdvancedMarker
   const [mapTypeId, setMapTypeId] = useState<google.maps.MapTypeId>();
-  const [currentLocation, setCurrentLocation] =
-    useState<google.maps.LatLngLiteral>();
+  const [cameraProps, setCameraProps] = useState<MapCameraProps>();
 
-  const [cameraProps, setCameraProps] = useState<MapCameraProps>({
-    center: DEFAULT_CENTER,
-    zoom: DEFAULT_ZOOM - 2,
-  });
-
-  const { data } = useSWR<Restaurant[]>("/api/restaurants", fetcher);
+  const [location, setLocation] = useState<google.maps.LatLng>();
+  // Use useSWRImmutable to disable revalidation
+  const { data } = useSWRImmutable<Restaurant[]>("/api/restaurants", fetcher);
+  // Data to be rendered on the viewport
+  const [renderedData, setRenderedData] = useState<Restaurant[]>();
+  // Set once, no need to re-render
+  const isCameraFirstCenteredToLocation = useRef(false);
 
   // Limit rendered data based on the viewport to improve performance
   const limitDataInBound = useCallback(
@@ -71,7 +80,7 @@ export default function Page() {
       bounds: google.maps.LatLngBounds | undefined,
     ) => {
       if (!data || !bounds) {
-        return [];
+        return null;
       }
 
       return data.filter(
@@ -85,55 +94,96 @@ export default function Page() {
     [],
   );
 
-  const handleCameraChange = useCallback((e: MapCameraChangedEvent) => {
-    setCameraProps(e.detail);
-    setSearchInThisAreaButtonVisible(true);
-  }, []);
+  const searchThisArea = useCallback(() => {
+    const limitedData = limitDataInBound(data, map?.getBounds());
 
-  const [searchInThisAreaButtonVisible, setSearchInThisAreaButtonVisible] =
-    useState(false);
-  const [renderedData, setRenderedData] = useState<Restaurant[]>([]);
+    if (limitedData !== null) {
+      setRenderedData(limitedData);
+      toast(
+        `Showing ${limitedData.length} place${limitedData.length !== 1 ? "s" : ""}.`,
+        {
+          duration: 2000,
+        },
+      );
+    }
+
+    setSearchThisAreaButtonVisible(false);
+  }, [data, limitDataInBound, map]);
 
   const locateUser = useCallback(() => {
-    getCurrentLocation()
+    getCurrentPosition({ enableHighAccuracy: false })
       .then((pos) => {
-        setCurrentLocation(pos);
+        setLocation(new google.maps.LatLng(pos));
         setCameraProps({
           center: pos,
-          zoom: DEFAULT_ZOOM,
+          zoom: DEFAULT_CAMERA_PROPS.defaultZoom,
         });
       })
       .catch((err) => {
         console.error(err);
-
         if (err instanceof GeolocationPositionError) {
-          toast.error("GeolocationPositionError", { description: err.message });
+          toast.error("GeolocationPositionError", {
+            description: err.message,
+          });
         } else {
-          toast.error(err);
+          toast.error(err as never);
         }
       });
   }, []);
 
-  // Locate user on first render
+  // 1. On first render - locate user
   useEffect(() => {
-    setRenderedData(limitDataInBound(data, map?.getBounds()));
-    locateUser();
-  }, [data, limitDataInBound, locateUser, map]);
+    if (!map) {
+      return;
+    }
 
-  const toggleMapType = useCallback(() => {
-    setMapTypeId((current) =>
-      current === google.maps.MapTypeId.ROADMAP
+    locateUser();
+  }, [locateUser, map]);
+
+  // 2. On first user location change - center the map on user location
+  useEffect(() => {
+    if (!map || !location) {
+      return;
+    }
+
+    setCameraProps({
+      center: location.toJSON(),
+      zoom: DEFAULT_CAMERA_PROPS.defaultZoom,
+    });
+
+    isCameraFirstCenteredToLocation.current = true;
+  }, [location, map]);
+
+  // 3. On first camera change to user location - search this area
+  useEffect(() => {
+    if (isCameraFirstCenteredToLocation.current) {
+      searchThisArea();
+    }
+  }, [searchThisArea]);
+
+  // Show button the top when the user zooms or STOPS dragging the map
+  // DO NOT show it while map is still moving
+  const [searchThisAreaButtonVisible, setSearchThisAreaButtonVisible] =
+    useState(false);
+
+  const handleCameraChange = useCallback((e: MapCameraChangedEvent) => {
+    setCameraProps(e.detail);
+  }, []);
+
+  const toggleMapType = () => {
+    setMapTypeId(
+      mapTypeId === google.maps.MapTypeId.ROADMAP
         ? google.maps.MapTypeId.SATELLITE
         : google.maps.MapTypeId.ROADMAP,
     );
-  }, []);
+  };
 
   return (
     <>
-      <CustomView condition={isIOS && isSafari}>
+      <CustomView condition={showIOSSafariBanner.current}>
         <Banner>
           <BannerIcon icon={SiGooglechrome} />
-          <BannerTitle>Use Google Chrome for the best experience</BannerTitle>
+          <BannerTitle>Use Google Chrome for the best experience.</BannerTitle>
           <BannerAction>
             <Link
               href={getGoogleChromeURLScheme()}
@@ -145,21 +195,18 @@ export default function Page() {
           </BannerAction>
           <BannerClose />
         </Banner>
-        <DevelopmentOnly>
-          <Banner>
-            <BannerIcon icon={Braces} />
-            <BannerTitle>
-              <code>googlechrome://</code>&nbsp; URL scheme will not work in
-              development due to HTTPS.
-            </BannerTitle>
-            <BannerClose />
-          </Banner>
-        </DevelopmentOnly>
+        <DevelopmentBanner>
+          <code>googlechrome://</code>&nbsp; URL scheme will not work in
+          development due to HTTPS.
+        </DevelopmentBanner>
       </CustomView>
       <Map
         className="w-dvw h-svh"
+        {...DEFAULT_CAMERA_PROPS}
         {...cameraProps}
         onCameraChanged={handleCameraChange}
+        onZoomChanged={() => setSearchThisAreaButtonVisible(true)}
+        onDrag={() => setSearchThisAreaButtonVisible(true)}
         mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_RESTAURANTS_MAP_WEB_ID}
         mapTypeId={mapTypeId}
         gestureHandling="greedy"
@@ -175,7 +222,7 @@ export default function Page() {
           <div className="pt-4">
             <motion.div
               initial="hidden"
-              animate={searchInThisAreaButtonVisible ? "visible" : "hidden"}
+              animate={searchThisAreaButtonVisible ? "visible" : "hidden"}
               variants={{
                 hidden: { opacity: 0, y: -20 },
                 visible: { opacity: 1, y: 0 },
@@ -185,12 +232,9 @@ export default function Page() {
                 ease: "easeInOut",
                 duration: 0.2,
               }}
-              onClick={() => {
-                setRenderedData(limitDataInBound(data, map?.getBounds()));
-                setSearchInThisAreaButtonVisible(false);
-              }}
+              onClick={searchThisArea}
             >
-              <Button>Search in this area</Button>
+              <Button>Search this area</Button>
             </motion.div>
           </div>
         </MapControl>
@@ -205,8 +249,9 @@ export default function Page() {
           </div>
         </MapControl>
         <AdvancedMarker
-          position={currentLocation}
+          position={location}
           onMouseEnter={(e) => e.preventDefault()}
+          onMouseLeave={(e) => e.preventDefault()}
         >
           <div
             className={cn(
@@ -222,7 +267,7 @@ export default function Page() {
               "shadow-sm",
               "shadow-blue-500",
               "hover:shadow-md",
-              "hover:shadow-blue-50",
+              "hover:shadow-blue-500",
             )}
           >
             <User size={12} color="#fff" />
@@ -252,8 +297,8 @@ export default function Page() {
                     "transition",
                     "shadow-sm",
                     "shadow-orange-400",
-                    "hover:shadow-lg",
-                    "hover:shadow-orange-40",
+                    "hover:shadow-md",
+                    "hover:shadow-orange-400",
                   )}
                 >
                   <Utensils size={12} color="white" />
@@ -267,9 +312,11 @@ export default function Page() {
                       <p className="text-xs">{r.name_translation}</p>
                     )}
                   </div>
-                  <div className="flex gap-1">
-                    <Badge>{r.cuisine}</Badge>
-                  </div>
+                  {r.cuisine && (
+                    <div className="flex gap-1">
+                      <Badge>{r.cuisine}</Badge>
+                    </div>
+                  )}
                   <div className="flex flex-col space-y-0.5">
                     <Link
                       href={r.google_maps_url}
@@ -279,11 +326,11 @@ export default function Page() {
                     >
                       {r.address}
                     </Link>
-                    {currentLocation && (
+                    {location && (
                       <p className="text-xs text-muted-foreground">
                         {haversineDistance(
-                          currentLocation.lat,
-                          currentLocation.lng,
+                          location.lat(),
+                          location.lng(),
                           r.latitude,
                           r.longitude,
                           "mi",
