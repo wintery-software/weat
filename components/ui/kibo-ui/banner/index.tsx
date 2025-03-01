@@ -5,9 +5,9 @@ import { cn } from "@/lib/utils";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { type LucideIcon, XIcon } from "lucide-react";
 import {
-  createContext,
   type HTMLAttributes,
   type MouseEventHandler,
+  createContext,
   useContext,
 } from "react";
 
@@ -51,7 +51,7 @@ export const Banner = ({
     <BannerContext.Provider value={{ show, setShow }}>
       <div
         className={cn(
-          "flex w-full items-center justify-between gap-2 bg-primary px-4 py-2 text-primary-foreground",
+          "flex w-full items-center justify-between gap-2 bg-background px-4 py-2 text-primary",
           inset && "rounded-lg",
           className,
         )}
@@ -100,10 +100,7 @@ export const BannerAction = ({
   <Button
     variant={variant}
     size={size}
-    className={cn(
-      "shrink-0 bg-transparent hover:bg-background/10 hover:text-background",
-      className,
-    )}
+    className={cn("shrink-0 bg-transparent hover:bg-background/10", className)}
     {...props}
   />
 );

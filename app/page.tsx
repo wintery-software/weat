@@ -1,45 +1,49 @@
 "use client";
 
-import { SearchBar } from "@/app/_search_bar";
 import DevelopmentBanner from "@/components/dev/development_banner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Banner,
-  BannerAction,
-  BannerClose,
-  BannerIcon,
-  BannerTitle,
-} from "@/components/ui/kibo-ui/banner";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getCurrentPosition } from "@/lib/maps";
 import {
-  cn,
-  fetcher,
-  getGoogleChromeURLScheme,
+  getCurrentPosition,
+  getGeolocationPermissionStatus,
   haversineDistance,
-} from "@/lib/utils";
-import { SiGooglechrome } from "@icons-pack/react-simple-icons";
+  isCoordinateInBounds,
+  metersToLatLngDegrees,
+} from "@/lib/maps";
+import { cn, fetcher } from "@/lib/utils";
+import type {
+  MapCameraChangedEvent,
+  MapCameraProps,
+  MapProps,
+} from "@vis.gl/react-google-maps";
 import {
   AdvancedMarker,
   CollisionBehavior,
   ControlPosition,
-  Map,
-  MapCameraChangedEvent,
-  MapCameraProps,
+  Map as GoogleMap,
   MapControl,
-  MapProps,
   useMap,
 } from "@vis.gl/react-google-maps";
-import { Earth, Locate, User, Utensils } from "lucide-react";
-import { motion } from "motion/react";
+import {
+  EarthIcon,
+  LoaderCircleIcon,
+  LocateFixedIcon,
+  LocateIcon,
+  LocateOffIcon,
+  RouteIcon,
+  UserIcon,
+  UtensilsIcon,
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { CustomView, isIOS, isSafari } from "react-device-detect";
+import * as React from "react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import { toast } from "sonner";
 import useSWRImmutable from "swr/immutable";
 
@@ -51,76 +55,86 @@ const DEFAULT_CAMERA_PROPS: Required<
   defaultZoom: 14,
 };
 
+const ICONS = {
+  locate: <LocateIcon />,
+  located: <LocateFixedIcon />,
+  locateOff: <LocateOffIcon />,
+  loading: <LoaderCircleIcon className="animate-spin" />,
+  mapRoad: <RouteIcon />,
+  mapSatellite: <EarthIcon />,
+};
+
 export default function Page() {
-  const showIOSSafariBanner = useRef(false);
-
-  useEffect(() => {
-    if (isIOS && isSafari) {
-      showIOSSafariBanner.current = true;
-    }
-  }, []);
-
   const map = useMap();
-  // Required to use AdvancedMarker
-  const [mapTypeId, setMapTypeId] = useState<google.maps.MapTypeId>();
+
   const [cameraProps, setCameraProps] = useState<MapCameraProps>();
-
+  const [isLocateButtonDisabled, setIsLocateButtonDisabled] = useState(true);
   const [location, setLocation] = useState<google.maps.LatLng>();
-  // Use useSWRImmutable to disable revalidation
-  const { data } = useSWRImmutable<Restaurant[]>("/api/restaurants", fetcher);
-  // Data to be rendered on the viewport
-  const [renderedData, setRenderedData] = useState<Restaurant[]>();
-  // Set once, no need to re-render
-  const isCameraFirstCenteredToLocation = useRef(false);
-
-  // Limit rendered data based on the viewport to improve performance
-  const limitDataInBound = useCallback(
-    (
-      data: Restaurant[] | undefined,
-      bounds: google.maps.LatLngBounds | undefined,
-    ) => {
-      if (!data || !bounds) {
-        return null;
-      }
-
-      return data.filter(
-        (r) =>
-          r.latitude >= bounds.getSouthWest().lat() &&
-          r.latitude <= bounds.getNorthEast().lat() &&
-          r.longitude >= bounds.getSouthWest().lng() &&
-          r.longitude <= bounds.getNorthEast().lng(),
-      );
-    },
-    [],
+  const [locateUserIcon, setLocateUserIcon] = useState<ReactNode>(
+    ICONS.locateOff,
   );
+  const [toggleMapTypeIcon, setToggleMapTypeIcon] = useState<ReactNode>(
+    ICONS.mapSatellite,
+  );
+  const [searchThisAreaButtonVisible, setSearchThisAreaButtonVisible] =
+    useState(false);
+  // To improve performance
+  const [renderedData, setRenderedData] = useState<Restaurant[]>();
+  // Use useSWRImmutable to disable revalidation
+  const { data } = useSWRImmutable<Restaurant[]>("/api/places", fetcher);
 
   const searchThisArea = useCallback(() => {
-    const limitedData = limitDataInBound(data, map?.getBounds());
-
-    if (limitedData !== null) {
-      setRenderedData(limitedData);
-      toast(
-        `Showing ${limitedData.length} place${limitedData.length !== 1 ? "s" : ""}.`,
-        {
-          duration: 2000,
-        },
-      );
+    if (!data) {
+      throw new Error("Places are not available.");
     }
 
-    setSearchThisAreaButtonVisible(false);
-  }, [data, limitDataInBound, map]);
+    const bounds = map?.getBounds();
 
-  const locateUser = useCallback(() => {
-    getCurrentPosition({ enableHighAccuracy: false })
+    if (!bounds) {
+      throw new Error("Map bounds are not available.");
+    }
+
+    const areaData = data.filter((r) =>
+      isCoordinateInBounds({ lat: r.latitude, lng: r.longitude }, bounds),
+    );
+
+    setRenderedData(areaData);
+    setSearchThisAreaButtonVisible(false);
+
+    toast(
+      `Showing ${areaData.length} place${areaData.length !== 1 ? "s" : ""}.`,
+      {
+        duration: 1000,
+      },
+    );
+  }, [data, map]);
+
+  const locateUserAndSearchArea = useCallback(() => {
+    if (!map) {
+      throw new Error("Map is not available.");
+    }
+
+    setLocateUserIcon(ICONS.loading);
+
+    getCurrentPosition()
       .then((pos) => {
         setLocation(new google.maps.LatLng(pos));
-        setCameraProps({
-          center: pos,
-          zoom: DEFAULT_CAMERA_PROPS.defaultZoom,
-        });
+
+        // Ensure camera is updated synchronously
+        // so searchThisArea() works correctly
+        flushSync(() =>
+          setCameraProps({
+            center: pos,
+            zoom: DEFAULT_CAMERA_PROPS.defaultZoom,
+          }),
+        );
+
+        searchThisArea();
+        setLocateUserIcon(ICONS.located);
       })
       .catch((err) => {
         console.error(err);
+
         if (err instanceof GeolocationPositionError) {
           toast.error("GeolocationPositionError", {
             description: err.message,
@@ -129,122 +143,154 @@ export default function Page() {
           toast.error(err as never);
         }
       });
-  }, []);
+  }, [map, searchThisArea]);
 
-  // 1. On first render - locate user
+  const handleCameraChange = useCallback(
+    (e: MapCameraChangedEvent) => {
+      setCameraProps(e.detail);
+
+      // Reset locate icon to default if camera movement is greater than 100m
+      const degree = metersToLatLngDegrees(100);
+
+      if (
+        location &&
+        (Math.abs(location.lat() - e.detail.center.lat) > degree ||
+          Math.abs(location.lng() - e.detail.center.lng) > degree)
+      ) {
+        setLocateUserIcon(ICONS.locate);
+      }
+    },
+    [location],
+  );
+
+  const toggleMapType = () => {
+    if (!map) {
+      throw new Error("Map is not available.");
+    }
+
+    // Do not use useState to manage mapTypeId as it causes delay
+    map.setMapTypeId(
+      map.getMapTypeId() === google.maps.MapTypeId.ROADMAP
+        ? google.maps.MapTypeId.SATELLITE
+        : google.maps.MapTypeId.ROADMAP,
+    );
+
+    setToggleMapTypeIcon((prev) =>
+      prev === ICONS.mapRoad ? ICONS.mapSatellite : ICONS.mapRoad,
+    );
+  };
+
+  // Extract permission handling logic
+  const handlePermissionStatus = (status: PermissionState) => {
+    if (status === "granted") {
+      setLocateUserIcon(ICONS.locate);
+      setIsLocateButtonDisabled(false);
+    } else if (status === "denied") {
+      setLocateUserIcon(ICONS.locateOff);
+      setIsLocateButtonDisabled(true);
+      toast.error("Location access denied.");
+    } else if (status === "prompt") {
+      setLocateUserIcon(ICONS.locateOff);
+      setIsLocateButtonDisabled(false);
+    }
+  };
+
+  // Render once actions
+  useEffect(() => {
+    if (!map || !data) {
+      return;
+    }
+
+    getGeolocationPermissionStatus().then((status) => {
+      handlePermissionStatus(status);
+
+      // Run if permission is granted or can be requested
+      if (status === "granted" || status === "prompt") {
+        locateUserAndSearchArea();
+      }
+    });
+  }, [data, locateUserAndSearchArea, map]);
+
   useEffect(() => {
     if (!map) {
       return;
     }
 
-    locateUser();
-  }, [locateUser, map]);
+    // Initial permission check
+    getGeolocationPermissionStatus().then(handlePermissionStatus);
 
-  // 2. On first user location change - center the map on user location
-  useEffect(() => {
-    if (!map || !location) {
-      return;
-    }
-
-    setCameraProps({
-      center: location.toJSON(),
-      zoom: DEFAULT_CAMERA_PROPS.defaultZoom,
+    // Listen for permission changes
+    navigator.permissions.query({ name: "geolocation" }).then((status) => {
+      status.addEventListener("change", () => {
+        handlePermissionStatus(status.state);
+      });
     });
 
-    isCameraFirstCenteredToLocation.current = true;
-  }, [location, map]);
-
-  // 3. On first camera change to user location - search this area
-  useEffect(() => {
-    if (isCameraFirstCenteredToLocation.current) {
-      searchThisArea();
-    }
-  }, [searchThisArea]);
-
-  // Show button the top when the user zooms or STOPS dragging the map
-  // DO NOT show it while map is still moving
-  const [searchThisAreaButtonVisible, setSearchThisAreaButtonVisible] =
-    useState(false);
-
-  const handleCameraChange = useCallback((e: MapCameraChangedEvent) => {
-    setCameraProps(e.detail);
-  }, []);
-
-  const toggleMapType = () => {
-    setMapTypeId(
-      mapTypeId === google.maps.MapTypeId.ROADMAP
-        ? google.maps.MapTypeId.SATELLITE
-        : google.maps.MapTypeId.ROADMAP,
-    );
-  };
+    return () => {
+      // Cleanup listener
+      navigator.permissions.query({ name: "geolocation" }).then((status) => {
+        status.removeEventListener("change", () => {
+          handlePermissionStatus(status.state);
+        });
+      });
+    };
+  }, [map]);
 
   return (
-    <>
-      <CustomView condition={showIOSSafariBanner.current}>
-        <Banner>
-          <BannerIcon icon={SiGooglechrome} />
-          <BannerTitle>Use Google Chrome for the best experience.</BannerTitle>
-          <BannerAction>
-            <Link
-              href={getGoogleChromeURLScheme()}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Open
-            </Link>
-          </BannerAction>
-          <BannerClose />
-        </Banner>
-        <DevelopmentBanner>
-          <code>googlechrome://</code>&nbsp; URL scheme will not work in
-          development due to HTTPS.
-        </DevelopmentBanner>
-      </CustomView>
-      <Map
-        className="w-dvw h-svh"
+    <div className="flex h-full w-full flex-col">
+      <DevelopmentBanner>
+        <code>googlechrome://</code>&nbsp; URL scheme will not work in
+        development due to HTTPS.
+      </DevelopmentBanner>
+      <GoogleMap
+        className="grow"
         {...DEFAULT_CAMERA_PROPS}
         {...cameraProps}
         onCameraChanged={handleCameraChange}
         onZoomChanged={() => setSearchThisAreaButtonVisible(true)}
         onDrag={() => setSearchThisAreaButtonVisible(true)}
         mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_RESTAURANTS_MAP_WEB_ID}
-        mapTypeId={mapTypeId}
-        gestureHandling="greedy"
+        gestureHandling={"greedy"}
         disableDefaultUI
         reuseMaps
       >
-        <MapControl position={ControlPosition.TOP_LEFT}>
-          <div className="p-4">
-            <SearchBar />
-          </div>
-        </MapControl>
-        <MapControl position={ControlPosition.TOP_CENTER}>
-          <div className="pt-4">
-            <motion.div
-              initial="hidden"
-              animate={searchThisAreaButtonVisible ? "visible" : "hidden"}
-              variants={{
-                hidden: { opacity: 0, y: -20 },
-                visible: { opacity: 1, y: 0 },
-              }}
-              transition={{
-                type: "tween",
-                ease: "easeInOut",
-                duration: 0.2,
-              }}
-              onClick={searchThisArea}
-            >
-              <Button>Search this area</Button>
-            </motion.div>
+        <MapControl position={ControlPosition.TOP}>
+          <div className="flex w-screen justify-center pt-4">
+            <AnimatePresence>
+              {searchThisAreaButtonVisible && (
+                <motion.div
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  variants={{
+                    hidden: { opacity: 0, y: -16 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  transition={{
+                    type: "tween",
+                    ease: "easeInOut",
+                    duration: 0.2,
+                  }}
+                  onClick={searchThisArea}
+                >
+                  <Button variant="secondary">Search this area</Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </MapControl>
         <MapControl position={ControlPosition.RIGHT_BOTTOM}>
-          <div className="p-4 flex flex-col gap-2">
-            <Button variant="outline" size="icon" onClick={locateUser}>
-              <Locate />
+          <div className="flex flex-col gap-2 p-4">
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={isLocateButtonDisabled}
+              onClick={locateUserAndSearchArea}
+            >
+              {locateUserIcon}
             </Button>
             <Button variant="outline" size="icon" onClick={toggleMapType}>
-              <Earth />
+              {toggleMapTypeIcon}
             </Button>
           </div>
         </MapControl>
@@ -270,17 +316,14 @@ export default function Page() {
               "hover:shadow-blue-500",
             )}
           >
-            <User size={12} color="#fff" />
+            <UserIcon size={12} color="#fff" />
           </div>
         </AdvancedMarker>
-        {renderedData?.map((r, zIndex) => (
+        {renderedData?.map((r) => (
           <AdvancedMarker
             key={r.id}
             position={{ lat: r.latitude, lng: r.longitude }}
             collisionBehavior={CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL}
-            zIndex={zIndex}
-            onMouseEnter={(e) => e.preventDefault()}
-            onMouseLeave={(e) => e.preventDefault()}
           >
             <Popover>
               <PopoverTrigger>
@@ -301,7 +344,7 @@ export default function Page() {
                     "hover:shadow-orange-400",
                   )}
                 >
-                  <Utensils size={12} color="white" />
+                  <UtensilsIcon size={12} color="white" />
                 </div>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-2">
@@ -322,7 +365,7 @@ export default function Page() {
                       href={r.google_maps_url}
                       target="_blank"
                       title="Open in Google Maps"
-                      className="text-xs hover:underline hover:underline-offset-2 text-blue-500"
+                      className="text-xs text-blue-500 hover:underline hover:underline-offset-2"
                     >
                       {r.address}
                     </Link>
@@ -344,7 +387,7 @@ export default function Page() {
             </Popover>
           </AdvancedMarker>
         ))}
-      </Map>
-    </>
+      </GoogleMap>
+    </div>
   );
 }

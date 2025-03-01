@@ -1,9 +1,10 @@
 import { parse } from "csv-parse/sync";
 import * as fs from "fs";
 import { NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 import * as path from "path";
 
-const readRestaurants = () => {
+const readPlaces = () => {
   const dirPath = path.join(process.cwd(), "test");
   const files = fs.readdirSync(dirPath);
   const csvFiles = files.filter((file) => file.endsWith(".csv"));
@@ -18,8 +19,8 @@ const readRestaurants = () => {
       from: 2,
     });
 
-    return records.map((record: Restaurant, index: number) => ({
-      id: `${file}-${index + 1}`,
+    return records.map((record: Restaurant) => ({
+      id: randomUUID(),
       name: record.name || "",
       name_translation: record.name_translation || "",
       address: record.address || "",
@@ -31,6 +32,6 @@ const readRestaurants = () => {
   });
 };
 
-const restaurants = readRestaurants();
+export const places = readPlaces();
 
-export const GET = async () => NextResponse.json(restaurants);
+export const GET = async () => NextResponse.json(places);

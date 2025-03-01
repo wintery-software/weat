@@ -1,7 +1,8 @@
 "use client";
 
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { APIProvider } from "@vis.gl/react-google-maps";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
@@ -10,7 +11,14 @@ export function Providers({ children }: { children: ReactNode }) {
       onLoad={() => console.log("Google Maps API has loaded.")}
       libraries={["core", "marker"]}
     >
-      {children}
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        {children}
+      </ThemeProvider>
     </APIProvider>
   );
 }

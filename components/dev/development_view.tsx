@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 const DevelopmentView = ({ children }: { children?: ReactNode }) => {
   if (process.env.NODE_ENV !== "development") {

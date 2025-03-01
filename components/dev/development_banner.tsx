@@ -11,12 +11,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CurlyBraces } from "lucide-react";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 const DevelopmentBanner = ({ children }: { children?: ReactNode }) => {
   return (
     <DevelopmentView>
-      <Banner className="bg-neutral-600">
+      <Banner className="dark:bg-background dark:text-primary">
         <BannerIcon icon={CurlyBraces} />
         <BannerTitle>
           <Popover>
@@ -25,7 +25,7 @@ const DevelopmentBanner = ({ children }: { children?: ReactNode }) => {
             </PopoverTrigger>
             <PopoverContent
               align="start"
-              className="w-fit p-2 text-xs border-none bg-primary text-background"
+              className="w-fit border-none bg-primary p-2 text-xs text-background"
             >
               This message is only visible in development mode.
             </PopoverContent>
