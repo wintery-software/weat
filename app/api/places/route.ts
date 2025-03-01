@@ -32,6 +32,6 @@ const readPlaces = () => {
   });
 };
 
-export const places = readPlaces();
+const places = readPlaces();
 
 export const GET = async () => NextResponse.json(places);
