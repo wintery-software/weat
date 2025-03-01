@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { SiGithub } from "@icons-pack/react-simple-icons";
+import { Analytics } from "@vercel/analytics/react";
 import { BananaIcon } from "lucide-react";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -89,6 +90,7 @@ export default function RootLayout({
           </Navigation>
           <div className="grow">{children}</div>
           <Toaster richColors />
+          <Analytics />
         </Providers>
       </body>
     </html>
