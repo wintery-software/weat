@@ -1,6 +1,5 @@
 "use client";
 
-import DevelopmentBanner from "@/components/dev/development_banner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -240,10 +239,6 @@ export default function Page() {
 
   return (
     <div className="flex h-full w-full flex-col">
-      <DevelopmentBanner>
-        <code>googlechrome://</code>&nbsp; URL scheme will not work in
-        development due to HTTPS.
-      </DevelopmentBanner>
       <GoogleMap
         className="grow"
         {...DEFAULT_CAMERA_PROPS}
