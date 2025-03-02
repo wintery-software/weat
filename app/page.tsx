@@ -371,7 +371,7 @@ export default function Page() {
                         href={r.google_maps_url}
                         target="_blank"
                         title="Open in Google Maps"
-                        className="text-xs text-blue-500 hover:underline hover:underline-offset-2"
+                        className="text-xs text-blue-500 hover:underline hover:underline-offset-2 dark:text-blue-300"
                       >
                         {r.address}
                       </Link>
