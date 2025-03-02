@@ -150,8 +150,9 @@ export default function Page() {
     (e: MapCameraChangedEvent) => {
       setCameraProps(e.detail);
 
-      // Reset locate icon to default if camera movement is greater than 100m
-      const degree = metersToLatLngDegrees(100);
+      // Reset locate icon to default if camera movement is greater than value
+      // Required because setting camera props will introduce a tiny offset for some reason
+      const degree = metersToLatLngDegrees(1);
 
       if (
         location &&
