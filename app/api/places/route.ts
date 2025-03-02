@@ -5,13 +5,23 @@ import { randomUUID } from "node:crypto";
 import * as path from "path";
 
 const readPlaces = () => {
-  const dirPath = path.join(process.cwd(), "test");
-  const files = fs.readdirSync(dirPath);
-  const csvFiles = files.filter((file) => file.endsWith(".csv"));
+  const dir = path.join(process.cwd(), "lib", "data");
+  const files: {
+    file: string;
+    category: string;
+  }[] = [
+    {
+      file: path.join(dir, "places_metadata - restaurants.csv"),
+      category: "restaurant",
+    },
+    {
+      file: path.join(dir, "places_metadata - drinks & snacks.csv"),
+      category: "drink",
+    },
+  ];
 
-  return csvFiles.flatMap((file) => {
-    const filePath = path.join(dirPath, file);
-    const fileContent = fs.readFileSync(filePath, "utf-8");
+  return files.flatMap(({ file, category }) => {
+    const fileContent = fs.readFileSync(file, "utf-8");
 
     const records = parse(fileContent, {
       columns: true,
@@ -25,9 +35,9 @@ const readPlaces = () => {
       name_translation: record.name_translation || "",
       address: record.address || "",
       google_maps_url: record.google_maps_url || "",
-      cuisine: record.cuisine || "",
       latitude: Number(record.latitude) || 0,
       longitude: Number(record.longitude) || 0,
+      category,
     }));
   });
 };

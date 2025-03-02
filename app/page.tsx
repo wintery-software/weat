@@ -15,6 +15,7 @@ import {
   isCoordinateInBounds,
   metersToLatLngDegrees,
 } from "@/lib/maps";
+import { PLACE_COLORS, PLACE_ICONS } from "@/lib/theme";
 import { cn, fetcher } from "@/lib/utils";
 import type {
   MapCameraChangedEvent,
@@ -30,19 +31,24 @@ import {
   useMap,
 } from "@vis.gl/react-google-maps";
 import {
-  EarthIcon,
-  LoaderCircleIcon,
-  LocateFixedIcon,
-  LocateIcon,
-  LocateOffIcon,
-  RouteIcon,
-  UserIcon,
-  UtensilsIcon,
+  LucideEarth,
+  LucideLoaderCircle,
+  LucideLocate,
+  LucideLocateFixed,
+  LucideLocateOff,
+  LucideRoute,
+  LucideUser,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import * as React from "react";
-import { type ReactNode, useCallback, useEffect, useState } from "react";
+import {
+  type CSSProperties,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { flushSync } from "react-dom";
 import { toast } from "sonner";
 import useSWRImmutable from "swr/immutable";
@@ -56,12 +62,12 @@ const DEFAULT_CAMERA_PROPS: Required<
 };
 
 const ICONS = {
-  locate: <LocateIcon />,
-  located: <LocateFixedIcon />,
-  locateOff: <LocateOffIcon />,
-  loading: <LoaderCircleIcon className="animate-spin" />,
-  mapRoad: <RouteIcon />,
-  mapSatellite: <EarthIcon />,
+  locate: <LucideLocate />,
+  located: <LucideLocateFixed />,
+  locateOff: <LucideLocateOff />,
+  loading: <LucideLoaderCircle className="animate-spin" />,
+  mapRoad: <LucideRoute />,
+  mapSatellite: <LucideEarth />,
 };
 
 export default function Page() {
@@ -70,12 +76,8 @@ export default function Page() {
   const [cameraProps, setCameraProps] = useState<MapCameraProps>();
   const [isLocateButtonDisabled, setIsLocateButtonDisabled] = useState(true);
   const [location, setLocation] = useState<google.maps.LatLng>();
-  const [locateUserIcon, setLocateUserIcon] = useState<ReactNode>(
-    ICONS.locateOff,
-  );
-  const [toggleMapTypeIcon, setToggleMapTypeIcon] = useState<ReactNode>(
-    ICONS.mapSatellite,
-  );
+  const [locateIcon, setLocateIcon] = useState<ReactNode>(ICONS.locateOff);
+  const [mapTypeIcon, setMapTypeIcon] = useState<ReactNode>(ICONS.mapSatellite);
   const [searchThisAreaButtonVisible, setSearchThisAreaButtonVisible] =
     useState(false);
   // To improve performance
@@ -114,7 +116,7 @@ export default function Page() {
       throw new Error("Map is not available.");
     }
 
-    setLocateUserIcon(ICONS.loading);
+    setLocateIcon(ICONS.loading);
 
     getCurrentPosition()
       .then((pos) => {
@@ -130,7 +132,7 @@ export default function Page() {
         );
 
         searchThisArea();
-        setLocateUserIcon(ICONS.located);
+        setLocateIcon(ICONS.located);
       })
       .catch((err) => {
         console.error(err);
@@ -157,7 +159,7 @@ export default function Page() {
         (Math.abs(location.lat() - e.detail.center.lat) > degree ||
           Math.abs(location.lng() - e.detail.center.lng) > degree)
       ) {
-        setLocateUserIcon(ICONS.locate);
+        setLocateIcon(ICONS.locate);
       }
     },
     [location],
@@ -175,7 +177,7 @@ export default function Page() {
         : google.maps.MapTypeId.ROADMAP,
     );
 
-    setToggleMapTypeIcon((prev) =>
+    setMapTypeIcon((prev) =>
       prev === ICONS.mapRoad ? ICONS.mapSatellite : ICONS.mapRoad,
     );
   };
@@ -183,14 +185,14 @@ export default function Page() {
   // Extract permission handling logic
   const handlePermissionStatus = (status: PermissionState) => {
     if (status === "granted") {
-      setLocateUserIcon(ICONS.locate);
+      setLocateIcon(ICONS.locate);
       setIsLocateButtonDisabled(false);
     } else if (status === "denied") {
-      setLocateUserIcon(ICONS.locateOff);
+      setLocateIcon(ICONS.locateOff);
       setIsLocateButtonDisabled(true);
       toast.error("Location access denied.");
     } else if (status === "prompt") {
-      setLocateUserIcon(ICONS.locateOff);
+      setLocateIcon(ICONS.locateOff);
       setIsLocateButtonDisabled(false);
     }
   };
@@ -287,10 +289,10 @@ export default function Page() {
               disabled={isLocateButtonDisabled}
               onClick={locateUserAndSearchArea}
             >
-              {locateUserIcon}
+              {locateIcon}
             </Button>
             <Button variant="outline" size="icon" onClick={toggleMapType}>
-              {toggleMapTypeIcon}
+              {mapTypeIcon}
             </Button>
           </div>
         </MapControl>
@@ -316,77 +318,87 @@ export default function Page() {
               "hover:shadow-blue-500",
             )}
           >
-            <UserIcon size={12} color="#fff" />
+            <LucideUser size={12} color="#fff" />
           </div>
         </AdvancedMarker>
-        {renderedData?.map((r) => (
-          <AdvancedMarker
-            key={r.id}
-            position={{ lat: r.latitude, lng: r.longitude }}
-            collisionBehavior={CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL}
-          >
-            <Popover>
-              <PopoverTrigger>
-                <div
-                  className={cn(
-                    "flex",
-                    "rounded-full",
-                    "bg-orange-400",
-                    "border-2",
-                    "border-white",
-                    "size-6",
-                    "justify-center",
-                    "items-center",
-                    "transition",
-                    "shadow-sm",
-                    "shadow-orange-400",
-                    "hover:shadow-md",
-                    "hover:shadow-orange-400",
-                  )}
-                >
-                  <UtensilsIcon size={12} color="white" />
-                </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-2">
-                <div className="flex flex-col space-y-2">
-                  <div className="flex flex-col space-y-0.5">
-                    <p className="text-sm font-semibold">{r.name}</p>
-                    {r.name_translation && (
-                      <p className="text-xs">{r.name_translation}</p>
+        {renderedData?.map((r) => {
+          const Icon = PLACE_ICONS[r.category];
+
+          return (
+            <AdvancedMarker
+              key={r.id}
+              position={{ lat: r.latitude, lng: r.longitude }}
+              collisionBehavior={CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL}
+            >
+              <Popover>
+                <PopoverTrigger>
+                  <div
+                    style={
+                      // Tailwind does not support dynamic classnames
+                      {
+                        "--marker-color": PLACE_COLORS[r.category],
+                      } as CSSProperties
+                    }
+                    className={cn(
+                      "flex",
+                      "rounded-full",
+                      "border-2",
+                      "border-white",
+                      "size-6",
+                      "justify-center",
+                      "items-center",
+                      "transition",
+                      "shadow-sm",
+                      "hover:shadow-md",
+                      "bg-[var(--marker-color)]",
+                      "shadow-[var(--marker-color)]",
+                      "hover:shadow-[var(--marker-color)]",
                     )}
+                  >
+                    <Icon size={12} color="white" />
                   </div>
-                  {r.cuisine && (
-                    <div className="flex gap-1">
-                      <Badge>{r.cuisine}</Badge>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-2">
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex flex-col space-y-0.5">
+                      <p className="text-sm font-semibold">{r.name}</p>
+                      {r.name_translation && (
+                        <p className="text-xs">{r.name_translation}</p>
+                      )}
                     </div>
-                  )}
-                  <div className="flex flex-col space-y-0.5">
-                    <Link
-                      href={r.google_maps_url}
-                      target="_blank"
-                      title="Open in Google Maps"
-                      className="text-xs text-blue-500 hover:underline hover:underline-offset-2"
-                    >
-                      {r.address}
-                    </Link>
-                    {location && (
-                      <p className="text-xs text-muted-foreground">
-                        {haversineDistance(
-                          location.lat(),
-                          location.lng(),
-                          r.latitude,
-                          r.longitude,
-                          "mi",
-                        ).toFixed(2)}
-                        &nbsp;mi away (approx.)
-                      </p>
+                    {r.cuisine && (
+                      <div className="flex gap-1">
+                        <Badge>{r.cuisine}</Badge>
+                      </div>
                     )}
+                    <div className="flex flex-col space-y-0.5">
+                      <Link
+                        href={r.google_maps_url}
+                        target="_blank"
+                        title="Open in Google Maps"
+                        className="text-xs text-blue-500 hover:underline hover:underline-offset-2"
+                      >
+                        {r.address}
+                      </Link>
+                      {location && (
+                        <p className="text-xs text-muted-foreground">
+                          {haversineDistance(
+                            location.lat(),
+                            location.lng(),
+                            r.latitude,
+                            r.longitude,
+                            "mi",
+                          ).toFixed(2)}
+                          &nbsp;mi away (approx.)
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </AdvancedMarker>
-        ))}
+                </PopoverContent>
+              </Popover>
+            </AdvancedMarker>
+          );
+        })}
       </GoogleMap>
     </div>
   );
