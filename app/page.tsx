@@ -3,23 +3,38 @@
 import { PlaceMarker } from "@/components/map/markers/place-marker";
 import { Button } from "@/components/ui/button";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
-import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
+import {
+  getCurrentPosition,
+  getGeolocationPermissionStatus,
+  metersToLatLngDegrees,
+} from "@/lib/maps";
 import { cn, fetcher, getLastUpdated } from "@/lib/utils";
-import type { MapCameraChangedEvent, MapCameraProps, MapProps } from "@vis.gl/react-google-maps";
-import { AdvancedMarker, ControlPosition, Map as GoogleMap, MapControl, useMap } from "@vis.gl/react-google-maps";
-import { LucideEarth, LucideLoaderCircle, LucideLocate, LucideLocateFixed, LucideLocateOff, LucideRoute, LucideUser } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { useDebounce } from "@uidotdev/usehooks";
+import type {
+  MapCameraChangedEvent,
+  MapProps,
+} from "@vis.gl/react-google-maps";
+import {
+  AdvancedMarker,
+  ControlPosition,
+  Map as GoogleMap,
+  MapControl,
+  useMap,
+} from "@vis.gl/react-google-maps";
+import {
+  LucideEarth,
+  LucideLoaderCircle,
+  LucideLocate,
+  LucideLocateFixed,
+  LucideLocateOff,
+  LucideRoute,
+  LucideUser,
+} from "lucide-react";
 import * as React from "react";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
-import { flushSync } from "react-dom";
 import { toast } from "sonner";
 import useSWRImmutable from "swr/immutable";
 
-
-
-
-
-// Apple Park :)
 const DEFAULT_CAMERA_PROPS: Required<
   Pick<MapProps, "defaultCenter" | "defaultZoom">
 > = {
@@ -38,64 +53,45 @@ const ICONS = {
 
 export default function Page() {
   const map = useMap();
-
-  const [cameraProps, setCameraProps] = useState<MapCameraProps>();
-  const [isLocateButtonDisabled, setIsLocateButtonDisabled] = useState(true);
   const [location, setLocation] = useState<google.maps.LatLng>();
+  // Use useSWRImmutable to disable revalidation
+  const { data: places } = useSWRImmutable<Place[]>("/api/places", fetcher);
+
+  const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
+  // Wait for bounds to stabilize before updating visible places
+  const debouncedBounds = useDebounce(bounds, 500);
+  // Only render places within bounds to prevent lag
+  const [placesInBounds, setVisiblePlaces] = useState<Place[]>([]);
+
+  const [isLocateButtonDisabled, setIsLocateButtonDisabled] = useState(true);
   const [locateIcon, setLocateIcon] = useState<ReactNode>(ICONS.locateOff);
   const [mapTypeIcon, setMapTypeIcon] = useState<ReactNode>(ICONS.mapSatellite);
-  const [searchThisAreaButtonVisible, setSearchThisAreaButtonVisible] =
-    useState(false);
-  // To improve performance
-  const [renderedData, setRenderedData] = useState<Place[]>();
-  // Use useSWRImmutable to disable revalidation
-  const { data } = useSWRImmutable<Place[]>("/api/places", fetcher);
 
-  const searchThisArea = useCallback(() => {
-    if (!data) {
-      throw new Error("Places are not available.");
-    }
+  const zoomAndPanTo = useCallback(
+    (lat: number, lng: number, zoom: number) => {
+      if (!map) {
+        return;
+      }
 
-    const bounds = map?.getBounds();
+      map.setZoom(zoom);
+      map.panTo({ lat, lng });
+    },
+    [map],
+  );
 
-    if (!bounds) {
-      throw new Error("Map bounds are not available.");
-    }
-
-    const visiblePlaces = data.filter((p) => bounds.contains(p.position));
-
-    setRenderedData(visiblePlaces);
-    setSearchThisAreaButtonVisible(false);
-
-    toast(
-      `Showing ${visiblePlaces.length} place${visiblePlaces.length !== 1 ? "s" : ""}.`,
-      {
-        duration: 1000,
-      },
-    );
-  }, [data, map]);
-
-  const locateUserAndSearchArea = useCallback(() => {
+  const locateUser = useCallback(() => {
     if (!map) {
-      throw new Error("Map is not available.");
+      return;
     }
 
     setLocateIcon(ICONS.loading);
 
     getCurrentPosition()
       .then((pos) => {
+        // Animated
+        zoomAndPanTo(pos.lat, pos.lng, DEFAULT_CAMERA_PROPS.defaultZoom);
+
         setLocation(new google.maps.LatLng(pos));
-
-        // Ensure camera is updated synchronously
-        // so searchThisArea() works correctly
-        flushSync(() =>
-          setCameraProps({
-            center: pos,
-            zoom: DEFAULT_CAMERA_PROPS.defaultZoom,
-          }),
-        );
-
-        searchThisArea();
         setLocateIcon(ICONS.located);
       })
       .catch((err) => {
@@ -109,30 +105,40 @@ export default function Page() {
           toast.error(err as never);
         }
       });
-  }, [map, searchThisArea]);
+  }, [map, zoomAndPanTo]);
 
-  const handleCameraChange = useCallback(
-    (e: MapCameraChangedEvent) => {
-      setCameraProps(e.detail);
+  const checkPlacesInBounds = useCallback(() => {
+    if (!map || !places) {
+      return;
+    }
 
-      // Reset locate icon to default if camera movement is greater than value
-      // Required because setting camera props will introduce a tiny offset for some reason
-      const degree = metersToLatLngDegrees(1);
+    const bounds = map.getBounds();
 
-      if (
-        location &&
-        (Math.abs(location.lat() - e.detail.center.lat) > degree ||
-          Math.abs(location.lng() - e.detail.center.lng) > degree)
-      ) {
-        setLocateIcon(ICONS.locate);
-      }
-    },
-    [location],
-  );
+    if (!bounds) {
+      return;
+    }
+
+    const inBounds = places.filter((p) => bounds.contains(p.position));
+    setVisiblePlaces(inBounds);
+  }, [map, places]);
+
+  // TODO: Use it
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const fitBoundsToMarkers = () => {
+    if (!map) {
+      return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+    placesInBounds.forEach((p) => bounds.extend(p.position));
+
+    // Animate the zoom to fit all markers
+    map.fitBounds(bounds, 50);
+  };
 
   const toggleMapType = () => {
     if (!map) {
-      throw new Error("Map is not available.");
+      return;
     }
 
     // Do not use useState to manage mapTypeId as it causes delay
@@ -149,6 +155,31 @@ export default function Page() {
     );
   };
 
+  const handleBoundsChange = useCallback(() => {
+    if (!map) {
+      return;
+    }
+
+    setBounds(map.getBounds());
+  }, [map]);
+
+  const handleCameraChange = useCallback(
+    (e: MapCameraChangedEvent) => {
+      // Reset locate icon to default if camera movement is greater than value
+      // Required because setting camera props will introduce a tiny offset for some reason
+      const degree = metersToLatLngDegrees(1);
+
+      if (
+        location &&
+        (Math.abs(location.lat() - e.detail.center.lat) > degree ||
+          Math.abs(location.lng() - e.detail.center.lng) > degree)
+      ) {
+        setLocateIcon(ICONS.locate);
+      }
+    },
+    [location],
+  );
+
   // Extract permission handling logic
   const handlePermissionStatus = (status: PermissionState) => {
     if (status === "granted") {
@@ -164,9 +195,9 @@ export default function Page() {
     }
   };
 
-  // Render once actions
+  // Actions on first load
   useEffect(() => {
-    if (!map || !data) {
+    if (!map) {
       return;
     }
 
@@ -177,15 +208,29 @@ export default function Page() {
       map.setMapTypeId(mapTypeId);
     }
 
+    // Locate user and search area if location access is granted
     getGeolocationPermissionStatus().then((status) => {
       handlePermissionStatus(status);
 
       // Run if permission is granted or can be requested
       if (status === "granted" || status === "prompt") {
-        locateUserAndSearchArea();
+        locateUser();
       }
     });
-  }, [data, locateUserAndSearchArea, map]);
+  }, [locateUser, map]);
+
+  // Refresh visible markers when bounds change
+  useEffect(() => {
+    if (!debouncedBounds || !places) {
+      return;
+    }
+
+    const visible = places.filter((marker) =>
+      debouncedBounds.contains(marker.position),
+    );
+
+    setVisiblePlaces(visible);
+  }, [debouncedBounds, places]);
 
   useEffect(() => {
     if (!map) {
@@ -217,56 +262,30 @@ export default function Page() {
       <GoogleMap
         className="grow"
         {...DEFAULT_CAMERA_PROPS}
-        {...cameraProps}
+        onBoundsChanged={handleBoundsChange}
         onCameraChanged={handleCameraChange}
-        onZoomChanged={() => setSearchThisAreaButtonVisible(true)}
-        onDrag={() => setSearchThisAreaButtonVisible(true)}
+        onIdle={checkPlacesInBounds}
         mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_RESTAURANTS_MAP_WEB_ID}
         gestureHandling={"greedy"}
         disableDefaultUI
         reuseMaps
       >
-        <MapControl position={ControlPosition.TOP_CENTER}>
-          <div className="flex w-screen justify-center pt-4">
-            <AnimatePresence>
-              {searchThisAreaButtonVisible && (
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  variants={{
-                    hidden: { opacity: 0, y: -16 },
-                    visible: { opacity: 1, y: 0 },
-                  }}
-                  transition={{
-                    type: "tween",
-                    ease: "easeInOut",
-                    duration: 0.2,
-                  }}
-                  onClick={searchThisArea}
-                >
-                  <Button variant="outline">Search this area</Button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </MapControl>
         <MapControl position={ControlPosition.RIGHT_BOTTOM}>
           <div className="flex flex-col items-end gap-2 p-4">
             <Button
               variant="outline"
               size="icon"
               disabled={isLocateButtonDisabled}
-              onClick={locateUserAndSearchArea}
+              onClick={locateUser}
             >
               {locateIcon}
             </Button>
             <Button variant="outline" size="icon" onClick={toggleMapType}>
               {mapTypeIcon}
             </Button>
-            {data && (
+            {places && (
               <div className="bg-white/50 px-1.5 py-0.5 text-[10px] text-black">
-                Last Updated:&nbsp;{getLastUpdated(data)}
+                Last Updated:&nbsp;{getLastUpdated(places)}
               </div>
             )}
           </div>
@@ -296,7 +315,7 @@ export default function Page() {
             <LucideUser size={12} color="#fff" />
           </div>
         </AdvancedMarker>
-        {renderedData?.map((p) => {
+        {placesInBounds?.map((p) => {
           return <PlaceMarker key={p.id} place={p} />;
         })}
       </GoogleMap>
