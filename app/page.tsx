@@ -16,7 +16,12 @@ import {
   metersToLatLngDegrees,
 } from "@/lib/maps";
 import { PLACE_COLORS, PLACE_ICONS } from "@/lib/theme";
-import { cn, fetcher } from "@/lib/utils";
+import {
+  cn,
+  fetcher,
+  getLastUpdatedTimestamp,
+  timestampToDateString,
+} from "@/lib/utils";
 import type {
   MapCameraChangedEvent,
   MapCameraProps,
@@ -262,7 +267,7 @@ export default function Page() {
         disableDefaultUI
         reuseMaps
       >
-        <MapControl position={ControlPosition.TOP}>
+        <MapControl position={ControlPosition.TOP_CENTER}>
           <div className="flex w-screen justify-center pt-4">
             <AnimatePresence>
               {searchThisAreaButtonVisible && (
@@ -288,7 +293,7 @@ export default function Page() {
           </div>
         </MapControl>
         <MapControl position={ControlPosition.RIGHT_BOTTOM}>
-          <div className="flex flex-col gap-2 p-4">
+          <div className="flex flex-col items-end gap-2 p-4">
             <Button
               variant="outline"
               size="icon"
@@ -300,6 +305,12 @@ export default function Page() {
             <Button variant="outline" size="icon" onClick={toggleMapType}>
               {mapTypeIcon}
             </Button>
+            {data && (
+              <div className="bg-white/50 px-1 py-0.5 text-[10px] text-black">
+                Last Updated:&nbsp;
+                {timestampToDateString(getLastUpdatedTimestamp(data))}
+              </div>
+            )}
           </div>
         </MapControl>
         <AdvancedMarker

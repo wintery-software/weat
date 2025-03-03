@@ -22,3 +22,21 @@ export const getGoogleChromeURLScheme = () => {
  */
 export const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+export const getLastUpdatedTimestamp = (data: Place[]) => {
+  const timestamps = data.map((place) => place.updatedAt);
+  return Math.max(...timestamps);
+};
+
+/**
+ * Convert a timestamp to a human-readable date string.
+ *
+ * @param timestamp The timestamp to convert
+ * @returns A date string
+ */
+export const timestampToDateString = (timestamp: number) =>
+  new Date(timestamp).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
