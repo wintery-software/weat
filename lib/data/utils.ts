@@ -5,6 +5,28 @@ import fs from "fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "path";
 
+interface CSVPlace {
+  name: string;
+  name_translation?: string;
+  address: string;
+  google_maps_url: string;
+  latitude: number;
+  longitude: number;
+}
+
+interface CSVRestaurantPlace extends CSVPlace {
+  cuisine?: string;
+}
+
+interface CSVParkPlace extends CSVPlace {
+  type?: string;
+  admission_fee?: string;
+  dog_policy?: string;
+  dog_policy_url?: string;
+}
+
+type CSVAnyPlace = CSVPlace | CSVRestaurantPlace | CSVParkPlace;
+
 export const readPlaces = async () => {
   const dir = path.join(process.cwd(), "lib", "data");
   const files: {
@@ -25,7 +47,7 @@ export const readPlaces = async () => {
     },
   ];
 
-  const results = await Promise.all(
+  const results: Place[] = await Promise.all(
     files.map(async ({ file, category }) => {
       // Read file content
       const content = await fs.readFile(file, "utf-8");
@@ -39,21 +61,24 @@ export const readPlaces = async () => {
       const records = parse(content, {
         columns: true,
         skip_empty_lines: true,
-        from: 2,
+        from: 2, // Skip header
       });
 
-      return records.map((record: Place) => ({
-        id: randomUUID(),
-        name: record.name || "",
-        name_translation: record.name_translation || "",
-        address: record.address || "",
-        google_maps_url: record.google_maps_url || "",
-        latitude: Number(record.latitude) || 0,
-        longitude: Number(record.longitude) || 0,
-        category,
-        createdAt,
-        updatedAt,
-      }));
+      return records.map((record: CSVAnyPlace) => {
+        const { latitude, longitude, ...rest } = record;
+
+        return {
+          id: randomUUID(),
+          category,
+          ...rest,
+          position: {
+            lat: Number(latitude),
+            lng: Number(longitude),
+          },
+          createdAt,
+          updatedAt,
+        };
+      });
     }),
   );
 

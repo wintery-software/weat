@@ -3,45 +3,21 @@
 import { PlaceMarker } from "@/components/map/markers/place-marker";
 import { Button } from "@/components/ui/button";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
-import {
-  getCurrentPosition,
-  getGeolocationPermissionStatus,
-  isCoordinateInBounds,
-  metersToLatLngDegrees,
-} from "@/lib/maps";
-import {
-  cn,
-  fetcher,
-  getLastUpdatedTimestamp,
-  timestampToDateString,
-} from "@/lib/utils";
-import type {
-  MapCameraChangedEvent,
-  MapCameraProps,
-  MapProps,
-} from "@vis.gl/react-google-maps";
-import {
-  AdvancedMarker,
-  ControlPosition,
-  Map as GoogleMap,
-  MapControl,
-  useMap,
-} from "@vis.gl/react-google-maps";
-import {
-  LucideEarth,
-  LucideLoaderCircle,
-  LucideLocate,
-  LucideLocateFixed,
-  LucideLocateOff,
-  LucideRoute,
-  LucideUser,
-} from "lucide-react";
+import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
+import { cn, fetcher, getLastUpdatedTimestamp } from "@/lib/utils";
+import type { MapCameraChangedEvent, MapCameraProps, MapProps } from "@vis.gl/react-google-maps";
+import { AdvancedMarker, ControlPosition, Map as GoogleMap, MapControl, useMap } from "@vis.gl/react-google-maps";
+import { LucideEarth, LucideLoaderCircle, LucideLocate, LucideLocateFixed, LucideLocateOff, LucideRoute, LucideUser } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import * as React from "react";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import { toast } from "sonner";
 import useSWRImmutable from "swr/immutable";
+
+
+
+
 
 // Apple Park :)
 const DEFAULT_CAMERA_PROPS: Required<
@@ -86,15 +62,13 @@ export default function Page() {
       throw new Error("Map bounds are not available.");
     }
 
-    const areaData = data.filter((r) =>
-      isCoordinateInBounds({ lat: r.latitude, lng: r.longitude }, bounds),
-    );
+    const visiblePlaces = data.filter((p) => bounds.contains(p.position));
 
-    setRenderedData(areaData);
+    setRenderedData(visiblePlaces);
     setSearchThisAreaButtonVisible(false);
 
     toast(
-      `Showing ${areaData.length} place${areaData.length !== 1 ? "s" : ""}.`,
+      `Showing ${visiblePlaces.length} place${visiblePlaces.length !== 1 ? "s" : ""}.`,
       {
         duration: 1000,
       },

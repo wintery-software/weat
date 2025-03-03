@@ -19,8 +19,7 @@ declare global {
     name_translation?: string;
     address: string;
     google_maps_url: string;
-    latitude: number;
-    longitude: number;
+    position: google.maps.LatLngLiteral;
     category: PlaceCategory;
   }
 

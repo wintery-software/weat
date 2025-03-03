@@ -2,6 +2,7 @@ import { EARTH_METERS_PER_DEGREE } from "@/lib/constants";
 
 /**
  * Get the current geolocation permission status.
+ *
  * @returns "granted", "denied", or "prompt"
  */
 export const getGeolocationPermissionStatus = () =>
@@ -88,19 +89,3 @@ export const haversineDistance = (
  */
 export const metersToLatLngDegrees = (meters: number) =>
   meters / EARTH_METERS_PER_DEGREE;
-
-/**
- * Check if a coordinate is within the bounds of current map view.
- *
- * @param coords Coordinate to check
- * @param bounds Bounds of the current map view
- * @returns Whether the coordinate is within the bounds
- */
-export const isCoordinateInBounds = (
-  coords: { lat: number; lng: number },
-  bounds: google.maps.LatLngBounds,
-) =>
-  coords.lat >= bounds.getSouthWest().lat() &&
-  coords.lat <= bounds.getNorthEast().lat() &&
-  coords.lng >= bounds.getSouthWest().lng() &&
-  coords.lng <= bounds.getNorthEast().lng();
