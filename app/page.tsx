@@ -323,8 +323,8 @@ export default function Page() {
             <LucideUser size={12} color="#fff" />
           </div>
         </AdvancedMarker>
-        {renderedData?.map((r) => {
-          return <PlaceMarker key={r.id} place={r} />;
+        {renderedData?.map((p) => {
+          return <PlaceMarker key={p.id} place={p} />;
         })}
       </GoogleMap>
     </div>
