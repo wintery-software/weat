@@ -32,7 +32,7 @@ export const AnnouncementTag = ({
 }: AnnouncementTagProps) => (
   <div
     className={cn(
-      "-ml-2.5 shrink-0 truncate rounded-full bg-foreground/5 px-2.5 py-1 text-xs",
+      "-ml-2.5 shrink-0 truncate rounded-full bg-foreground/5 px-2.5 py-1 text-xs dark:bg-foreground/15",
       "group-[.announcement-themed]:bg-background/60",
       className,
     )}
