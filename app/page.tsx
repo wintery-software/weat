@@ -7,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
 import {
   getCurrentPosition,
   getGeolocationPermissionStatus,
@@ -171,11 +172,13 @@ export default function Page() {
     }
 
     // Do not use useState to manage mapTypeId as it causes delay
-    map.setMapTypeId(
+    const newMapTypeId =
       map.getMapTypeId() === google.maps.MapTypeId.ROADMAP
         ? google.maps.MapTypeId.SATELLITE
-        : google.maps.MapTypeId.ROADMAP,
-    );
+        : google.maps.MapTypeId.ROADMAP;
+
+    map.setMapTypeId(newMapTypeId);
+    localStorage.setItem(LOCAL_STORAGE_MAP_MAP_TYPE_ID, newMapTypeId);
 
     setMapTypeIcon((prev) =>
       prev === ICONS.mapRoad ? ICONS.mapSatellite : ICONS.mapRoad,
@@ -201,6 +204,13 @@ export default function Page() {
   useEffect(() => {
     if (!map || !data) {
       return;
+    }
+
+    // Restore map type from local storage if available
+    const mapTypeId = localStorage.getItem(LOCAL_STORAGE_MAP_MAP_TYPE_ID);
+
+    if (mapTypeId) {
+      map.setMapTypeId(mapTypeId);
     }
 
     getGeolocationPermissionStatus().then((status) => {
