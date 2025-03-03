@@ -32,8 +32,8 @@ export const readPlaces = async () => {
 
       // Get file modified time
       const stat = await fs.stat(file);
-      const createdAt = stat.birthtimeMs;
-      const updatedAt = stat.mtimeMs;
+      const createdAt = new Date(stat.birthtimeMs).toISOString();
+      const updatedAt = new Date(stat.mtimeMs).toISOString();
 
       // Parse CSV
       const records = parse(content, {

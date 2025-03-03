@@ -292,8 +292,7 @@ export default function Page() {
             </Button>
             {data && (
               <div className="bg-white/50 px-1.5 py-0.5 text-[10px] text-black">
-                Last Updated:&nbsp;
-                {timestampToDateString(getLastUpdatedTimestamp(data))}
+                Last Updated:&nbsp;{getLastUpdatedTimestamp(data)}
               </div>
             )}
           </div>

@@ -10,8 +10,8 @@ declare module "lucide-react" {
 declare global {
   interface Data {
     id: string;
-    createdAt: number;
-    updatedAt: number;
+    createdAt: string;
+    updatedAt: string;
   }
 
   interface Place extends Data {

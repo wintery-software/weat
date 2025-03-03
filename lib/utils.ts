@@ -24,8 +24,24 @@ export const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 export const getLastUpdatedTimestamp = (data: Place[]) => {
-  const timestamps = data.map((place) => place.updatedAt);
-  return Math.max(...timestamps);
+  if (!data || data.length === 0) {
+    return "N/A";
+  }
+
+  let latestDate = new Date(0); // Start with the earliest possible date
+
+  for (let i = 0; i < data.length; i++) {
+    const currentDate = new Date(data[i].updatedAt);
+    if (currentDate > latestDate) {
+      latestDate = currentDate;
+    }
+  }
+
+  return latestDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 };
 
 /**
