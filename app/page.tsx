@@ -281,7 +281,7 @@ export default function Page() {
                   }}
                   onClick={searchThisArea}
                 >
-                  <Button variant="secondary">Search this area</Button>
+                  <Button variant="outline">Search this area</Button>
                 </motion.div>
               )}
             </AnimatePresence>
