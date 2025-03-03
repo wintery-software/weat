@@ -306,7 +306,7 @@ export default function Page() {
               {mapTypeIcon}
             </Button>
             {data && (
-              <div className="bg-white/50 px-1 py-0.5 text-[10px] text-black">
+              <div className="bg-white/50 px-1.5 py-0.5 text-[10px] text-black">
                 Last Updated:&nbsp;
                 {timestampToDateString(getLastUpdatedTimestamp(data))}
               </div>
