@@ -19,6 +19,10 @@ export const readPlaces = async () => {
       file: path.join(dir, "places_metadata - drinks & snacks.csv"),
       category: "drink",
     },
+    {
+      file: path.join(dir, "places_metadata - trails.csv"),
+      category: "trail",
+    },
   ];
 
   const results = await Promise.all(
