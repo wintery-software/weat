@@ -28,7 +28,7 @@ export const PlaceMarker = ({
     <AdvancedMarker
       key={place.id}
       position={{ lat: place.latitude, lng: place.longitude }}
-      collisionBehavior={CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL}
+      collisionBehavior={CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY}
     >
       <Popover>
         <PopoverTrigger>
