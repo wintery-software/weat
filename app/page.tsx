@@ -1,21 +1,14 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import { PlaceMarker } from "@/components/map/place-marker";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
 import {
   getCurrentPosition,
   getGeolocationPermissionStatus,
-  haversineDistance,
   isCoordinateInBounds,
   metersToLatLngDegrees,
 } from "@/lib/maps";
-import { PLACE_COLORS, PLACE_ICONS } from "@/lib/theme";
 import {
   cn,
   fetcher,
@@ -29,7 +22,6 @@ import type {
 } from "@vis.gl/react-google-maps";
 import {
   AdvancedMarker,
-  CollisionBehavior,
   ControlPosition,
   Map as GoogleMap,
   MapControl,
@@ -45,15 +37,8 @@ import {
   LucideUser,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import Link from "next/link";
 import * as React from "react";
-import {
-  type CSSProperties,
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import { toast } from "sonner";
 import useSWRImmutable from "swr/immutable";
@@ -339,82 +324,7 @@ export default function Page() {
           </div>
         </AdvancedMarker>
         {renderedData?.map((r) => {
-          const Icon = PLACE_ICONS[r.category];
-
-          return (
-            <AdvancedMarker
-              key={r.id}
-              position={{ lat: r.latitude, lng: r.longitude }}
-              collisionBehavior={CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL}
-            >
-              <Popover>
-                <PopoverTrigger>
-                  <div
-                    style={
-                      // Tailwind does not support dynamic classnames
-                      {
-                        "--marker-color": PLACE_COLORS[r.category],
-                      } as CSSProperties
-                    }
-                    className={cn(
-                      "flex",
-                      "rounded-full",
-                      "border-2",
-                      "border-white",
-                      "size-6",
-                      "justify-center",
-                      "items-center",
-                      "transition",
-                      "shadow-sm",
-                      "hover:shadow-md",
-                      "bg-[var(--marker-color)]",
-                      "shadow-[var(--marker-color)]",
-                      "hover:shadow-[var(--marker-color)]",
-                    )}
-                  >
-                    <Icon size={12} color="white" />
-                  </div>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-2">
-                  <div className="flex flex-col space-y-2">
-                    <div className="flex flex-col space-y-0.5">
-                      <p className="text-sm font-semibold">{r.name}</p>
-                      {r.name_translation && (
-                        <p className="text-xs">{r.name_translation}</p>
-                      )}
-                    </div>
-                    {r.cuisine && (
-                      <div className="flex gap-1">
-                        <Badge>{r.cuisine}</Badge>
-                      </div>
-                    )}
-                    <div className="flex flex-col space-y-0.5">
-                      <Link
-                        href={r.google_maps_url}
-                        target="_blank"
-                        title="Open in Google Maps"
-                        className="text-xs text-blue-500 hover:underline hover:underline-offset-2 dark:text-blue-300"
-                      >
-                        {r.address}
-                      </Link>
-                      {location && (
-                        <p className="text-xs text-muted-foreground">
-                          {haversineDistance(
-                            location.lat(),
-                            location.lng(),
-                            r.latitude,
-                            r.longitude,
-                            "mi",
-                          ).toFixed(2)}
-                          &nbsp;mi away (approx.)
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </AdvancedMarker>
-          );
+          return <PlaceMarker key={r.id} place={r} />;
         })}
       </GoogleMap>
     </div>
