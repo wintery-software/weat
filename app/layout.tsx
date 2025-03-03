@@ -2,12 +2,17 @@ import "./globals.css";
 import { Providers } from "@/app/providers";
 import { Navigation } from "@/components/navigation";
 import { Button } from "@/components/ui/button";
+import {
+  Announcement,
+  AnnouncementTag,
+  AnnouncementTitle,
+} from "@/components/ui/kibo-ui/announcement";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { SiGithub } from "@icons-pack/react-simple-icons";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { BananaIcon } from "lucide-react";
+import { LucideArrowUpRight, LucideBanana } from "lucide-react";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
@@ -50,6 +55,10 @@ export default function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const announcementMessage = process.env.ANNOUNCEMENT_MESSAGE;
+  const announcementUrl = process.env.ANNOUNCEMENT_URL;
+  const showAnnouncement = announcementMessage && announcementUrl;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -71,11 +80,26 @@ export default function RootLayout({
               className="font-bold hover:bg-background"
             >
               <Link href="/">
-                <BananaIcon />
+                <LucideBanana />
                 Weat
               </Link>
             </Button>
-            <div className="ml-auto px-2">
+            {/* Right side */}
+            <div className="ml-auto flex items-center gap-2 px-2">
+              {showAnnouncement && (
+                <Announcement>
+                  <AnnouncementTag>Update</AnnouncementTag>
+                  <Link href={announcementUrl} target={"_blank"}>
+                    <AnnouncementTitle>
+                      {announcementMessage}
+                      <LucideArrowUpRight
+                        size={14}
+                        className="shrink-0 text-muted-foreground"
+                      />
+                    </AnnouncementTitle>
+                  </Link>
+                </Announcement>
+              )}
               <div className="flex gap-2">
                 <Button variant="ghost" size="icon" asChild>
                   <Link
