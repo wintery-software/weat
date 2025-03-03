@@ -27,13 +27,9 @@ declare global {
   export type PlaceCategory =
     | "restaurant"
     | "drink"
-    | "snack"
-    | "trail"
+    | "park"
+    | "dogPark"
     | "entertainment";
-
-  interface Restaurant extends Place {
-    cuisine: string;
-  }
 
   interface LucideIconProps extends LucideProps {
     name: keyof typeof dynamicIconImports;

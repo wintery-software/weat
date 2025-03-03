@@ -9,7 +9,7 @@ export const readPlaces = async () => {
   const dir = path.join(process.cwd(), "lib", "data");
   const files: {
     file: string;
-    category: string;
+    category: PlaceCategory;
   }[] = [
     {
       file: path.join(dir, "places_metadata - restaurants.csv"),
@@ -20,8 +20,8 @@ export const readPlaces = async () => {
       category: "drink",
     },
     {
-      file: path.join(dir, "places_metadata - trails.csv"),
-      category: "trail",
+      file: path.join(dir, "places_metadata - parks.csv"),
+      category: "park",
     },
   ];
 
@@ -42,7 +42,7 @@ export const readPlaces = async () => {
         from: 2,
       });
 
-      return records.map((record: Restaurant) => ({
+      return records.map((record: Place) => ({
         id: randomUUID(),
         name: record.name || "",
         name_translation: record.name_translation || "",
