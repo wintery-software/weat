@@ -23,7 +23,14 @@ export const getGoogleChromeURLScheme = () => {
 export const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-export const getLastUpdatedTimestamp = (data: Place[]) => {
+/**
+ * Get the date of the last update from a list of places.
+ * If the list is empty, return "N/A".
+ *
+ * @param data List of places
+ * @returns Date of the last update
+ */
+export const getLastUpdated = (data: Place[]) => {
   if (!data || data.length === 0) {
     return "N/A";
   }
@@ -43,16 +50,3 @@ export const getLastUpdatedTimestamp = (data: Place[]) => {
     day: "numeric",
   });
 };
-
-/**
- * Convert a timestamp to a human-readable date string.
- *
- * @param timestamp The timestamp to convert
- * @returns A date string
- */
-export const timestampToDateString = (timestamp: number) =>
-  new Date(timestamp).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });

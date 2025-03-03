@@ -4,7 +4,7 @@ import { PlaceMarker } from "@/components/map/markers/place-marker";
 import { Button } from "@/components/ui/button";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
 import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
-import { cn, fetcher, getLastUpdatedTimestamp } from "@/lib/utils";
+import { cn, fetcher, getLastUpdated } from "@/lib/utils";
 import type { MapCameraChangedEvent, MapCameraProps, MapProps } from "@vis.gl/react-google-maps";
 import { AdvancedMarker, ControlPosition, Map as GoogleMap, MapControl, useMap } from "@vis.gl/react-google-maps";
 import { LucideEarth, LucideLoaderCircle, LucideLocate, LucideLocateFixed, LucideLocateOff, LucideRoute, LucideUser } from "lucide-react";
@@ -266,7 +266,7 @@ export default function Page() {
             </Button>
             {data && (
               <div className="bg-white/50 px-1.5 py-0.5 text-[10px] text-black">
-                Last Updated:&nbsp;{getLastUpdatedTimestamp(data)}
+                Last Updated:&nbsp;{getLastUpdated(data)}
               </div>
             )}
           </div>
