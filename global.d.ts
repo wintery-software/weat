@@ -31,6 +31,22 @@ declare global {
     | "dogPark"
     | "entertainment";
 
+  interface RestaurantPlace extends Place {
+    cuisine: string;
+  }
+
+  interface DrinkPlace extends Place {}
+
+  interface ParkPlace extends Place {
+    admissionFee?: string;
+    dogPolicy?: string;
+    dogPolicyUrl?: string;
+  }
+
+  interface DogParkPlace extends Place {}
+
+  interface EntertainmentPlace extends Place {}
+
   interface LucideIconProps extends LucideProps {
     name: keyof typeof dynamicIconImports;
   }

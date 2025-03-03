@@ -4,9 +4,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { haversineDistance } from "@/lib/maps";
-import { PLACE_COLORS, PLACE_ICONS } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { AdvancedMarker, CollisionBehavior } from "@vis.gl/react-google-maps";
+import {
+  LucideCupSoda,
+  LucideGamepad2,
+  LucidePawPrint,
+  LucideTreePine,
+  LucideUtensils,
+} from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 import { CSSProperties, ReactNode } from "react";
@@ -17,12 +23,35 @@ export interface PlaceMarkerProps {
   popoverExtraContent?: ReactNode;
 }
 
+export const PLACE_MARKER_THEMES = {
+  restaurant: {
+    icon: LucideUtensils,
+    color: "#fb923c", // orange-400
+  },
+  drink: {
+    icon: LucideCupSoda,
+    color: "#a16207", // yellow-700
+  },
+  park: {
+    icon: LucideTreePine,
+    color: "#16a34a", // green-600
+  },
+  dogPark: {
+    icon: LucidePawPrint,
+    color: "#16a34a", // green-600
+  },
+  entertainment: {
+    icon: LucideGamepad2,
+    color: "#a78bfa", // violet-400
+  },
+};
+
 export const PlaceMarker = ({
   place,
   currentLocation,
   popoverExtraContent,
 }: PlaceMarkerProps) => {
-  const Icon = PLACE_ICONS[place.category];
+  const Icon = PLACE_MARKER_THEMES[place.category].icon;
 
   return (
     <AdvancedMarker
@@ -36,7 +65,7 @@ export const PlaceMarker = ({
             style={
               // Tailwind does not support dynamic classnames
               {
-                "--marker-color": PLACE_COLORS[place.category],
+                "--marker-color": PLACE_MARKER_THEMES[place.category].color,
               } as CSSProperties
             }
             className={cn(

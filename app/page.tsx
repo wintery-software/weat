@@ -1,6 +1,6 @@
 "use client";
 
-import { PlaceMarker } from "@/components/map/place-marker";
+import { PlaceMarker } from "@/components/map/markers/place-marker";
 import { Button } from "@/components/ui/button";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
 import {
@@ -71,9 +71,9 @@ export default function Page() {
   const [searchThisAreaButtonVisible, setSearchThisAreaButtonVisible] =
     useState(false);
   // To improve performance
-  const [renderedData, setRenderedData] = useState<Restaurant[]>();
+  const [renderedData, setRenderedData] = useState<Place[]>();
   // Use useSWRImmutable to disable revalidation
-  const { data } = useSWRImmutable<Restaurant[]>("/api/places", fetcher);
+  const { data } = useSWRImmutable<Place[]>("/api/places", fetcher);
 
   const searchThisArea = useCallback(() => {
     if (!data) {
