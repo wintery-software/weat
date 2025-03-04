@@ -58,6 +58,9 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      textColor: {
+        link: "hsl(var(--link))",
+      },
     },
   },
   plugins: [tailwindcssAnimate, typography],
