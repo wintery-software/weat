@@ -1,18 +1,14 @@
 import "./globals.css";
 import { Providers } from "@/app/providers";
 import { Navigation } from "@/components/navigation";
+import Notifications from "@/components/notifications";
 import { Button } from "@/components/ui/button";
-import {
-  Announcement,
-  AnnouncementTag,
-  AnnouncementTitle,
-} from "@/components/ui/kibo-ui/announcement";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { SiGithub } from "@icons-pack/react-simple-icons";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { LucideArrowUpRight, LucideBanana } from "lucide-react";
+import { LucideBanana, LucideMapPinPlus } from "lucide-react";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
@@ -50,15 +46,11 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: ReactNode;
-}>) {
-  const announcementMessage = process.env.ANNOUNCEMENT_MESSAGE;
-  const announcementUrl = process.env.ANNOUNCEMENT_URL;
-  const showAnnouncement = announcementMessage && announcementUrl;
-
+}>) => {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -86,22 +78,13 @@ export default function RootLayout({
             </Button>
             {/* Right side */}
             <div className="ml-auto flex items-center gap-2 px-2">
-              {showAnnouncement && (
-                <Announcement>
-                  <AnnouncementTag>Update</AnnouncementTag>
-                  <Link href={announcementUrl} target={"_blank"}>
-                    <AnnouncementTitle>
-                      {announcementMessage}
-                      <LucideArrowUpRight
-                        size={14}
-                        className="shrink-0 text-muted-foreground"
-                      />
-                    </AnnouncementTitle>
-                  </Link>
-                </Announcement>
-              )}
+              <Button size={"sm"} variant={"outline"}>
+                <LucideMapPinPlus size={12} />
+                Suggest a new place
+              </Button>
+              <Notifications />
               <div className="flex gap-2">
-                <Button variant="ghost" size="icon" asChild>
+                <Button variant={"ghost"} size={"icon"} asChild>
                   <Link
                     href="https://github.com/wintery-software/weat"
                     target="_blank"
@@ -113,7 +96,7 @@ export default function RootLayout({
               </div>
             </div>
           </Navigation>
-          <div className="grow">{children}</div>
+          <main className="grow">{children}</main>
           <Toaster richColors />
           <Analytics />
           <SpeedInsights />
@@ -121,4 +104,6 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

@@ -49,4 +49,15 @@ declare global {
   interface LucideIconProps extends LucideProps {
     name: keyof typeof dynamicIconImports;
   }
+
+  interface WeatNotification {
+    id: string;
+    type: NotificationType;
+    title: string;
+    description: string;
+    url?: string;
+    createdAt: string;
+  }
+
+  export type NotificationType = "info" | "success" | "warning" | "error";
 }
