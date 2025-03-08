@@ -64,9 +64,11 @@ const RootLayout = ({
             </Button>
             {/* Right side */}
             <div className="ml-auto flex items-center gap-2 px-2">
-              <Button size={"sm"} variant={"outline"}>
-                <LucideMapPinPlus size={12} />
-                Suggest a new place
+              <Button size={"sm"} variant={"outline"} asChild>
+                <Link href={process.env.GOOGLE_SUGGEST_FORM_URL || "#"} target={"_blank"}>
+                  <LucideMapPinPlus size={12} />
+                  Suggest a new place
+                </Link>
               </Button>
               <Notifications />
               <div className="flex gap-2">
