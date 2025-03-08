@@ -20,7 +20,7 @@ const toString = (place: IPlace) =>
   `Place<id="${place.id}", name="${place.displayName?.text}", address="${place.formattedAddress}", googleMapsUri="${place.googleMapsUri}">`;
 
 const readData = async () => {
-  const filePath = path.resolve(path.join(__dirname, "place-data.json"));
+  const filePath = path.resolve("test/place-data.json");
 
   try {
     const fileContent = await fs.readFile(filePath, "utf-8");

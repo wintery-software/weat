@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack --experimental-https",
     "dev:db:create": "tsx test/dynamo.ts",
-    "dev:db:seed": "tsx test/seed.ts",
+    "dev:db:seed": "tsx db/seed.ts",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
