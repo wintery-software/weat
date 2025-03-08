@@ -23,7 +23,7 @@ export class Dynamo {
   private readonly dynamoClient: DynamoDBClient;
 
   constructor(local: boolean = false) {
-    local = local || process.env.NODE_ENV !== "production";
+    local = local ?? process.env.NODE_ENV !== "production";
 
     this.dynamoClient = new DynamoDBClient({
       region: getAWSRegion(local),
