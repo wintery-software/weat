@@ -28,10 +28,10 @@ interface CSVParkPlace extends CSVPlace {
 type CSVAnyPlace = CSVPlace | CSVRestaurantPlace | CSVParkPlace;
 
 export const readPlaces = async () => {
-  const dir = path.join(process.cwd(), "lib", "data");
+  const dir = __dirname;
   const files: {
     file: string;
-    category: PlaceCategory;
+    category: Weat.PlaceType;
   }[] = [
     {
       file: path.join(dir, "places_metadata - restaurants.csv"),
@@ -47,7 +47,7 @@ export const readPlaces = async () => {
     },
   ];
 
-  const results: Place[] = await Promise.all(
+  const results: Weat.Place[] = await Promise.all(
     files.map(async ({ file, category }) => {
       // Read file content
       const content = await fs.readFile(file, "utf-8");
@@ -71,10 +71,7 @@ export const readPlaces = async () => {
           id: randomUUID(),
           category,
           ...rest,
-          position: {
-            lat: Number(latitude),
-            lng: Number(longitude),
-          },
+          position: [Number(longitude), Number(latitude)],
           createdAt,
           updatedAt,
         };

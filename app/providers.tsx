@@ -6,16 +6,8 @@ import { type ReactNode } from "react";
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <APIProvider
-      apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
-      libraries={["core", "marker"]}
-    >
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
+    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!} libraries={["core", "marker"]}>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
         {children}
       </ThemeProvider>
     </APIProvider>

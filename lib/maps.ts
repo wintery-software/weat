@@ -6,9 +6,7 @@ import { EARTH_METERS_PER_DEGREE } from "@/lib/constants";
  * @returns "granted", "denied", or "prompt"
  */
 export const getGeolocationPermissionStatus = () =>
-  navigator.permissions
-    .query({ name: "geolocation" })
-    .then((status) => status.state);
+  navigator.permissions.query({ name: "geolocation" }).then((status) => status.state);
 
 /**
  * Get the current geolocation of the user.
@@ -57,23 +55,13 @@ export const toRadians = (deg: number) => (deg * Math.PI) / 180;
  * @param unit Unit of distance measurement
  * @returns Distance between the two points in the specified unit
  */
-export const haversineDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number,
-  unit: "mi" | "km" = "mi",
-) => {
+export const haversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number, unit: "mi" | "km" = "mi") => {
   const R = 6371; // Radius of Earth in km
 
   const dLat = toRadians(lat2 - lat1);
   const dLon = toRadians(lon2 - lon1);
 
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRadians(lat1)) *
-      Math.cos(toRadians(lat2)) *
-      Math.sin(dLon / 2) ** 2;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLon / 2) ** 2;
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
@@ -87,5 +75,4 @@ export const haversineDistance = (
  * @param meters Distance in meters
  * @returns Distance in degrees of latitude/longitude
  */
-export const metersToLatLngDegrees = (meters: number) =>
-  meters / EARTH_METERS_PER_DEGREE;
+export const metersToLatLngDegrees = (meters: number) => meters / EARTH_METERS_PER_DEGREE;

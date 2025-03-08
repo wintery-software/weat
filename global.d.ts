@@ -8,56 +8,84 @@ declare module "lucide-react" {
 }
 
 declare global {
-  interface Data {
-    id: string;
-    createdAt: string;
-    updatedAt: string;
-  }
-
-  interface Place extends Data {
-    name: string;
-    name_translation?: string;
-    address: string;
-    google_maps_url: string;
-    position: google.maps.LatLngLiteral;
-    category: PlaceCategory;
-  }
-
-  export type PlaceCategory =
-    | "restaurant"
-    | "drink"
-    | "park"
-    | "dogPark"
-    | "entertainment";
-
-  interface RestaurantPlace extends Place {
-    cuisine: string;
-  }
-
-  interface DrinkPlace extends Place {}
-
-  interface ParkPlace extends Place {
-    admissionFee?: string;
-    dogPolicy?: string;
-    dogPolicyUrl?: string;
-  }
-
-  interface DogParkPlace extends Place {}
-
-  interface EntertainmentPlace extends Place {}
-
   interface LucideIconProps extends LucideProps {
     name: keyof typeof dynamicIconImports;
   }
 
-  interface WeatNotification {
-    id: string;
-    type: NotificationType;
-    title: string;
-    description: string;
-    url?: string;
-    createdAt: string;
-  }
+  type AlertType = "info" | "success" | "warning" | "error";
+  type LanguageCode = "en" | "en-US" | "zh-CN" | "zh-TW";
 
-  export type NotificationType = "info" | "success" | "warning" | "error";
+  namespace Weat {
+    interface Data {
+      id: string;
+      createdAt: string;
+      updatedAt: string;
+    }
+
+    interface Place extends Data {
+      placeId: string;
+      name: {
+        languageCode: LanguageCode;
+        text: string;
+      };
+      types: PlaceType[];
+      address: string;
+      googleMapsUrl: string;
+      location: google.maps.LatLngLiteral;
+      phoneNumber: string;
+      websiteUrl: string;
+    }
+
+    interface RestaurantPlace extends Place {
+      cuisine: string;
+    }
+
+    interface DrinkPlace extends Place {}
+
+    interface ParkPlace extends Place {
+      admissionFee?: string;
+      dogPolicy?: string;
+      dogPolicyUrl?: string;
+    }
+
+    interface DogParkPlace extends Place {}
+
+    interface EntertainmentPlace extends Place {}
+
+    interface Notification {
+      id: string;
+      type: AlertType;
+      title: string;
+      description: string;
+      url?: string;
+      createdAt: string;
+    }
+
+    type PlaceType = "restaurant" | "drink" | "park" | "dogPark" | "entertainment" | "other";
+
+    namespace Dynamo {
+      interface Data {
+        Id: string;
+        CreatedAt: string;
+        UpdatedAt: string;
+      }
+
+      interface Place extends Data {
+        PlaceId: string;
+        Name: {
+          Text: string;
+          LanguageCode: string;
+        };
+        Types: Set<PlaceType>;
+        Address: string;
+        GoogleMapsUrl: string;
+        Location: {
+          Lat: number;
+          Lng: number;
+        };
+        PhoneNumber: string | null;
+        WebsiteUrl: string | null;
+      }
+    }
+  }
 }

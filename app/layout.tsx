@@ -53,24 +53,10 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          geistSans.variable,
-          geistMono.variable,
-          "antialiased",
-          "flex",
-          "flex-col",
-          "w-dvh",
-          "h-dvh",
-        )}
-      >
+      <body className={cn(geistSans.variable, geistMono.variable, "antialiased", "flex", "flex-col", "w-dvh", "h-dvh")}>
         <Providers>
           <Navigation>
-            <Button
-              variant="ghost"
-              asChild
-              className="font-bold hover:bg-background"
-            >
+            <Button variant="ghost" asChild className="font-bold hover:bg-background">
               <Link href="/">
                 <LucideBanana />
                 Weat
@@ -85,10 +71,7 @@ const RootLayout = ({
               <Notifications />
               <div className="flex gap-2">
                 <Button variant={"ghost"} size={"icon"} asChild>
-                  <Link
-                    href="https://github.com/wintery-software/weat"
-                    target="_blank"
-                  >
+                  <Link href="https://github.com/wintery-software/weat" target="_blank">
                     <SiGithub />
                   </Link>
                 </Button>
@@ -96,7 +79,7 @@ const RootLayout = ({
               </div>
             </div>
           </Navigation>
-          <main className="grow">{children}</main>
+          <div className="grow">{children}</div>
           <Toaster richColors />
           <Analytics />
           <SpeedInsights />

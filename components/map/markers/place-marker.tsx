@@ -1,12 +1,9 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { haversineDistance } from "@/lib/maps";
 import { cn } from "@/lib/utils";
 import { AdvancedMarker, CollisionBehavior } from "@vis.gl/react-google-maps";
 import {
+  LucideCircleHelp,
   LucideCupSoda,
   LucideGamepad2,
   LucidePawPrint,
@@ -18,12 +15,12 @@ import * as React from "react";
 import { CSSProperties, ReactNode } from "react";
 
 export interface PlaceMarkerProps {
-  place: Place;
+  place: Weat.Place;
   currentLocation?: google.maps.LatLng;
   popoverExtraContent?: ReactNode;
 }
 
-export const PLACE_MARKER_THEMES = {
+const PLACE_MARKER_THEMES = {
   restaurant: {
     icon: LucideUtensils,
     color: "#fb923c", // orange-400
@@ -44,19 +41,24 @@ export const PLACE_MARKER_THEMES = {
     icon: LucideGamepad2,
     color: "#a78bfa", // violet-400
   },
+  other: {
+    icon: LucideCircleHelp,
+    color: "#737373", // neutral-500
+  },
 };
 
-export const PlaceMarker = ({
-  place,
-  currentLocation,
-  popoverExtraContent,
-}: PlaceMarkerProps) => {
-  const Icon = PLACE_MARKER_THEMES[place.category].icon;
+export const PlaceMarker = ({ place, currentLocation, popoverExtraContent }: PlaceMarkerProps) => {
+  const type = place.types[0];
+  if (!type) {
+    throw new Error(`Place type is required: ${JSON.stringify(place)}`);
+  }
+  const theme = PLACE_MARKER_THEMES[type];
+  const Icon = theme.icon;
 
   return (
     <AdvancedMarker
       key={place.id}
-      position={place.position}
+      position={place.location}
       collisionBehavior={CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY}
     >
       <Popover>
@@ -65,7 +67,7 @@ export const PlaceMarker = ({
             style={
               // Tailwind does not support dynamic classnames
               {
-                "--marker-color": PLACE_MARKER_THEMES[place.category].color,
+                "--marker-color": theme.color,
               } as CSSProperties
             }
             className={cn(
@@ -90,15 +92,12 @@ export const PlaceMarker = ({
         <PopoverContent className="w-auto p-2">
           <div className="flex flex-col space-y-2">
             <div className="flex flex-col space-y-0.5">
-              <p className="text-sm font-semibold">{place.name}</p>
-              {place.name_translation && (
-                <p className="text-xs">{place.name_translation}</p>
-              )}
+              <p className="text-sm font-semibold">{place.name.text}</p>
             </div>
             {popoverExtraContent}
             <div className="flex flex-col space-y-0.5">
               <Link
-                href={place.google_maps_url}
+                href={place.googleMapsUrl}
                 target="_blank"
                 title="Open in Google Maps"
                 className="text-xs text-blue-500 hover:underline hover:underline-offset-2 dark:text-blue-300"
@@ -110,8 +109,8 @@ export const PlaceMarker = ({
                   {haversineDistance(
                     currentLocation.lat(),
                     currentLocation.lng(),
-                    place.position.lat,
-                    place.position.lng,
+                    place.location.lat,
+                    place.location.lng,
                     "mi",
                   ).toFixed(2)}
                   &nbsp;mi away (approx.)

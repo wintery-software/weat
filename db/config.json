@@ -1,0 +1,8 @@
+{
+  "tables": {
+    "places": {
+      "tableName": "WeatPlaces",
+      "partitionKey": "Id"
+    }
+  }
+}

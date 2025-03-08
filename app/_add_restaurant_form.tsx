@@ -1,15 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,10 +34,7 @@ export const AddRestaurantForm = ({ className }: { className?: string }) => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("space-y-4", className)}
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-4", className)}>
         <FormField
           control={form.control}
           name="name"
@@ -97,9 +86,7 @@ export const AddRestaurantForm = ({ className }: { className?: string }) => {
               <FormControl>
                 <Input placeholder="https://maps.app.goo.gl/..." {...field} />
               </FormControl>
-              <FormDescription>
-                The Google Maps URL to the restaurant.
-              </FormDescription>
+              <FormDescription>The Google Maps URL to the restaurant.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

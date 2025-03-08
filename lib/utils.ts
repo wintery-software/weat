@@ -5,10 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const fetchWeatAPI = async <T = never>(
-  input: string | URL | Request,
-  init?: RequestInit,
-) => {
+export const fetchWeatAPI = async <T = never>(input: string | URL | Request, init?: RequestInit) => {
   const appUrl = process.env.APP_URL;
 
   if (!appUrl) {
@@ -26,8 +23,7 @@ export const fetchWeatAPI = async <T = never>(
   }
 };
 
-export const fetcher = (...args: Parameters<typeof fetch>) =>
-  fetch(...args).then((res) => res.json());
+export const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).then((res) => res.json());
 
 export const getGoogleChromeURLScheme = () => {
   if (typeof window === "undefined") {
@@ -41,8 +37,7 @@ export const getGoogleChromeURLScheme = () => {
 /**
  * Sleep for a specified number of milliseconds.
  */
-export const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+export const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Get the date of the last update from a list of places.
@@ -51,7 +46,7 @@ export const sleep = (ms: number): Promise<void> =>
  * @param data List of places
  * @returns Date of the last update
  */
-export const getLastUpdated = (data: Place[]) => {
+export const getLastUpdated = (data: Weat.Place[]) => {
   if (!data || data.length === 0) {
     return "N/A";
   }

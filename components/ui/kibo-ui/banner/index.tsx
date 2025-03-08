@@ -4,12 +4,7 @@ import { Button, type ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { type LucideIcon, XIcon } from "lucide-react";
-import {
-  type HTMLAttributes,
-  type MouseEventHandler,
-  createContext,
-  useContext,
-} from "react";
+import { type HTMLAttributes, type MouseEventHandler, createContext, useContext } from "react";
 
 type BannerContextProps = {
   show: boolean;
@@ -67,18 +62,8 @@ export type BannerIconProps = HTMLAttributes<HTMLDivElement> & {
   icon: LucideIcon;
 };
 
-export const BannerIcon = ({
-  icon: Icon,
-  className,
-  ...props
-}: BannerIconProps) => (
-  <div
-    className={cn(
-      "rounded-full border border-background/20 bg-background/10 p-1 shadow-sm",
-      className,
-    )}
-    {...props}
-  >
+export const BannerIcon = ({ icon: Icon, className, ...props }: BannerIconProps) => (
+  <div className={cn("rounded-full border border-background/20 bg-background/10 p-1 shadow-sm", className)} {...props}>
     <Icon size={16} />
   </div>
 );
@@ -91,12 +76,7 @@ export const BannerTitle = ({ className, ...props }: BannerTitleProps) => (
 
 export type BannerActionProps = ButtonProps;
 
-export const BannerAction = ({
-  variant = "outline",
-  size = "sm",
-  className,
-  ...props
-}: BannerActionProps) => (
+export const BannerAction = ({ variant = "outline", size = "sm", className, ...props }: BannerActionProps) => (
   <Button
     variant={variant}
     size={size}
@@ -107,13 +87,7 @@ export const BannerAction = ({
 
 export type BannerCloseProps = ButtonProps;
 
-export const BannerClose = ({
-  variant = "ghost",
-  size = "icon",
-  onClick,
-  className,
-  ...props
-}: BannerCloseProps) => {
+export const BannerClose = ({ variant = "ghost", size = "icon", onClick, className, ...props }: BannerCloseProps) => {
   const { setShow } = useContext(BannerContext);
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -126,10 +100,7 @@ export const BannerClose = ({
       variant={variant}
       size={size}
       onClick={handleClick}
-      className={cn(
-        "shrink-0 bg-transparent hover:bg-background/10 hover:text-background",
-        className,
-      )}
+      className={cn("shrink-0 bg-transparent hover:bg-background/10 hover:text-background", className)}
       {...props}
     >
       <XIcon size={18} />

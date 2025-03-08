@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 
 export const GET = async () => {
-  const notifications: WeatNotification[] = [
+  const notifications: Weat.Notification[] = [
     {
       id: randomUUID(),
       type: "info",

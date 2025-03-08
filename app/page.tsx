@@ -3,24 +3,11 @@
 import { PlaceMarker } from "@/components/map/markers/place-marker";
 import { Button } from "@/components/ui/button";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
-import {
-  getCurrentPosition,
-  getGeolocationPermissionStatus,
-  metersToLatLngDegrees,
-} from "@/lib/maps";
+import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
 import { cn, fetcher, getLastUpdated } from "@/lib/utils";
 import { useDebounce } from "@uidotdev/usehooks";
-import type {
-  MapCameraChangedEvent,
-  MapProps,
-} from "@vis.gl/react-google-maps";
-import {
-  AdvancedMarker,
-  ControlPosition,
-  Map as GoogleMap,
-  MapControl,
-  useMap,
-} from "@vis.gl/react-google-maps";
+import type { MapCameraChangedEvent, MapProps } from "@vis.gl/react-google-maps";
+import { AdvancedMarker, ControlPosition, Map as GoogleMap, MapControl, useMap } from "@vis.gl/react-google-maps";
 import {
   LucideEarth,
   LucideLoaderCircle,
@@ -30,14 +17,11 @@ import {
   LucideRoute,
   LucideUser,
 } from "lucide-react";
-import * as React from "react";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import useSWRImmutable from "swr/immutable";
 
-const DEFAULT_CAMERA_PROPS: Required<
-  Pick<MapProps, "defaultCenter" | "defaultZoom">
-> = {
+const DEFAULT_CAMERA_PROPS: Required<Pick<MapProps, "defaultCenter" | "defaultZoom">> = {
   defaultCenter: { lat: 37.3346, lng: -122.009 },
   defaultZoom: 14,
 };
@@ -55,13 +39,13 @@ export default function Page() {
   const map = useMap();
   const [location, setLocation] = useState<google.maps.LatLng>();
   // Use useSWRImmutable to disable revalidation
-  const { data: places } = useSWRImmutable<Place[]>("/api/places", fetcher);
+  const { data: places } = useSWRImmutable<Weat.Place[]>("/api/places", fetcher);
 
   const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
   // Wait for bounds to stabilize before updating visible places
   const debouncedBounds = useDebounce(bounds, 500);
   // Only render places within bounds to prevent lag
-  const [placesInBounds, setVisiblePlaces] = useState<Place[]>([]);
+  const [placesInBounds, setVisiblePlaces] = useState<Weat.Place[]>([]);
 
   const [isLocateButtonDisabled, setIsLocateButtonDisabled] = useState(true);
   const [locateIcon, setLocateIcon] = useState<ReactNode>(ICONS.locateOff);
@@ -118,7 +102,7 @@ export default function Page() {
       return;
     }
 
-    const inBounds = places.filter((p) => bounds.contains(p.position));
+    const inBounds = places.filter((p) => bounds.contains(p.location));
     setVisiblePlaces(inBounds);
   }, [map, places]);
 
@@ -130,7 +114,7 @@ export default function Page() {
     }
 
     const bounds = new google.maps.LatLngBounds();
-    placesInBounds.forEach((p) => bounds.extend(p.position));
+    placesInBounds.forEach((p) => bounds.extend(p.location));
 
     // Animate the zoom to fit all markers
     map.fitBounds(bounds, 50);
@@ -150,9 +134,7 @@ export default function Page() {
     map.setMapTypeId(newMapTypeId);
     localStorage.setItem(LOCAL_STORAGE_MAP_MAP_TYPE_ID, newMapTypeId);
 
-    setMapTypeIcon((prev) =>
-      prev === ICONS.mapRoad ? ICONS.mapSatellite : ICONS.mapRoad,
-    );
+    setMapTypeIcon((prev) => (prev === ICONS.mapRoad ? ICONS.mapSatellite : ICONS.mapRoad));
   };
 
   const handleBoundsChange = useCallback(() => {
@@ -225,9 +207,7 @@ export default function Page() {
       return;
     }
 
-    const visible = places.filter((marker) =>
-      debouncedBounds.contains(marker.position),
-    );
+    const visible = places.filter((marker) => debouncedBounds.contains(marker.location));
 
     setVisiblePlaces(visible);
   }, [debouncedBounds, places]);
@@ -272,12 +252,7 @@ export default function Page() {
       >
         <MapControl position={ControlPosition.RIGHT_BOTTOM}>
           <div className="flex flex-col items-end gap-2 p-4">
-            <Button
-              variant="outline"
-              size="icon"
-              disabled={isLocateButtonDisabled}
-              onClick={locateUser}
-            >
+            <Button variant="outline" size="icon" disabled={isLocateButtonDisabled} onClick={locateUser}>
               {locateIcon}
             </Button>
             <Button variant="outline" size="icon" onClick={toggleMapType}>

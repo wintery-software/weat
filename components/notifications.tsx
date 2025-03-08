@@ -18,10 +18,10 @@ import { CSSProperties } from "react";
 import useSWR from "swr";
 
 interface NotificationItemProps {
-  notification: WeatNotification;
+  notification: Weat.Notification;
 }
 
-const NOTIFICATION_TYPE_COLORS: Record<NotificationType, string> = {
+const NOTIFICATION_TYPE_COLORS: Record<AlertType, string> = {
   info: "#0ea5e9", // sky-500
   success: "#16a34a", // green-600
   warning: "#facc15", // yellow-400
@@ -35,8 +35,7 @@ const NotificationItem = ({ notification }: NotificationItemProps) => {
     <div
       style={
         {
-          "--notification-border-color":
-            NOTIFICATION_TYPE_COLORS[notification.type],
+          "--notification-border-color": NOTIFICATION_TYPE_COLORS[notification.type],
         } as CSSProperties
       }
       className={`flex border-l-2 border-[var(--notification-border-color)] px-2`}
@@ -46,10 +45,7 @@ const NotificationItem = ({ notification }: NotificationItemProps) => {
           <p className="font-semibold">{notification.title}</p>
           <p className="text-xs">{notification.description}</p>
         </div>
-        <p
-          className="text-xs text-muted-foreground"
-          title={createdAt.format("LLL")}
-        >
+        <p className="text-xs text-muted-foreground" title={createdAt.format("LLL")}>
           {createdAt.fromNow()}
         </p>
       </div>
@@ -58,7 +54,7 @@ const NotificationItem = ({ notification }: NotificationItemProps) => {
 };
 
 const Notifications = () => {
-  const { data } = useSWR<WeatNotification[]>("/api/notifications", fetcher);
+  const { data } = useSWR<Weat.Notification[]>("/api/notifications", fetcher);
 
   return (
     <DropdownMenu>
