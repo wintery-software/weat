@@ -5,6 +5,7 @@ export const GET = async () => {
   const client = new Dynamo();
   const output = await client.scanTable(client.config.tables.places.tableName);
   client.destroy();
+
   const places = output.Items?.map((item) => {
     return {
       id: item.Id,
@@ -26,6 +27,6 @@ export const GET = async () => {
       updatedAt: item.UpdatedAt,
     };
   }) as Weat.Place[];
-  console.log(places);
+
   return NextResponse.json(places);
 };
