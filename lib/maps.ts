@@ -1,4 +1,7 @@
-import { EARTH_METERS_PER_DEGREE } from "@/lib/constants";
+/**
+ * Earth's equatorial radius in meters
+ */
+export const EARTH_METERS_PER_DEGREE = 111111;
 
 /**
  * Get the current geolocation permission status.
