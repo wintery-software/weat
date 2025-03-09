@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Compare environment variables if .env exists
+if [ -f .env ]; then
+  ./scripts/env-diff .env.example .env
+fi
