@@ -31,9 +31,9 @@ declare global {
       types: PlaceType[];
       address: string;
       googleMapsUrl: string;
-      location: google.maps.LatLngLiteral;
-      phoneNumber: string;
-      websiteUrl: string;
+      position: google.maps.LatLngLiteral;
+      phoneNumber: string | null;
+      websiteUrl: string | null;
     }
 
     interface RestaurantPlace extends Place {
@@ -74,12 +74,12 @@ declare global {
         PlaceId: string;
         Name: {
           Text: string;
-          LanguageCode: string;
+          LanguageCode: LanguageCode;
         };
         Types: Set<PlaceType>;
         Address: string;
         GoogleMapsUrl: string;
-        Location: {
+        Position: {
           Lat: number;
           Lng: number;
         };

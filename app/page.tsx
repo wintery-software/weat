@@ -1,5 +1,6 @@
 "use client";
 
+import DevelopmentView from "@/components/dev/development_view";
 import { PlaceMarker } from "@/components/map/markers/place-marker";
 import { Button } from "@/components/ui/button";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
@@ -39,7 +40,8 @@ export default function Page() {
   const map = useMap();
   const [location, setLocation] = useState<google.maps.LatLng>();
   // Use useSWRImmutable to disable revalidation
-  const { data: places } = useSWRImmutable<Weat.Place[]>("/api/places", fetcher);
+  const { data } = useSWRImmutable<Weat.Place[]>("/api/places", fetcher);
+  const { data: dataSource } = useSWRImmutable<{ source: string }>("/api/places/source", fetcher);
 
   const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
   // Wait for bounds to stabilize before updating visible places
@@ -92,7 +94,7 @@ export default function Page() {
   }, [map, zoomAndPanTo]);
 
   const checkPlacesInBounds = useCallback(() => {
-    if (!map || !places) {
+    if (!map || !data) {
       return;
     }
 
@@ -102,9 +104,9 @@ export default function Page() {
       return;
     }
 
-    const inBounds = places.filter((p) => bounds.contains(p.location));
+    const inBounds = data.filter((p) => bounds.contains(p.position));
     setVisiblePlaces(inBounds);
-  }, [map, places]);
+  }, [map, data]);
 
   // TODO: Use it
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -114,7 +116,7 @@ export default function Page() {
     }
 
     const bounds = new google.maps.LatLngBounds();
-    placesInBounds.forEach((p) => bounds.extend(p.location));
+    placesInBounds.forEach((p) => bounds.extend(p.position));
 
     // Animate the zoom to fit all markers
     map.fitBounds(bounds, 50);
@@ -203,14 +205,14 @@ export default function Page() {
 
   // Refresh visible markers when bounds change
   useEffect(() => {
-    if (!debouncedBounds || !places) {
+    if (!debouncedBounds || !data) {
       return;
     }
 
-    const visible = places.filter((marker) => debouncedBounds.contains(marker.location));
+    const visible = data.filter((marker) => debouncedBounds.contains(marker.position));
 
     setVisiblePlaces(visible);
-  }, [debouncedBounds, places]);
+  }, [debouncedBounds, data]);
 
   useEffect(() => {
     if (!map) {
@@ -250,6 +252,19 @@ export default function Page() {
         disableDefaultUI
         reuseMaps
       >
+        <MapControl position={ControlPosition.TOP_RIGHT}>
+          <DevelopmentView style={true}>
+            <div className="text-right text-xs text-black">
+              <p>Data source: {dataSource?.source}</p>
+              {data && (
+                <>
+                  <p>Count: {data.length}</p>
+                  <p>Last updated:&nbsp;{getLastUpdated(data)}</p>
+                </>
+              )}
+            </div>
+          </DevelopmentView>
+        </MapControl>
         <MapControl position={ControlPosition.RIGHT_BOTTOM}>
           <div className="flex flex-col items-end gap-2 p-4">
             <Button variant="outline" size="icon" disabled={isLocateButtonDisabled} onClick={locateUser}>
@@ -258,11 +273,6 @@ export default function Page() {
             <Button variant="outline" size="icon" onClick={toggleMapType}>
               {mapTypeIcon}
             </Button>
-            {places && (
-              <div className="bg-white/50 px-1.5 py-0.5 text-[10px] text-black">
-                Last Updated:&nbsp;{getLastUpdated(places)}
-              </div>
-            )}
           </div>
         </MapControl>
         <AdvancedMarker
