@@ -23,7 +23,22 @@ export const fetchWeatAPI = async <T = never>(input: string | URL | Request, ini
   }
 };
 
-export const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).then((res) => res.json());
+export const fetcher = async (...args: Parameters<typeof fetch>) => {
+  const response = await fetch(...args);
+
+  if (!response.ok) {
+    const data = await response.json();
+    // If the API returns an error object, use that message
+    if (data && data.error) {
+      throw new Error(data.error);
+    }
+
+    // Otherwise throw with status text
+    throw new Error(`${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+};
 
 export const getGoogleChromeURLScheme = () => {
   if (typeof window === "undefined") {
