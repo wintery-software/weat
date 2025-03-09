@@ -58,7 +58,7 @@ export const PlaceMarker = ({ place, currentLocation, popoverExtraContent }: Pla
   return (
     <AdvancedMarker
       key={place.id}
-      position={place.location}
+      position={place.position}
       collisionBehavior={CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY}
     >
       <Popover>
@@ -109,8 +109,8 @@ export const PlaceMarker = ({ place, currentLocation, popoverExtraContent }: Pla
                   {haversineDistance(
                     currentLocation.lat(),
                     currentLocation.lng(),
-                    place.location.lat,
-                    place.location.lng,
+                    place.position.lat,
+                    place.position.lng,
                     "mi",
                   ).toFixed(2)}
                   &nbsp;mi away (approx.)

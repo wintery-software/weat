@@ -20,7 +20,7 @@ const toString = (place: IPlace) =>
   `Place<id="${place.id}", name="${place.displayName?.text}", address="${place.formattedAddress}", googleMapsUri="${place.googleMapsUri}">`;
 
 const readData = async () => {
-  const filePath = path.resolve("test/place-data.json");
+  const filePath = path.resolve("tmp/place-data.json");
 
   try {
     const fileContent = await fs.readFile(filePath, "utf-8");
@@ -106,7 +106,7 @@ const writeDataToDynamo = async (data: IPlace[]) => {
             Types: types,
             Address: place.formattedAddress,
             GoogleMapsUrl: place.googleMapsUri,
-            Location: {
+            Position: {
               Lat: place.location!.latitude!,
               Lng: place.location!.longitude!,
             },

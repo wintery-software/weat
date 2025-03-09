@@ -28,27 +28,27 @@ interface CSVParkPlace extends CSVPlace {
 type CSVAnyPlace = CSVPlace | CSVRestaurantPlace | CSVParkPlace;
 
 export const readPlaces = async () => {
-  const dir = __dirname;
+  const dir = path.join(process.cwd(), "db/data");
   const files: {
     file: string;
-    category: Weat.PlaceType;
+    type: Weat.PlaceType;
   }[] = [
     {
       file: path.join(dir, "places_metadata - restaurants.csv"),
-      category: "restaurant",
+      type: "restaurant",
     },
     {
       file: path.join(dir, "places_metadata - drinks & snacks.csv"),
-      category: "drink",
+      type: "drink",
     },
     {
       file: path.join(dir, "places_metadata - parks.csv"),
-      category: "park",
+      type: "park",
     },
   ];
 
   const results: Weat.Place[] = await Promise.all(
-    files.map(async ({ file, category }) => {
+    files.map(async ({ file, type }) => {
       // Read file content
       const content = await fs.readFile(file, "utf-8");
 
@@ -65,16 +65,25 @@ export const readPlaces = async () => {
       });
 
       return records.map((record: CSVAnyPlace) => {
-        const { latitude, longitude, ...rest } = record;
-
         return {
           id: randomUUID(),
-          category,
-          ...rest,
-          position: [Number(longitude), Number(latitude)],
+          placeId: "#",
+          name: {
+            text: record.name,
+            languageCode: "en-US",
+          },
+          types: Array.from(new Set([type])),
+          address: record.address,
+          googleMapsUrl: record.google_maps_url,
+          position: {
+            lat: Number(record.latitude),
+            lng: Number(record.longitude),
+          },
+          phoneNumber: "0",
+          websiteUrl: "#",
           createdAt,
           updatedAt,
-        };
+        } as Weat.Place;
       });
     }),
   );
