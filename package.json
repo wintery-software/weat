@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack --experimental-https",
     "dev:db:create": "tsx test/dynamo.ts",
     "dev:db:seed": "tsx db/seed.ts",
-    "build": "next build",
+    "build": "next build && ./scripts/post-build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write ."
