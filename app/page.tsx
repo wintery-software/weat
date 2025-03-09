@@ -2,6 +2,7 @@
 
 import DevelopmentView from "@/components/dev/development_view";
 import { PlaceMarker } from "@/components/map/markers/place-marker";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
 import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
@@ -301,7 +302,22 @@ export default function Page() {
           </div>
         </AdvancedMarker>
         {placesInBounds?.map((p) => {
-          return <PlaceMarker key={p.id} place={p} />;
+          return (
+            <PlaceMarker
+              key={p.id}
+              place={p}
+              currentLocation={location}
+              popoverExtraContent={
+                <div className="flex gap-1">
+                  {p.types.map((type) => (
+                    <Badge key={type} className="capitalize">
+                      {type}
+                    </Badge>
+                  ))}
+                </div>
+              }
+            />
+          );
         })}
       </GoogleMap>
     </div>
