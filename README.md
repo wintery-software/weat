@@ -1,5 +1,9 @@
 # Weat
 
+## Statistics
+
+![Alt](https://repobeats.axiom.co/api/embed/6b790c8e855beb6a78c66f2b1648fb356ca3d4ad.svg "Repobeats analytics image")
+
 ## Getting Started
 
 Install dependencies:
