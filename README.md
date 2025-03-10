@@ -2,8 +2,6 @@
 
 ![Vercel Deploy](https://deploy-badge.vercel.app/vercel/weat-git-master-wintery-software)
 
-## Statistics
-
 ![Alt](https://repobeats.axiom.co/api/embed/6b790c8e855beb6a78c66f2b1648fb356ca3d4ad.svg "Repobeats analytics image")
 
 ## Getting Started
