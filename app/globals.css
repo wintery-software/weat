@@ -108,3 +108,7 @@ h2 {
 h3 {
   @apply text-lg font-semibold tracking-tight;
 }
+
+.link {
+  @apply text-link hover:underline;
+}

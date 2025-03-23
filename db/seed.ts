@@ -99,10 +99,12 @@ const writeDataToDynamo = async (data: IPlace[]) => {
           Item: {
             Id: randomUUID(),
             PlaceId: place.id,
-            Name: {
-              Text: place.displayName?.text,
-              LanguageCode: place.displayName?.languageCode,
-            },
+            Names: [
+              {
+                Text: place.displayName?.text,
+                LanguageCode: place.displayName?.languageCode,
+              },
+            ],
             Types: types,
             Address: place.formattedAddress,
             GoogleMapsUrl: place.googleMapsUri,

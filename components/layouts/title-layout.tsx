@@ -5,7 +5,7 @@ interface H1LayoutProps {
   children: ReactNode;
 }
 
-const H1Layout = ({ title, children }: H1LayoutProps) => {
+const TitleLayout = ({ title, children }: H1LayoutProps) => {
   return (
     <>
       <h1>{title}</h1>
@@ -14,4 +14,4 @@ const H1Layout = ({ title, children }: H1LayoutProps) => {
   );
 };
 
-export default H1Layout;
+export default TitleLayout;

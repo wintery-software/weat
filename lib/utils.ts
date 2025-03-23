@@ -5,41 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const fetchWeatAPI = async <T = never>(input: string | URL | Request, init?: RequestInit) => {
-  const appUrl = process.env.APP_URL;
-
-  if (!appUrl) {
-    throw new Error("APP_URL is not set.");
-  }
-
-  console.log(`URL: ${appUrl}/${input}`);
-
-  try {
-    const res = await fetch(`${appUrl}/${input}`, init);
-    return (await res.json()) as T;
-  } catch (e) {
-    console.error(e);
-    throw e;
-  }
-};
-
-export const fetcher = async (...args: Parameters<typeof fetch>) => {
-  const response = await fetch(...args);
-
-  if (!response.ok) {
-    const data = await response.json();
-    // If the API returns an error object, use that message
-    if (data && data.error) {
-      throw new Error(data.error);
-    }
-
-    // Otherwise throw with status text
-    throw new Error(`${response.status} ${response.statusText}`);
-  }
-
-  return response.json();
-};
-
 export const getGoogleChromeURLScheme = () => {
   if (typeof window === "undefined") {
     return "";

@@ -1,25 +1,34 @@
 "use client";
 
-import { ThemeProvider } from "@/components/providers/theme-provider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type ReactNode } from "react";
 import { toast } from "sonner";
-import { SWRConfig } from "swr";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      throwOnError: (error, query) => {
+        toast.error("Failed to fetch", {
+          id: query.queryKey.toString(), // Make sure no duplicate toasts are shown
+          description: error.message,
+        });
+
+        // Return false to prevent the default error handling
+        return false;
+      },
+    },
+    mutations: {
+      throwOnError: true,
+    },
+  },
+});
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <SWRConfig
-      value={{
-        onError: (err: Error, key) => {
-          console.error(`${key}:`, err);
-          toast.error("Failed to fetch data", {
-            description: err.message,
-          });
-        },
-      }}
-    >
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-        {children}
-      </ThemeProvider>
-    </SWRConfig>
+    <QueryClientProvider client={queryClient}>
+      {/*<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>*/}
+      {children}
+      {/*</ThemeProvider>*/}
+    </QueryClientProvider>
   );
 }

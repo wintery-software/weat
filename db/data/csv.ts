@@ -67,11 +67,21 @@ export const readPlaces = async () => {
       return records.map((record: CSVAnyPlace) => {
         return {
           id: randomUUID(),
-          placeId: "#",
-          name: {
-            text: record.name,
-            languageCode: "en-US",
-          },
+          placeId: "",
+          names: [
+            {
+              text: record.name,
+              languageCode: "en",
+            },
+            ...(record.name_translation
+              ? [
+                  {
+                    text: record.name_translation,
+                    languageCode: "zh",
+                  },
+                ]
+              : []),
+          ],
           types: Array.from(new Set([type])),
           address: record.address,
           googleMapsUrl: record.google_maps_url,
@@ -79,8 +89,8 @@ export const readPlaces = async () => {
             lat: Number(record.latitude),
             lng: Number(record.longitude),
           },
-          phoneNumber: "0",
-          websiteUrl: "#",
+          phoneNumber: "",
+          websiteUrl: "",
           createdAt,
           updatedAt,
         } as Weat.Place;

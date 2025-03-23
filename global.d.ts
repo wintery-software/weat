@@ -1,3 +1,4 @@
+import { google } from "@googlemaps/places/build/protos/protos";
 import { LucideProps } from "lucide-react";
 import { dynamicIconImports } from "lucide-react/dynamic";
 
@@ -24,16 +25,22 @@ declare global {
 
     interface Place extends Data {
       placeId: string;
-      name: {
-        languageCode: LanguageCode;
-        text: string;
-      };
+      names: google.type.ILocalizedText[];
       types: PlaceType[];
       address: string;
       googleMapsUrl: string;
       position: google.maps.LatLngLiteral;
       phoneNumber: string | null;
       websiteUrl: string | null;
+    }
+
+    enum PlaceType {
+      RESTAURANT = "restaurant",
+      DRINK = "drink",
+      PARK = "park",
+      DOG_PARK = "dogPark",
+      ENTERTAINMENT = "entertainment",
+      OTHER = "other",
     }
 
     interface RestaurantPlace extends Place {
@@ -61,8 +68,6 @@ declare global {
       createdAt: string;
     }
 
-    type PlaceType = "restaurant" | "drink" | "park" | "dogPark" | "entertainment" | "other";
-
     namespace Dynamo {
       interface Data {
         Id: string;
@@ -72,10 +77,10 @@ declare global {
 
       interface Place extends Data {
         PlaceId: string;
-        Name: {
+        Names: {
           Text: string;
           LanguageCode: LanguageCode;
-        };
+        }[];
         Types: Set<PlaceType>;
         Address: string;
         GoogleMapsUrl: string;

@@ -89,10 +89,16 @@ export const PlaceMarker = ({ place, currentLocation, popoverExtraContent }: Pla
             <Icon size={12} color="white" />
           </div>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-2">
-          <div className="flex flex-col space-y-2">
-            <div className="flex flex-col space-y-0.5">
-              <p className="text-sm font-semibold">{place.name.text}</p>
+        <PopoverContent className="p-2 sm:w-auto">
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-0.5">
+              <p className="text-sm font-semibold">{place.names[0].text}</p>
+              <p className="text-xs font-semibold text-muted-foreground">
+                {place.names
+                  .slice(1)
+                  .map((p) => p.text)
+                  .join(",")}
+              </p>
             </div>
             {popoverExtraContent}
             <div className="flex flex-col space-y-0.5">

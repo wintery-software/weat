@@ -1,4 +1,4 @@
-import { readPlaces } from "@/db/data/utils";
+import { readPlaces } from "@/db/data/csv";
 import { Dynamo } from "@/db/dynamo";
 import { DataSources } from "@/db/types";
 import { NextResponse } from "next/server";
@@ -13,28 +13,7 @@ export const GET = async () => {
   let data: Weat.Place[];
 
   if (source === "csv") {
-    const places = await readPlaces();
-    data = places.map((place) => {
-      return {
-        id: place.id,
-        placeId: place.placeId,
-        name: {
-          text: place.name.text,
-          languageCode: place.name.languageCode,
-        },
-        types: place.types,
-        address: place.address,
-        googleMapsUrl: place.googleMapsUrl,
-        position: {
-          lat: place.position.lat,
-          lng: place.position.lng,
-        },
-        phoneNumber: place.phoneNumber,
-        websiteUrl: place.websiteUrl,
-        createdAt: place.createdAt,
-        updatedAt: place.updatedAt,
-      };
-    });
+    data = await readPlaces();
   } else {
     try {
       const client = new Dynamo(source === "dynamo-local");
@@ -46,10 +25,10 @@ export const GET = async () => {
         return {
           id: item.Id,
           placeId: item.PlaceId,
-          name: {
-            text: item.Name.Text,
-            languageCode: item.Name.LanguageCode,
-          },
+          names: item.Names.map((name) => ({
+            text: name.Text,
+            languageCode: name.LanguageCode,
+          })),
           types: Array.from(item.Types),
           address: item.Address,
           googleMapsUrl: item.GoogleMapsUrl,

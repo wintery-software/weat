@@ -2,11 +2,14 @@
 
 import DevelopmentView from "@/components/dev/development_view";
 import { PlaceMarker } from "@/components/map/markers/place-marker";
-import { Badge } from "@/components/ui/badge";
+import SearchBar from "@/components/search-bar";
 import { Button } from "@/components/ui/button";
+import { CommandItem } from "@/components/ui/command";
+import { api } from "@/lib/api";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
 import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
-import { cn, fetcher, getLastUpdated } from "@/lib/utils";
+import { cn, getLastUpdated } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@uidotdev/usehooks";
 import type { MapCameraChangedEvent, MapProps } from "@vis.gl/react-google-maps";
 import { AdvancedMarker, ControlPosition, Map as GoogleMap, MapControl, useMap } from "@vis.gl/react-google-maps";
@@ -21,7 +24,6 @@ import {
 } from "lucide-react";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import useSWRImmutable from "swr/immutable";
 
 const DEFAULT_CAMERA_PROPS: Required<Pick<MapProps, "defaultCenter" | "defaultZoom">> = {
   defaultCenter: { lat: 37.3346, lng: -122.009 },
@@ -37,18 +39,46 @@ const ICONS = {
   mapSatellite: <LucideEarth />,
 };
 
+// Delay (ms) before fetching places after bounds/query change
+const DEBOUNCE_DELAY = 300;
+
+const searchPlaces = async (query: string, bounds: google.maps.LatLngBounds | undefined) => {
+  if (!bounds) {
+    return null;
+  }
+
+  const params = new URLSearchParams();
+  params.append("q", query);
+
+  const ne = bounds.getNorthEast();
+  const sw = bounds.getSouthWest();
+  // Format as "south,west,north,east" (standard format for many mapping APIs)
+  params.append("bounds", `${sw.lat()},${sw.lng()},${ne.lat()},${ne.lng()}`);
+
+  return (await api.get(`/api/places/search?${params}`)).data;
+};
+
 export default function Page() {
   const map = useMap();
   const [location, setLocation] = useState<google.maps.LatLng>();
-  // Use useSWRImmutable to disable revalidation
-  const { data } = useSWRImmutable<Weat.Place[]>("/api/places", fetcher);
-  const { data: dataSource } = useSWRImmutable<{ source: string }>("/api/places/source", fetcher);
 
   const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
   // Wait for bounds to stabilize before updating visible places
-  const debouncedBounds = useDebounce(bounds, 500);
-  // Only render places within bounds to prevent lag
-  const [placesInBounds, setVisiblePlaces] = useState<Weat.Place[]>([]);
+  const debouncedBounds = useDebounce(bounds, DEBOUNCE_DELAY);
+
+  const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY);
+
+  const dataSourceQuery = useQuery<{ source: string }>({
+    queryKey: ["/api/places/source"],
+    queryFn: async () => (await api.get("/api/places/source")).data,
+  });
+  const placesQuery = useQuery<Weat.Place[]>({
+    queryKey: ["places", "search", debouncedQuery, JSON.stringify(debouncedBounds)],
+    queryFn: async () => searchPlaces(debouncedQuery, debouncedBounds),
+    enabled: !!debouncedBounds,
+    placeholderData: (previousData) => previousData ?? [],
+  });
 
   const [isLocateButtonDisabled, setIsLocateButtonDisabled] = useState(true);
   const [locateIcon, setLocateIcon] = useState<ReactNode>(ICONS.locateOff);
@@ -93,35 +123,6 @@ export default function Page() {
         }
       });
   }, [map, zoomAndPanTo]);
-
-  const checkPlacesInBounds = useCallback(() => {
-    if (!map || !data) {
-      return;
-    }
-
-    const bounds = map.getBounds();
-
-    if (!bounds) {
-      return;
-    }
-
-    const inBounds = data.filter((p) => bounds.contains(p.position));
-    setVisiblePlaces(inBounds);
-  }, [map, data]);
-
-  // TODO: Use it
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const fitBoundsToMarkers = () => {
-    if (!map) {
-      return;
-    }
-
-    const bounds = new google.maps.LatLngBounds();
-    placesInBounds.forEach((p) => bounds.extend(p.position));
-
-    // Animate the zoom to fit all markers
-    map.fitBounds(bounds, 50);
-  };
 
   const toggleMapType = () => {
     if (!map) {
@@ -180,6 +181,10 @@ export default function Page() {
     }
   };
 
+  const handleSelectedChange = (item: Weat.Place) => {
+    zoomAndPanTo(item.position.lat, item.position.lng, DEFAULT_CAMERA_PROPS.defaultZoom);
+  };
+
   // Actions on first load
   useEffect(() => {
     if (!map) {
@@ -203,17 +208,6 @@ export default function Page() {
       }
     });
   }, [locateUser, map]);
-
-  // Refresh visible markers when bounds change
-  useEffect(() => {
-    if (!debouncedBounds || !data) {
-      return;
-    }
-
-    const visible = data.filter((marker) => debouncedBounds.contains(marker.position));
-
-    setVisiblePlaces(visible);
-  }, [debouncedBounds, data]);
 
   useEffect(() => {
     if (!map) {
@@ -247,20 +241,37 @@ export default function Page() {
         {...DEFAULT_CAMERA_PROPS}
         onBoundsChanged={handleBoundsChange}
         onCameraChanged={handleCameraChange}
-        onIdle={checkPlacesInBounds}
+        // onIdle={checkPlacesInBounds}
         mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_RESTAURANTS_MAP_WEB_ID}
         gestureHandling={"greedy"}
         disableDefaultUI
         reuseMaps
       >
+        <MapControl position={ControlPosition.TOP_LEFT}>
+          <div className="flex w-96 p-4">
+            <SearchBar<Weat.Place>
+              url={`/api/places/search?q=${debouncedQuery}`}
+              renderFn={(place) => (
+                <CommandItem key={place.id}>
+                  <div className="flex flex-col gap-1">
+                    <p className="font-semibold">{place.names[0].text}</p>
+                    <p className="text-muted-foreground">{place.address}</p>
+                  </div>
+                </CommandItem>
+              )}
+              onSelectedChange={handleSelectedChange}
+              placeholder="Search place..."
+            />
+          </div>
+        </MapControl>
         <MapControl position={ControlPosition.TOP_RIGHT}>
           <DevelopmentView style={true}>
             <div className="text-right text-xs text-black">
-              <p>Data source: {dataSource?.source}</p>
-              {data && (
+              <p>Data source: {dataSourceQuery.data?.source}</p>
+              {placesQuery.data && (
                 <>
-                  <p>Count: {data.length}</p>
-                  <p>Last updated:&nbsp;{getLastUpdated(data)}</p>
+                  <p>Count: {placesQuery.data.length}</p>
+                  <p>Last updated:&nbsp;{getLastUpdated(placesQuery.data)}</p>
                 </>
               )}
             </div>
@@ -280,6 +291,7 @@ export default function Page() {
           position={location}
           onMouseEnter={(e) => e.preventDefault()}
           onMouseLeave={(e) => e.preventDefault()}
+          zIndex={999} // Always on top
         >
           <div
             className={cn(
@@ -301,21 +313,13 @@ export default function Page() {
             <LucideUser size={12} color="#fff" />
           </div>
         </AdvancedMarker>
-        {placesInBounds?.map((p) => {
+        {placesQuery.data?.map((p) => {
           return (
             <PlaceMarker
               key={p.id}
               place={p}
               currentLocation={location}
-              popoverExtraContent={
-                <div className="flex gap-1">
-                  {p.types.map((type) => (
-                    <Badge key={type} className="capitalize">
-                      {type}
-                    </Badge>
-                  ))}
-                </div>
-              }
+              popoverExtraContent={<div className="text-xs capitalize text-muted-foreground">{p.types.join(", ")}</div>}
             />
           );
         })}
