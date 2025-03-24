@@ -1,24 +1,11 @@
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton } from "@/components/ui/sidebar";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 
 interface SearchResultProps {
   items: Weat.Place[] | undefined;
-  isLoading?: boolean;
   onSelectedChange: (item: Weat.Place) => void;
 }
 
-const SearchResult = ({ items, isLoading, onSelectedChange }: SearchResultProps) => {
-  if (isLoading) {
-    return (
-      <SidebarMenu>
-        {Array.from({ length: 10 }).map((_, index) => (
-          <SidebarMenuItem key={index}>
-            <SidebarMenuSkeleton showIcon />
-          </SidebarMenuItem>
-        ))}
-      </SidebarMenu>
-    );
-  }
-
+const SearchResult = ({ items, onSelectedChange }: SearchResultProps) => {
   if (!Array.isArray(items)) {
     return null;
   }

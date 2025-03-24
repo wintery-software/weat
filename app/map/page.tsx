@@ -29,6 +29,7 @@ import type { MapCameraChangedEvent, MapProps } from "@vis.gl/react-google-maps"
 import { AdvancedMarker, ControlPosition, Map as GoogleMap, MapControl, useMap } from "@vis.gl/react-google-maps";
 import {
   LucideEarth,
+  LucideLoader2,
   LucideLoaderCircle,
   LucideLocate,
   LucideLocateFixed,
@@ -262,7 +263,7 @@ export default function Page() {
   }, [map]);
 
   return (
-    <div className="flex h-dvh w-dvw flex-col md:flex-row">
+    <div className="flex h-screen w-full overflow-hidden">
       <Sidebar>
         <SidebarHeader />
         <SidebarContent>
@@ -282,6 +283,9 @@ export default function Page() {
                 }}
               />
               <LucideSearch className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
+              {searchQuery.isLoading && (
+                <LucideLoader2 className="pointer-events-none absolute right-2 top-1/4 size-4 animate-spin select-none opacity-50" />
+              )}
             </SidebarGroupContent>
           </SidebarGroup>
           <SidebarSeparator />
@@ -296,95 +300,95 @@ export default function Page() {
               <SidebarMenuBadge>{searchQuery.data?.length ?? placesQuery.data?.length}</SidebarMenuBadge>
             </SidebarGroupAction>
             <SidebarGroupContent>
-              <SearchResult
-                items={searchQuery.data ?? placesQuery.data}
-                isLoading={searchQuery.isLoading}
-                onSelectedChange={handleSelectedChange}
-              />
+              <SearchResult items={searchQuery.data ?? placesQuery.data} onSelectedChange={handleSelectedChange} />
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter />
       </Sidebar>
-      <GoogleMap
-        {...DEFAULT_CAMERA_PROPS}
-        onBoundsChanged={handleBoundsChange}
-        onCameraChanged={handleCameraChange}
-        // onIdle={checkPlacesInBounds}
-        mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_RESTAURANTS_MAP_WEB_ID}
-        gestureHandling={"greedy"}
-        disableDefaultUI
-        reuseMaps
-      >
-        <MapControl position={ControlPosition.TOP_LEFT}>
-          <div className="p-4">
-            <Button size={"icon"} variant={"outline"} onClick={toggleSidebar}>
-              <LucideSearch />
-            </Button>
-          </div>
-        </MapControl>
-        <MapControl position={ControlPosition.TOP_RIGHT}>
-          <DevelopmentView style={true}>
-            <div className="text-right text-xs text-black">
-              <p>Data source: {dataSourceQuery.data?.source}</p>
-              {placesQuery.data && (
-                <>
-                  <p>Count: {placesQuery.data.length}</p>
-                  <p>Last updated:&nbsp;{getLastUpdated(placesQuery.data)}</p>
-                </>
-              )}
-            </div>
-          </DevelopmentView>
-        </MapControl>
-        <MapControl position={ControlPosition.RIGHT_BOTTOM}>
-          <div className="p-4">
-            <div className="flex flex-col items-end gap-2">
-              <Button variant="outline" size="icon" disabled={isLocateButtonDisabled} onClick={locateUser}>
-                {locateIcon}
-              </Button>
-              <Button variant="outline" size="icon" onClick={toggleMapType}>
-                {mapTypeIcon}
-              </Button>
-            </div>
-          </div>
-        </MapControl>
-        <AdvancedMarker
-          position={location}
-          onMouseEnter={(e) => e.preventDefault()}
-          onMouseLeave={(e) => e.preventDefault()}
-          zIndex={999} // Always on top
+      <main className="flex-1">
+        <GoogleMap
+          {...DEFAULT_CAMERA_PROPS}
+          onBoundsChanged={handleBoundsChange}
+          onCameraChanged={handleCameraChange}
+          // onIdle={checkPlacesInBounds}
+          mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_RESTAURANTS_MAP_WEB_ID}
+          gestureHandling={"greedy"}
+          disableDefaultUI
+          reuseMaps
         >
-          <div
-            className={cn(
-              "flex",
-              "rounded-full",
-              "bg-blue-500",
-              "border-2",
-              "border-white",
-              "size-6",
-              "justify-center",
-              "items-center",
-              "transition",
-              "shadow-sm",
-              "shadow-blue-500",
-              "hover:shadow-md",
-              "hover:shadow-blue-500",
-            )}
+          <MapControl position={ControlPosition.TOP_LEFT}>
+            <div className="p-4">
+              <Button size={"icon"} variant={"outline"} onClick={toggleSidebar}>
+                <LucideSearch />
+              </Button>
+            </div>
+          </MapControl>
+          <MapControl position={ControlPosition.TOP_RIGHT}>
+            <DevelopmentView style={true}>
+              <div className="text-right text-xs text-black">
+                <p>Data source: {dataSourceQuery.data?.source}</p>
+                {placesQuery.data && (
+                  <>
+                    <p>Count: {placesQuery.data.length}</p>
+                    <p>Last updated:&nbsp;{getLastUpdated(placesQuery.data)}</p>
+                  </>
+                )}
+              </div>
+            </DevelopmentView>
+          </MapControl>
+          <MapControl position={ControlPosition.RIGHT_BOTTOM}>
+            <div className="p-4">
+              <div className="flex flex-col items-end gap-2">
+                <Button variant="outline" size="icon" disabled={isLocateButtonDisabled} onClick={locateUser}>
+                  {locateIcon}
+                </Button>
+                <Button variant="outline" size="icon" onClick={toggleMapType}>
+                  {mapTypeIcon}
+                </Button>
+              </div>
+            </div>
+          </MapControl>
+          <AdvancedMarker
+            position={location}
+            onMouseEnter={(e) => e.preventDefault()}
+            onMouseLeave={(e) => e.preventDefault()}
+            zIndex={999} // Always on top
           >
-            <LucideUser size={12} color="#fff" />
-          </div>
-        </AdvancedMarker>
-        {placesQuery.data?.map((p) => {
-          return (
-            <PlaceMarker
-              key={p.id}
-              place={p}
-              currentLocation={location}
-              popoverExtraContent={<div className="text-xs capitalize text-muted-foreground">{p.types.join(", ")}</div>}
-            />
-          );
-        })}
-      </GoogleMap>
+            <div
+              className={cn(
+                "flex",
+                "rounded-full",
+                "bg-blue-500",
+                "border-2",
+                "border-white",
+                "size-6",
+                "justify-center",
+                "items-center",
+                "transition",
+                "shadow-sm",
+                "shadow-blue-500",
+                "hover:shadow-md",
+                "hover:shadow-blue-500",
+              )}
+            >
+              <LucideUser size={12} color="#fff" />
+            </div>
+          </AdvancedMarker>
+          {placesQuery.data?.map((p) => {
+            return (
+              <PlaceMarker
+                key={p.id}
+                place={p}
+                currentLocation={location}
+                popoverExtraContent={
+                  <div className="text-xs capitalize text-muted-foreground">{p.types.join(", ")}</div>
+                }
+              />
+            );
+          })}
+        </GoogleMap>
+      </main>
     </div>
   );
 }

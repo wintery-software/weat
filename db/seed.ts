@@ -74,15 +74,15 @@ const writeDataToDynamo = async (data: IPlace[]) => {
     const place = data[i];
     const placeTypes = place.types;
 
-    let type = Weat.PlaceType.OTHER;
+    let type = "other" as Weat.PlaceType;
 
     if (placeTypes) {
       if (placeTypes.includes("restaurant")) {
-        type = Weat.PlaceType.RESTAURANT;
+        type = "restaurant" as Weat.PlaceType;
       } else if (placeTypes.includes("tea_house")) {
-        type = Weat.PlaceType.DRINK;
+        type = "drink" as Weat.PlaceType;
       } else if (placeTypes.includes("park")) {
-        type = Weat.PlaceType.PARK;
+        type = "park" as Weat.PlaceType;
       }
     }
 
