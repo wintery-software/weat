@@ -211,6 +211,7 @@ export default function Page() {
 
   const handleSelectedChange = (item: Weat.Place) => {
     zoomAndPanTo(item.position.lat, item.position.lng, DEFAULT_CAMERA_PROPS.defaultZoom);
+    toggleSidebar();
   };
 
   // Actions on first load
