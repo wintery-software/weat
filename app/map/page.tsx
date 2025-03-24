@@ -263,7 +263,7 @@ export default function Page() {
   }, [map]);
 
   return (
-    <div className="flex h-screen w-full overflow-hidden">
+    <div className="flex h-dvh w-full overflow-hidden">
       <Sidebar>
         <SidebarHeader />
         <SidebarContent>
