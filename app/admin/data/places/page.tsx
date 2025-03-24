@@ -4,11 +4,11 @@ import { DataTable } from "@/components/data-table";
 import TitleLayout from "@/components/layouts/title-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
 import { ENDPOINTS } from "@/lib/endpoints";
-import { fetcher } from "@/lib/utils";
-import { ColumnDef } from "@tanstack/table-core";
+import { useQuery } from "@tanstack/react-query";
+import { type ColumnDef } from "@tanstack/table-core";
 import Link from "next/link";
-import useSWR from "swr";
 
 /**
  * Render URL string as a link.
@@ -145,8 +145,14 @@ const columns: ColumnDef<Weat.Place>[] = [
 ];
 
 const Page = () => {
-  const { data } = useSWR<Weat.Place[]>(ENDPOINTS.places, fetcher);
-  const { data: dataSource } = useSWR<{ source: string }>(ENDPOINTS.placesSource, fetcher);
+  const { data } = useQuery<Weat.Place[]>({
+    queryKey: ["places"],
+    queryFn: async () => (await api.get(ENDPOINTS.places)).data,
+  });
+  const { data: dataSource } = useQuery<{ source: string }>({
+    queryKey: ["placesSource"],
+    queryFn: async () => (await api.get(ENDPOINTS.placesSource)).data,
+  });
 
   return (
     <TitleLayout title="Places">

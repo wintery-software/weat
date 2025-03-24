@@ -1,10 +1,24 @@
 "use client";
 
+import SearchResult from "./sidebar/search-result";
 import DevelopmentView from "@/components/dev/development_view";
 import { PlaceMarker } from "@/components/map/markers/place-marker";
-import SearchBar from "@/components/search-bar";
 import { Button } from "@/components/ui/button";
-import { CommandItem } from "@/components/ui/command";
+import { Label } from "@/components/ui/label";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupAction,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInput,
+  SidebarMenuBadge,
+  SidebarSeparator,
+  useSidebar,
+} from "@/components/ui/sidebar";
 import { api } from "@/lib/api";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
 import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
@@ -20,6 +34,7 @@ import {
   LucideLocateFixed,
   LucideLocateOff,
   LucideRoute,
+  LucideSearch,
   LucideUser,
 } from "lucide-react";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
@@ -42,24 +57,31 @@ const ICONS = {
 // Delay (ms) before fetching places after bounds/query change
 const DEBOUNCE_DELAY = 300;
 
-const searchPlaces = async (query: string, bounds: google.maps.LatLngBounds | undefined) => {
-  if (!bounds) {
+const searchPlaces = async ({ bounds, query }: { bounds?: google.maps.LatLngBounds; query?: string }) => {
+  if (!bounds && !query) {
     return null;
   }
 
   const params = new URLSearchParams();
-  params.append("q", query);
 
-  const ne = bounds.getNorthEast();
-  const sw = bounds.getSouthWest();
-  // Format as "south,west,north,east" (standard format for many mapping APIs)
-  params.append("bounds", `${sw.lat()},${sw.lng()},${ne.lat()},${ne.lng()}`);
+  if (query) {
+    params.append("q", query);
+  }
+
+  if (bounds) {
+    const ne = bounds.getNorthEast();
+    const sw = bounds.getSouthWest();
+    // Format as "south,west,north,east" (standard format for many mapping APIs)
+    params.append("bounds", `${sw.lat()},${sw.lng()},${ne.lat()},${ne.lng()}`);
+  }
 
   return (await api.get(`/api/places/search?${params}`)).data;
 };
 
 export default function Page() {
   const map = useMap();
+  const { toggleSidebar } = useSidebar();
+
   const [location, setLocation] = useState<google.maps.LatLng>();
 
   const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
@@ -67,6 +89,7 @@ export default function Page() {
   const debouncedBounds = useDebounce(bounds, DEBOUNCE_DELAY);
 
   const [query, setQuery] = useState("");
+  // Wait for user to stop typing before searching
   const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY);
 
   const dataSourceQuery = useQuery<{ source: string }>({
@@ -74,10 +97,14 @@ export default function Page() {
     queryFn: async () => (await api.get("/api/places/source")).data,
   });
   const placesQuery = useQuery<Weat.Place[]>({
-    queryKey: ["places", "search", debouncedQuery, JSON.stringify(debouncedBounds)],
-    queryFn: async () => searchPlaces(debouncedQuery, debouncedBounds),
+    queryKey: ["places", "bounds", JSON.stringify(debouncedBounds)],
+    queryFn: async () => searchPlaces({ bounds: debouncedBounds }),
     enabled: !!debouncedBounds,
-    placeholderData: (previousData) => previousData ?? [],
+  });
+  const searchQuery = useQuery<Weat.Place[]>({
+    queryKey: ["places", "search", debouncedQuery],
+    queryFn: async () => searchPlaces({ query: debouncedQuery }),
+    enabled: !!debouncedQuery,
   });
 
   const [isLocateButtonDisabled, setIsLocateButtonDisabled] = useState(true);
@@ -235,9 +262,51 @@ export default function Page() {
   }, [map]);
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex h-dvh w-dvw flex-col md:flex-row">
+      <Sidebar>
+        <SidebarHeader />
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent className="relative">
+              <Label htmlFor="search" className="sr-only">
+                Search
+              </Label>
+              <SidebarInput
+                type="text"
+                id="search"
+                placeholder="Search places..."
+                className="pl-8"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                }}
+              />
+              <LucideSearch className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarSeparator />
+          <SidebarGroup>
+            <SidebarGroupLabel>Filter</SidebarGroupLabel>
+            <SidebarGroupContent></SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarSeparator />
+          <SidebarGroup>
+            <SidebarGroupLabel>Results</SidebarGroupLabel>
+            <SidebarGroupAction title="Total results" asChild>
+              <SidebarMenuBadge>{searchQuery.data?.length ?? placesQuery.data?.length}</SidebarMenuBadge>
+            </SidebarGroupAction>
+            <SidebarGroupContent>
+              <SearchResult
+                items={searchQuery.data ?? placesQuery.data}
+                isLoading={searchQuery.isLoading}
+                onSelectedChange={handleSelectedChange}
+              />
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter />
+      </Sidebar>
       <GoogleMap
-        className="grow"
         {...DEFAULT_CAMERA_PROPS}
         onBoundsChanged={handleBoundsChange}
         onCameraChanged={handleCameraChange}
@@ -248,20 +317,10 @@ export default function Page() {
         reuseMaps
       >
         <MapControl position={ControlPosition.TOP_LEFT}>
-          <div className="flex w-96 p-4">
-            <SearchBar<Weat.Place>
-              url={`/api/places/search?q=${debouncedQuery}`}
-              renderFn={(place) => (
-                <CommandItem key={place.id}>
-                  <div className="flex flex-col gap-1">
-                    <p className="font-semibold">{place.names[0].text}</p>
-                    <p className="text-muted-foreground">{place.address}</p>
-                  </div>
-                </CommandItem>
-              )}
-              onSelectedChange={handleSelectedChange}
-              placeholder="Search place..."
-            />
+          <div className="p-4">
+            <Button size={"icon"} variant={"outline"} onClick={toggleSidebar}>
+              <LucideSearch />
+            </Button>
           </div>
         </MapControl>
         <MapControl position={ControlPosition.TOP_RIGHT}>
@@ -278,13 +337,15 @@ export default function Page() {
           </DevelopmentView>
         </MapControl>
         <MapControl position={ControlPosition.RIGHT_BOTTOM}>
-          <div className="flex flex-col items-end gap-2 p-4">
-            <Button variant="outline" size="icon" disabled={isLocateButtonDisabled} onClick={locateUser}>
-              {locateIcon}
-            </Button>
-            <Button variant="outline" size="icon" onClick={toggleMapType}>
-              {mapTypeIcon}
-            </Button>
+          <div className="p-4">
+            <div className="flex flex-col items-end gap-2">
+              <Button variant="outline" size="icon" disabled={isLocateButtonDisabled} onClick={locateUser}>
+                {locateIcon}
+              </Button>
+              <Button variant="outline" size="icon" onClick={toggleMapType}>
+                {mapTypeIcon}
+              </Button>
+            </div>
           </div>
         </MapControl>
         <AdvancedMarker

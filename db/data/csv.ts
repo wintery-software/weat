@@ -35,15 +35,15 @@ export const readPlaces = async () => {
   }[] = [
     {
       file: path.join(dir, "places_metadata - restaurants.csv"),
-      type: "restaurant",
+      type: Weat.PlaceType.RESTAURANT,
     },
     {
       file: path.join(dir, "places_metadata - drinks & snacks.csv"),
-      type: "drink",
+      type: Weat.PlaceType.DRINK,
     },
     {
       file: path.join(dir, "places_metadata - parks.csv"),
-      type: "park",
+      type: Weat.PlaceType.PARK,
     },
   ];
 

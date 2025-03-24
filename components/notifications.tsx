@@ -10,12 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { fetcher } from "@/lib/utils";
+import { api } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import { LucideBell, LucideInbox, LucideX } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
 import { CSSProperties } from "react";
-import useSWR from "swr";
 
 interface NotificationItemProps {
   notification: Weat.Notification;
@@ -54,7 +54,10 @@ const NotificationItem = ({ notification }: NotificationItemProps) => {
 };
 
 const Notifications = () => {
-  const { data } = useSWR<Weat.Notification[]>("/api/notifications", fetcher);
+  const { data } = useQuery<Weat.Notification[]>({
+    queryKey: ["notifications"],
+    queryFn: async () => (await api.get("/api/notifications")).data,
+  });
 
   return (
     <DropdownMenu>
