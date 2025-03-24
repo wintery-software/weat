@@ -277,6 +277,7 @@ export default function Page() {
                 type="text"
                 id="search"
                 placeholder="Search places..."
+                tabIndex={-1}
                 className="pl-8"
                 value={query}
                 onChange={(e) => {
