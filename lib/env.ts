@@ -27,4 +27,3 @@ export const getAWSRegion = (dummy: boolean = false) => (dummy ? "region" : load
 export const getAWSAccessKeyId = (dummy: boolean = false) => (dummy ? "accessKeyId" : loadKey("AWS_ACCESS_KEY_ID"));
 export const getAWSSecretAccessKey = (dummy: boolean = false) =>
   dummy ? "secretAccessKey" : loadKey("AWS_SECRET_ACCESS_KEY");
-export const getLocalDynamoEndpoint = () => loadKey("DYNAMO_ENDPOINT");

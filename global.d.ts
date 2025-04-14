@@ -67,30 +67,5 @@ declare global {
       url?: string;
       createdAt: string;
     }
-
-    namespace Dynamo {
-      interface Data {
-        Id: string;
-        CreatedAt: string;
-        UpdatedAt: string;
-      }
-
-      interface Place extends Data {
-        PlaceId: string;
-        Names: {
-          Text: string;
-          LanguageCode: LanguageCode;
-        }[];
-        Types: Set<PlaceType>;
-        Address: string;
-        GoogleMapsUrl: string;
-        Position: {
-          Lat: number;
-          Lng: number;
-        };
-        PhoneNumber: string | null;
-        WebsiteUrl: string | null;
-      }
-    }
   }
 }
