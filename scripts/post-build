@@ -2,5 +2,6 @@
 
 # Compare environment variables if .env exists
 if [ -f .env ]; then
+  echo '.env.example <-> .env'
   ./scripts/env-diff .env.example .env
 fi
