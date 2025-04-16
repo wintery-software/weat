@@ -7,11 +7,11 @@ export const loadEnv = () => {
   }
 
   dotenv.config({
-    path: [path.resolve(process.cwd(), ".env"), path.resolve(process.cwd(), ".env.local")],
+    path: [path.resolve(__dirname, "..", ".env"), path.resolve(__dirname, "..", ".env.local")],
   });
 };
 
-const loadKey = (key: string) => {
+export const getEnvVar = (key: string) => {
   const value = process.env[key];
 
   if (!value) {
@@ -21,9 +21,8 @@ const loadKey = (key: string) => {
   return value as string;
 };
 
-export const getGoogleMapsAPIKey = () => loadKey("NEXT_PUBLIC_GOOGLE_MAPS_API_KEY");
+export const getGoogleMapsAPIKey = () => getEnvVar("NEXT_PUBLIC_GOOGLE_MAPS_API_KEY");
 
-export const getAWSRegion = (dummy: boolean = false) => (dummy ? "region" : loadKey("AWS_REGION"));
-export const getAWSAccessKeyId = (dummy: boolean = false) => (dummy ? "accessKeyId" : loadKey("AWS_ACCESS_KEY_ID"));
-export const getAWSSecretAccessKey = (dummy: boolean = false) =>
-  dummy ? "secretAccessKey" : loadKey("AWS_SECRET_ACCESS_KEY");
+export const getAWSRegion = () => getEnvVar("AWS_REGION");
+export const getAWSAccessKeyId = () => getEnvVar("AWS_ACCESS_KEY_ID");
+export const getAWSSecretAccessKey = () => getEnvVar("AWS_SECRET_ACCESS_KEY");
