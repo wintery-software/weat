@@ -1,6 +1,0 @@
-onlyBuiltDependencies:
-  - '@vercel/speed-insights'
-  - core-js-pure
-  - esbuild
-  - protobufjs
-  - sharp
