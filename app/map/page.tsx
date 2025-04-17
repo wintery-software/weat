@@ -70,7 +70,7 @@ const searchPlaces = async ({ bounds, query }: { bounds?: google.maps.LatLngBoun
   } else if (bounds) {
     const { lat: south, lng: west } = bounds.getSouthWest().toJSON();
     const { lat: north, lng: east } = bounds.getNorthEast().toJSON();
-    params = { bounds: `${west},${south},${east},${north}`, page_size: 100 };
+    params = { bounds: `${west},${south},${east},${north}`, page_size: 9999 };
   }
 
   const response = await frontendAPI.get<API.Paginated<API.Place>>(`/api/places`, {
