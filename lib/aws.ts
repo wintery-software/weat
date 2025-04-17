@@ -1,12 +1,11 @@
-import { getAWSAccessKeyId, getAWSRegion, getAWSSecretAccessKey } from "./env";
 import { GetSecretValueCommand, SecretsManagerClient } from "@aws-sdk/client-secrets-manager";
 
 export const getSecret = async (secretName: string) => {
   const client = new SecretsManagerClient({
-    region: getAWSRegion(),
+    region: process.env.AWS_REGION || "us-west-2",
     credentials: {
-      accessKeyId: getAWSAccessKeyId(),
-      secretAccessKey: getAWSSecretAccessKey(),
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
     },
   });
 

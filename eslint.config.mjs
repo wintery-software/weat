@@ -10,9 +10,10 @@ const eslintConfig = [
     extends: ["next/core-web-vitals", "next/typescript", "plugin:import/recommended", "prettier"],
     ...pluginQuery.configs["flat/recommended"],
     rules: {
+      "import/no-named-as-default": "off",
+      "prefer-const": "error",
       curly: "error",
       semi: "error",
-      "prefer-const": "error",
     },
   }),
 ];

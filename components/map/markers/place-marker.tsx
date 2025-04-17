@@ -1,64 +1,41 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { haversineDistance } from "@/lib/maps";
 import { cn } from "@/lib/utils";
+import { API } from "@/types/api";
 import { AdvancedMarker, CollisionBehavior } from "@vis.gl/react-google-maps";
-import {
-  LucideCircleHelp,
-  LucideCupSoda,
-  LucideGamepad2,
-  LucidePawPrint,
-  LucideTreePine,
-  LucideUtensils,
-} from "lucide-react";
+import { type LucideIcon, LucideUtensils } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
-import { CSSProperties, ReactNode } from "react";
+import { type CSSProperties, type ReactNode } from "react";
 
 export interface PlaceMarkerProps {
-  place: Weat.Place;
+  place: API.Place;
   currentLocation?: google.maps.LatLng;
   popoverExtraContent?: ReactNode;
 }
 
-const PLACE_MARKER_THEMES = {
-  restaurant: {
+const PLACE_MARKER_TYPES: Record<API.PlaceType, { icon: LucideIcon; color: string }> = {
+  food: {
     icon: LucideUtensils,
     color: "#fb923c", // orange-400
-  },
-  drink: {
-    icon: LucideCupSoda,
-    color: "#a16207", // yellow-700
-  },
-  park: {
-    icon: LucideTreePine,
-    color: "#16a34a", // green-600
-  },
-  dogPark: {
-    icon: LucidePawPrint,
-    color: "#16a34a", // green-600
-  },
-  entertainment: {
-    icon: LucideGamepad2,
-    color: "#a78bfa", // violet-400
-  },
-  other: {
-    icon: LucideCircleHelp,
-    color: "#737373", // neutral-500
   },
 };
 
 export const PlaceMarker = ({ place, currentLocation, popoverExtraContent }: PlaceMarkerProps) => {
-  const type = place.types[0];
+  const type = place.type;
   if (!type) {
     throw new Error(`Place type is required: ${JSON.stringify(place)}`);
   }
-  const theme = PLACE_MARKER_THEMES[type];
+  const theme = PLACE_MARKER_TYPES[type];
   const Icon = theme.icon;
 
   return (
     <AdvancedMarker
       key={place.id}
-      position={place.position}
+      position={{
+        lat: place.latitude,
+        lng: place.longitude,
+      }}
       collisionBehavior={CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY}
     >
       <Popover>
@@ -92,18 +69,13 @@ export const PlaceMarker = ({ place, currentLocation, popoverExtraContent }: Pla
         <PopoverContent className="p-2 sm:w-auto">
           <div className="flex flex-col gap-2">
             <div className="flex flex-col gap-0.5">
-              <p className="text-sm font-semibold">{place.names[0].text}</p>
-              <p className="text-xs font-semibold text-muted-foreground">
-                {place.names
-                  .slice(1)
-                  .map((p) => p.text)
-                  .join(",")}
-              </p>
+              <p className="text-sm font-semibold">{place.name}</p>
+              <p className="text-xs font-semibold text-muted-foreground">{place.name_zh}</p>
             </div>
             {popoverExtraContent}
             <div className="flex flex-col space-y-0.5">
               <Link
-                href={place.googleMapsUrl}
+                href={place.google_maps_url}
                 target="_blank"
                 title="Open in Google Maps"
                 className="text-xs text-blue-500 hover:underline hover:underline-offset-2 dark:text-blue-300"
@@ -115,8 +87,8 @@ export const PlaceMarker = ({ place, currentLocation, popoverExtraContent }: Pla
                   {haversineDistance(
                     currentLocation.lat(),
                     currentLocation.lng(),
-                    place.position.lat,
-                    place.position.lng,
+                    place.latitude,
+                    place.longitude,
                     "mi",
                   ).toFixed(2)}
                   &nbsp;mi away (approx.)

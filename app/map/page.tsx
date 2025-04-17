@@ -1,7 +1,6 @@
 "use client";
 
 import SearchResult from "./sidebar/search-result";
-import DevelopmentView from "@/components/dev/development_view";
 import { PlaceMarker } from "@/components/map/markers/place-marker";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -19,10 +18,11 @@ import {
   SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { api } from "@/lib/api";
+import { frontendAPI } from "@/lib/api";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
 import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
-import { cn, getLastUpdated } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { API } from "@/types/api";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@uidotdev/usehooks";
 import type { MapCameraChangedEvent, MapProps } from "@vis.gl/react-google-maps";
@@ -63,20 +63,21 @@ const searchPlaces = async ({ bounds, query }: { bounds?: google.maps.LatLngBoun
     return null;
   }
 
-  const params = new URLSearchParams();
+  let params;
 
   if (query) {
-    params.append("q", query);
+    params = { q: query };
+  } else if (bounds) {
+    const { lat: south, lng: west } = bounds.getSouthWest().toJSON();
+    const { lat: north, lng: east } = bounds.getNorthEast().toJSON();
+    params = { bounds: `${west},${south},${east},${north}`, page_size: 100 };
   }
 
-  if (bounds) {
-    const ne = bounds.getNorthEast();
-    const sw = bounds.getSouthWest();
-    // Format as "south,west,north,east" (standard format for many mapping APIs)
-    params.append("bounds", `${sw.lat()},${sw.lng()},${ne.lat()},${ne.lng()}`);
-  }
+  const response = await frontendAPI.get<API.Paginated<API.Place>>(`/api/places`, {
+    params,
+  });
 
-  return (await api.get(`/api/places/search?${params}`)).data;
+  return response.data;
 };
 
 export default function Page() {
@@ -93,16 +94,12 @@ export default function Page() {
   // Wait for user to stop typing before searching
   const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY);
 
-  const dataSourceQuery = useQuery<{ source: string }>({
-    queryKey: ["/api/places/source"],
-    queryFn: async () => (await api.get("/api/places/source")).data,
-  });
-  const placesQuery = useQuery<Weat.Place[]>({
+  const placesQuery = useQuery({
     queryKey: ["places", "bounds", JSON.stringify(debouncedBounds)],
     queryFn: async () => searchPlaces({ bounds: debouncedBounds }),
     enabled: !!debouncedBounds,
   });
-  const searchQuery = useQuery<Weat.Place[]>({
+  const searchQuery = useQuery({
     queryKey: ["places", "search", debouncedQuery],
     queryFn: async () => searchPlaces({ query: debouncedQuery }),
     enabled: !!debouncedQuery,
@@ -209,8 +206,8 @@ export default function Page() {
     }
   };
 
-  const handleSelectedChange = (item: Weat.Place) => {
-    zoomAndPanTo(item.position.lat, item.position.lng, DEFAULT_CAMERA_PROPS.defaultZoom);
+  const handleSelectedChange = (item: API.Place) => {
+    zoomAndPanTo(item.latitude, item.longitude, DEFAULT_CAMERA_PROPS.defaultZoom);
     toggleSidebar();
   };
 
@@ -299,10 +296,13 @@ export default function Page() {
           <SidebarGroup>
             <SidebarGroupLabel>Results</SidebarGroupLabel>
             <SidebarGroupAction title="Total results" asChild>
-              <SidebarMenuBadge>{searchQuery.data?.length ?? placesQuery.data?.length}</SidebarMenuBadge>
+              <SidebarMenuBadge>{searchQuery.data?.items.length ?? placesQuery.data?.items.length}</SidebarMenuBadge>
             </SidebarGroupAction>
             <SidebarGroupContent>
-              <SearchResult items={searchQuery.data ?? placesQuery.data} onSelectedChange={handleSelectedChange} />
+              <SearchResult
+                items={searchQuery.data?.items ?? placesQuery.data?.items}
+                onSelectedChange={handleSelectedChange}
+              />
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
@@ -325,19 +325,6 @@ export default function Page() {
                 <LucideSearch />
               </Button>
             </div>
-          </MapControl>
-          <MapControl position={ControlPosition.TOP_RIGHT}>
-            <DevelopmentView style={true}>
-              <div className="text-right text-xs text-black">
-                <p>Data source: {dataSourceQuery.data?.source}</p>
-                {placesQuery.data && (
-                  <>
-                    <p>Count: {placesQuery.data.length}</p>
-                    <p>Last updated:&nbsp;{getLastUpdated(placesQuery.data)}</p>
-                  </>
-                )}
-              </div>
-            </DevelopmentView>
           </MapControl>
           <MapControl position={ControlPosition.RIGHT_BOTTOM}>
             <div className="p-4">
@@ -377,15 +364,13 @@ export default function Page() {
               <LucideUser size={12} color="#fff" />
             </div>
           </AdvancedMarker>
-          {placesQuery.data?.map((p) => {
+          {placesQuery.data?.items.map((p) => {
             return (
               <PlaceMarker
                 key={p.id}
                 place={p}
                 currentLocation={location}
-                popoverExtraContent={
-                  <div className="text-xs capitalize text-muted-foreground">{p.types.join(", ")}</div>
-                }
+                popoverExtraContent={<div className="text-xs capitalize text-muted-foreground">{p.type}</div>}
               />
             );
           })}

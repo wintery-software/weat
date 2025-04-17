@@ -23,17 +23,6 @@ declare global {
       updatedAt: string;
     }
 
-    interface Place extends Data {
-      placeId: string;
-      names: google.type.ILocalizedText[];
-      types: PlaceType[];
-      address: string;
-      googleMapsUrl: string;
-      position: google.maps.LatLngLiteral;
-      phoneNumber: string | null;
-      websiteUrl: string | null;
-    }
-
     enum PlaceType {
       RESTAURANT = "restaurant",
       DRINK = "drink",

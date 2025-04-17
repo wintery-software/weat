@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 import { getSecret } from "@/lib/aws";
-import { getEnvVar, loadEnv } from "@/lib/env";
+import { config } from "dotenv";
 import ora from "ora";
 import { Pool } from "pg";
 
@@ -13,13 +13,13 @@ interface DbSecret {
   dbInstanceIdentifier: string;
 }
 
-loadEnv();
+config();
 
-const LOCAL_DB_URI = getEnvVar("LOCAL_DB_URI");
+const LOCAL_DB_URI = process.env.LOCAL_DB_URI!;
 
 const main = async () => {
   const spinnerSecret = ora(`Retrieving production database secret`).start();
-  const PROD_DB_SECRET_NAME = getEnvVar("PROD_DB_SECRET_NAME");
+  const PROD_DB_SECRET_NAME = process.env.PROD_DB_SECRET_NAME!;
   const secret = (await getSecret(PROD_DB_SECRET_NAME)) as DbSecret;
   spinnerSecret.succeed("Retrieved secret");
 
@@ -65,7 +65,7 @@ const main = async () => {
       if (rows.length > 0) {
         try {
           // Truncate existing table and copy data from production
-          await localClient.query(`TRUNCATE TABLE ${table_name}`);
+          await localClient.query(`TRUNCATE TABLE ${table_name} CASCADE`);
 
           // Insert all data from production
           const columns = Object.keys(rows[0]).join(", ");

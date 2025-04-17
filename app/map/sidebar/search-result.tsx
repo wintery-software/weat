@@ -1,8 +1,9 @@
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import { API } from "@/types/api";
 
 interface SearchResultProps {
-  items: Weat.Place[] | undefined;
-  onSelectedChange: (item: Weat.Place) => void;
+  items: API.Place[] | undefined;
+  onSelectedChange: (item: API.Place) => void;
 }
 
 const SearchResult = ({ items, onSelectedChange }: SearchResultProps) => {
@@ -28,8 +29,8 @@ const SearchResult = ({ items, onSelectedChange }: SearchResultProps) => {
         <SidebarMenuItem key={index}>
           <SidebarMenuButton className="h-auto" onClick={() => onSelectedChange(p)}>
             <div className="flex flex-col">
-              <p className="font-semibold">{p.names[0].text}</p>
-              {p.names?.[1] && <p className="text-xs">{p.names[1].text}</p>}
+              <p className="font-semibold">{p.name}</p>
+              {p.name_zh && <p className="text-xs">{p.name_zh}</p>}
               <p className="text-xs text-muted-foreground">{p.address}</p>
             </div>
           </SidebarMenuButton>
