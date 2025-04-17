@@ -1,5 +1,4 @@
-import { google } from "@googlemaps/places/build/protos/protos";
-import { LucideProps } from "lucide-react";
+import { type LucideProps } from "lucide-react";
 import { dynamicIconImports } from "lucide-react/dynamic";
 
 export {};
@@ -14,47 +13,4 @@ declare global {
   }
 
   type AlertType = "info" | "success" | "warning" | "error";
-  type LanguageCode = "en" | "en-US" | "zh-CN" | "zh-TW";
-
-  namespace Weat {
-    interface Data {
-      id: string;
-      createdAt: string;
-      updatedAt: string;
-    }
-
-    enum PlaceType {
-      RESTAURANT = "restaurant",
-      DRINK = "drink",
-      PARK = "park",
-      DOG_PARK = "dogPark",
-      ENTERTAINMENT = "entertainment",
-      OTHER = "other",
-    }
-
-    interface RestaurantPlace extends Place {
-      cuisine: string;
-    }
-
-    interface DrinkPlace extends Place {}
-
-    interface ParkPlace extends Place {
-      admissionFee?: string;
-      dogPolicy?: string;
-      dogPolicyUrl?: string;
-    }
-
-    interface DogParkPlace extends Place {}
-
-    interface EntertainmentPlace extends Place {}
-
-    interface Notification {
-      id: string;
-      type: AlertType;
-      title: string;
-      description: string;
-      url?: string;
-      createdAt: string;
-    }
-  }
 }
