@@ -25,7 +25,6 @@ export const GET = async (request: NextRequest) => {
   const query = params.get("q");
   const bounds = toBounds(params.get("bounds"));
 
-  console.log(process.env.API_URL);
   const response = await backendAPI.get<API.Paginated<API.Place>>(ENDPOINT, {
     params: {
       page,
@@ -33,7 +32,6 @@ export const GET = async (request: NextRequest) => {
     },
   });
 
-  console.log(response.data);
   const data = response.data;
 
   if (query) {
