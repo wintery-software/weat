@@ -49,31 +49,6 @@ const RootLayout = ({
     <html lang="en" suppressHydrationWarning>
       <body className={cn(geistSans.variable, geistMono.variable, "antialiased")}>
         <Providers>
-          {/*<Navigation>*/}
-          {/*  <Button variant="ghost" asChild className="font-bold hover:bg-background">*/}
-          {/*    <Link href="/">*/}
-          {/*      <LucideBanana />*/}
-          {/*      Weat*/}
-          {/*    </Link>*/}
-          {/*  </Button>*/}
-          {/*  /!* Right side *!/*/}
-          {/*  <div className="ml-auto flex items-center gap-2 px-2">*/}
-          {/*    <Button size={"sm"} variant={"outline"} asChild>*/}
-          {/*      <Link href={process.env.GOOGLE_SUGGEST_FORM_URL || "#"} target={"_blank"}>*/}
-          {/*        <LucideMapPinPlus size={12} />*/}
-          {/*        Suggest a new place*/}
-          {/*      </Link>*/}
-          {/*    </Button>*/}
-          {/*    <div className="flex gap-2">*/}
-          {/*      <Button variant={"ghost"} size={"icon"} asChild>*/}
-          {/*        <Link href="https://github.com/wintery-software/weat" target="_blank">*/}
-          {/*          <SiGithub />*/}
-          {/*        </Link>*/}
-          {/*      </Button>*/}
-          {/*      /!*<ThemeToggle />*!/*/}
-          {/*    </div>*/}
-          {/*  </div>*/}
-          {/*</Navigation>*/}
           {children}
           <Toaster richColors />
           <Analytics />
