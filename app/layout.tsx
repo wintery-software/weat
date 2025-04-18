@@ -5,17 +5,12 @@ import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import { type ReactNode } from "react";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -47,7 +42,7 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(geistSans.variable, geistMono.variable, "antialiased")}>
+      <body className={cn(inter.className, "antialiased")}>
         <Providers>
           {children}
           <Toaster richColors />
