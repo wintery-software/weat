@@ -82,6 +82,10 @@ const searchPlaces = async ({ bounds, query }: { bounds?: google.maps.LatLngBoun
 
 export default function Page() {
   const map = useMap();
+  map?.setOptions({
+    draggableCursor: "default",
+  });
+
   const { toggleSidebar } = useSidebar();
 
   const [location, setLocation] = useState<google.maps.LatLng>();
