@@ -5,8 +5,6 @@ import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { point } from "@turf/helpers";
 import { NextRequest, NextResponse } from "next/server";
 
-const ENDPOINT = "/places";
-
 const toBounds = (value: string | null) => {
   if (!value) {
     return null;
@@ -22,10 +20,9 @@ export const GET = async (request: NextRequest) => {
   const page = params.get("page");
   const pageSize = params.get("page_size");
 
-  const query = params.get("q");
   const bounds = toBounds(params.get("bounds"));
 
-  const response = await backendAPI.get<API.Paginated<API.Place>>(ENDPOINT, {
+  const response = await backendAPI.get<API.Paginated<API.Place>>("/places", {
     params: {
       page,
       page_size: pageSize,
@@ -34,23 +31,13 @@ export const GET = async (request: NextRequest) => {
 
   const data = response.data;
 
-  if (query) {
+  if (bounds) {
     data.items = data.items.filter((place) => {
-      const name = place.name.toLowerCase();
-      const nameZh = place.name_zh?.toLowerCase() || "";
-      const searchQuery = query.toLowerCase();
-
-      return (
-        name.includes(searchQuery) || nameZh.includes(searchQuery) || place.address.toLowerCase().includes(searchQuery)
-      );
-    });
-  } else if (bounds) {
-    data.items = data.items.filter((place) => {
-      const location = point([place.longitude, place.latitude]);
+      const location = point([place.location.longitude, place.location.latitude]);
       return booleanPointInPolygon(location, bounds);
     });
   } else {
-    return NextResponse.json({ error: "No query or bounds provided" }, { status: 400 });
+    return NextResponse.json({ error: "Missing bounds" }, { status: 400 });
   }
 
   return NextResponse.json(data);
