@@ -56,7 +56,7 @@ const ICONS = {
 };
 
 // Delay (ms) before fetching places after bounds/query change
-const DEBOUNCE_DELAY = 300;
+const DEBOUNCE_DELAY = 500;
 
 const searchPlaces = async ({ bounds, query }: { bounds?: google.maps.LatLngBounds; query?: string }) => {
   if (!bounds && !query) {
