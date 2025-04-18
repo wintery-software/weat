@@ -17,8 +17,10 @@ export namespace API {
     name_zh: string | null;
     type: PlaceType;
     address: string;
-    latitude: number;
-    longitude: number;
+    location: {
+      latitude: number;
+      longitude: number;
+    };
     google_maps_url: string;
     google_maps_place_id: string;
     phone_number: string | null;
