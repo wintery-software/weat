@@ -18,7 +18,7 @@ import {
   SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { frontendAPI } from "@/lib/api";
+import { backendAPI, frontendAPI } from "@/lib/api";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
 import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
 import { cn } from "@/lib/utils";
@@ -58,23 +58,28 @@ const ICONS = {
 // Delay (ms) before fetching places after bounds/query change
 const DEBOUNCE_DELAY = 500;
 
-const searchPlaces = async ({ bounds, query }: { bounds?: google.maps.LatLngBounds; query?: string }) => {
-  if (!bounds && !query) {
+const listPlaces = async ({ bounds }: { bounds?: google.maps.LatLngBounds }) => {
+  if (!bounds) {
     return null;
   }
 
-  let params;
+  const { lat: south, lng: west } = bounds.getSouthWest().toJSON();
+  const { lat: north, lng: east } = bounds.getNorthEast().toJSON();
 
-  if (query) {
-    params = { q: query };
-  } else if (bounds) {
-    const { lat: south, lng: west } = bounds.getSouthWest().toJSON();
-    const { lat: north, lng: east } = bounds.getNorthEast().toJSON();
-    params = { bounds: `${west},${south},${east},${north}`, page_size: 9999 };
+  const response = await frontendAPI.get<API.Paginated<API.Place>>(`/places`, {
+    params: { bounds: `${west},${south},${east},${north}`, page_size: 9999 },
+  });
+
+  return response.data;
+};
+
+const searchPlaces = async ({ q }: { q?: string }) => {
+  if (!q) {
+    return null;
   }
 
-  const response = await frontendAPI.get<API.Paginated<API.Place>>(`/api/places`, {
-    params,
+  const response = await backendAPI.get<API.Paginated<API.Place>>(`/places/search`, {
+    params: { q, page_size: 9999 },
   });
 
   return response.data;
@@ -91,21 +96,23 @@ export default function Page() {
   const [location, setLocation] = useState<google.maps.LatLng>();
 
   const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
-  // Wait for bounds to stabilize before updating visible places
-  const debouncedBounds = useDebounce(bounds, DEBOUNCE_DELAY);
 
+  const [places, setPlaces] = useState<API.Place[]>();
   const [query, setQuery] = useState("");
   // Wait for user to stop typing before searching
   const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY);
 
   const placesQuery = useQuery({
-    queryKey: ["places", "bounds", JSON.stringify(debouncedBounds)],
-    queryFn: async () => searchPlaces({ bounds: debouncedBounds }),
-    enabled: !!debouncedBounds,
+    queryKey: ["places"],
+    queryFn: async () => {
+      const result = await listPlaces({ bounds });
+      return result?.items;
+    },
+    enabled: false,
   });
   const searchQuery = useQuery({
     queryKey: ["places", "search", debouncedQuery],
-    queryFn: async () => searchPlaces({ query: debouncedQuery }),
+    queryFn: () => searchPlaces({ q: debouncedQuery }),
     enabled: !!debouncedQuery,
   });
 
@@ -211,8 +218,21 @@ export default function Page() {
   };
 
   const handleSelectedChange = (item: API.Place) => {
-    zoomAndPanTo(item.latitude, item.longitude, DEFAULT_CAMERA_PROPS.defaultZoom);
-    toggleSidebar();
+    if (!map) {
+      return;
+    }
+
+    zoomAndPanTo(item.location.latitude, item.location.longitude, DEFAULT_CAMERA_PROPS.defaultZoom);
+
+    // Listen for the 'idle' event once after the animation starts
+    google.maps.event.addListenerOnce(map, "idle", () => {
+      setTimeout(() => {
+        // Re-fetch data once the map is idle (animation finished)
+        placesQuery.refetch().then((res) => {
+          setPlaces(res.data);
+        });
+      }, 100);
+    });
   };
 
   // Actions on first load
@@ -300,13 +320,10 @@ export default function Page() {
           <SidebarGroup>
             <SidebarGroupLabel>Results</SidebarGroupLabel>
             <SidebarGroupAction title="Total results" asChild>
-              <SidebarMenuBadge>{searchQuery.data?.items.length ?? placesQuery.data?.items.length}</SidebarMenuBadge>
+              <SidebarMenuBadge>{searchQuery.data?.items.length}</SidebarMenuBadge>
             </SidebarGroupAction>
             <SidebarGroupContent>
-              <SearchResult
-                items={searchQuery.data?.items ?? placesQuery.data?.items}
-                onSelectedChange={handleSelectedChange}
-              />
+              <SearchResult items={searchQuery.data?.items} onSelectedChange={handleSelectedChange} />
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
@@ -317,7 +334,6 @@ export default function Page() {
           {...DEFAULT_CAMERA_PROPS}
           onBoundsChanged={handleBoundsChange}
           onCameraChanged={handleCameraChange}
-          // onIdle={checkPlacesInBounds}
           mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_RESTAURANTS_MAP_WEB_ID}
           gestureHandling={"greedy"}
           disableDefaultUI
@@ -327,6 +343,21 @@ export default function Page() {
             <div className="p-4">
               <Button size={"icon"} variant={"outline"} onClick={toggleSidebar}>
                 <LucideSearch />
+              </Button>
+            </div>
+          </MapControl>
+          <MapControl position={ControlPosition.TOP_CENTER}>
+            <div className="p-4">
+              <Button
+                onClick={() => {
+                  if (bounds) {
+                    placesQuery.refetch().then((res) => {
+                      setPlaces(res.data);
+                    });
+                  }
+                }}
+              >
+                Search This Area
               </Button>
             </div>
           </MapControl>
@@ -344,8 +375,6 @@ export default function Page() {
           </MapControl>
           <AdvancedMarker
             position={location}
-            onMouseEnter={(e) => e.preventDefault()}
-            onMouseLeave={(e) => e.preventDefault()}
             zIndex={999} // Always on top
           >
             <div
@@ -368,16 +397,7 @@ export default function Page() {
               <LucideUser size={12} color="#fff" />
             </div>
           </AdvancedMarker>
-          {placesQuery.data?.items.map((p) => {
-            return (
-              <PlaceMarker
-                key={p.id}
-                place={p}
-                currentLocation={location}
-                popoverExtraContent={<div className="text-xs capitalize text-muted-foreground">{p.type}</div>}
-              />
-            );
-          })}
+          {places?.map((p) => <PlaceMarker key={p.id} place={p} />)}
         </GoogleMap>
       </main>
     </div>
