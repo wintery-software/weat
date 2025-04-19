@@ -18,7 +18,7 @@ import {
   SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { backendAPI, frontendAPI } from "@/lib/api";
+import { WeatAPI } from "@/lib/api";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
 import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
 import { cn } from "@/lib/utils";
@@ -66,8 +66,8 @@ const listPlaces = async ({ bounds }: { bounds?: google.maps.LatLngBounds }) => 
   const { lat: south, lng: west } = bounds.getSouthWest().toJSON();
   const { lat: north, lng: east } = bounds.getNorthEast().toJSON();
 
-  const response = await frontendAPI.get<API.Paginated<API.Place>>(`/places`, {
-    params: { bounds: `${west},${south},${east},${north}`, page_size: 9999 },
+  const response = await WeatAPI.get<API.Paginated<API.Place>>(`/places/`, {
+    params: { sw_lat: south, sw_lng: west, ne_lat: north, ne_lng: east, page_size: 9999 },
   });
 
   return response.data;
@@ -78,7 +78,7 @@ const searchPlaces = async ({ q }: { q?: string }) => {
     return null;
   }
 
-  const response = await backendAPI.get<API.Paginated<API.Place>>(`/places/search`, {
+  const response = await WeatAPI.get<API.Paginated<API.Place>>(`/places/search`, {
     params: { q, page_size: 9999 },
   });
 
@@ -116,7 +116,7 @@ export default function Page() {
     enabled: !!debouncedQuery,
   });
 
-  const [isLocateButtonDisabled, setIsLocateButtonDisabled] = useState(true);
+  const [canSearchThisArea, setCanSearchThisArea] = useState(false);
   const [locateIcon, setLocateIcon] = useState<ReactNode>(ICONS.locateOff);
   const [mapTypeIcon, setMapTypeIcon] = useState<ReactNode>(ICONS.mapSatellite);
 
@@ -141,8 +141,8 @@ export default function Page() {
 
     getCurrentPosition()
       .then((pos) => {
-        // Animated
         zoomAndPanTo(pos.lat, pos.lng, DEFAULT_CAMERA_PROPS.defaultZoom);
+        searchPlacesOnIdle();
 
         setLocation(new google.maps.LatLng(pos));
         setLocateIcon(ICONS.located);
@@ -159,6 +159,24 @@ export default function Page() {
         }
       });
   }, [map, zoomAndPanTo]);
+
+  const searchPlacesOnIdle = useCallback(
+    (delay: number = 100) => {
+      if (!map) {
+        return;
+      }
+
+      google.maps.event.addListenerOnce(map, "idle", () => {
+        setTimeout(() => {
+          // Re-fetch data once the map is idle (animation finished)
+          placesQuery.refetch().then((res) => {
+            setPlaces(res.data);
+          });
+        }, delay);
+      });
+    },
+    [map, placesQuery],
+  );
 
   const toggleMapType = () => {
     if (!map) {
@@ -187,17 +205,25 @@ export default function Page() {
 
   const handleCameraChange = useCallback(
     (e: MapCameraChangedEvent) => {
+      if (!location) {
+        return;
+      }
+
       // Reset locate icon to default if camera movement is greater than value
       // Required because setting camera props will introduce a tiny offset for some reason
       const degree = metersToLatLngDegrees(1);
 
       if (
-        location &&
-        (Math.abs(location.lat() - e.detail.center.lat) > degree ||
-          Math.abs(location.lng() - e.detail.center.lng) > degree)
+        !(
+          Math.abs(location.lat() - e.detail.center.lat) > degree ||
+          Math.abs(location.lng() - e.detail.center.lng) > degree
+        )
       ) {
-        setLocateIcon(ICONS.locate);
+        return;
       }
+
+      setLocateIcon(ICONS.locate);
+      setCanSearchThisArea(true);
     },
     [location],
   );
@@ -206,14 +232,11 @@ export default function Page() {
   const handlePermissionStatus = (status: PermissionState) => {
     if (status === "granted") {
       setLocateIcon(ICONS.locate);
-      setIsLocateButtonDisabled(false);
     } else if (status === "denied") {
       setLocateIcon(ICONS.locateOff);
-      setIsLocateButtonDisabled(true);
       toast.error("Location access denied.");
     } else if (status === "prompt") {
       setLocateIcon(ICONS.locateOff);
-      setIsLocateButtonDisabled(false);
     }
   };
 
@@ -222,17 +245,8 @@ export default function Page() {
       return;
     }
 
-    zoomAndPanTo(item.location.latitude, item.location.longitude, DEFAULT_CAMERA_PROPS.defaultZoom);
-
-    // Listen for the 'idle' event once after the animation starts
-    google.maps.event.addListenerOnce(map, "idle", () => {
-      setTimeout(() => {
-        // Re-fetch data once the map is idle (animation finished)
-        placesQuery.refetch().then((res) => {
-          setPlaces(res.data);
-        });
-      }, 100);
-    });
+    zoomAndPanTo(item.location.latitude, item.location.longitude, DEFAULT_CAMERA_PROPS.defaultZoom + 4);
+    searchPlacesOnIdle();
   };
 
   // Actions on first load
@@ -347,16 +361,22 @@ export default function Page() {
             </div>
           </MapControl>
           <MapControl position={ControlPosition.TOP_CENTER}>
-            <div className="p-4">
+            <div
+              className={cn(
+                "mt-4 transition-all duration-300 ease-in-out",
+                canSearchThisArea ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0",
+              )}
+            >
               <Button
-                onClick={() => {
-                  if (bounds) {
-                    placesQuery.refetch().then((res) => {
-                      setPlaces(res.data);
-                    });
-                  }
+                disabled={placesQuery.isFetching}
+                onClick={async () => {
+                  placesQuery.refetch().then((res) => {
+                    setPlaces(res.data);
+                    setCanSearchThisArea(false);
+                  });
                 }}
               >
+                {placesQuery.isFetching ? <LucideLoader2 className="animate-spin" /> : <LucideSearch />}
                 Search This Area
               </Button>
             </div>
@@ -364,7 +384,12 @@ export default function Page() {
           <MapControl position={ControlPosition.RIGHT_BOTTOM}>
             <div className="p-4">
               <div className="flex flex-col items-end gap-2">
-                <Button variant="outline" size="icon" disabled={isLocateButtonDisabled} onClick={locateUser}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  disabled={location && map?.getCenter()?.equals(location)}
+                  onClick={locateUser}
+                >
                   {locateIcon}
                 </Button>
                 <Button variant="outline" size="icon" onClick={toggleMapType}>
