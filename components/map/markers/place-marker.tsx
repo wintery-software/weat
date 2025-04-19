@@ -16,6 +16,9 @@ const PLACE_MARKER_TYPES: Record<API.PlaceType, { icon: LucideIcon; color: strin
   },
 };
 
+const textStrokeWidth = "1px";
+const textStrokeColor = "white";
+
 export const PlaceMarker = ({ place }: PlaceMarkerProps) => {
   const type = place.type;
   if (!type) {
@@ -47,7 +50,12 @@ export const PlaceMarker = ({ place }: PlaceMarkerProps) => {
           style={
             {
               "--marker-text-color": textColor,
-              textShadow: "-1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white",
+              textShadow: `
+                -${textStrokeWidth} -${textStrokeWidth} 0 ${textStrokeColor}, 
+                ${textStrokeWidth} -${textStrokeWidth} 0 ${textStrokeColor}, 
+                -${textStrokeWidth} ${textStrokeWidth} 0 ${textStrokeColor}, 
+                ${textStrokeWidth} ${textStrokeWidth} 0 ${textStrokeColor}
+              `,
             } as CSSProperties
           }
         >
