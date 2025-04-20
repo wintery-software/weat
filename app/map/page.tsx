@@ -378,7 +378,7 @@ export default function Page() {
                 }}
               >
                 {placesQuery.isFetching ? <LucideLoader2 className="animate-spin" /> : <LucideSearch />}
-                Search This Area
+                Search this area
               </Button>
             </div>
           </MapControl>
