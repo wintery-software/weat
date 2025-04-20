@@ -116,7 +116,7 @@ export default function Page() {
     enabled: !!debouncedQuery,
   });
 
-  const [canSearchThisArea, setCanSearchThisArea] = useState(false);
+  const [canSearchThisArea, setCanSearchThisArea] = useState(true);
   const [locateIcon, setLocateIcon] = useState<ReactNode>(ICONS.locateOff);
   const [mapTypeIcon, setMapTypeIcon] = useState<ReactNode>(ICONS.mapSatellite);
 
@@ -171,6 +171,7 @@ export default function Page() {
           // Re-fetch data once the map is idle (animation finished)
           placesQuery.refetch().then((res) => {
             setPlaces(res.data);
+            setCanSearchThisArea(false);
           });
         }, delay);
       });
