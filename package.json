@@ -4,11 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --experimental-https",
-    "build": "next build && ./scripts/post-build",
+    "build": "prettier --check . && next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write .",
-    "db:seed": "tsx scripts/db/seed.ts"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@googlemaps/places": "^1.10.0",
