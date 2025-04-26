@@ -12,15 +12,18 @@ export namespace API {
     page_size: number;
   }
 
-  interface Place extends Base {
+  interface BasePlace extends Base {
     name: string;
     name_zh: string | null;
     type: PlaceType;
-    address: string;
     location: {
       latitude: number;
       longitude: number;
     };
+  }
+
+  interface Place extends BasePlace {
+    address: string;
     google_maps_url: string;
     google_maps_place_id: string;
     phone_number: string | null;

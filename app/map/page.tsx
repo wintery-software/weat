@@ -1,30 +1,15 @@
 "use client";
 
-import SearchResult from "./sidebar/search-result";
+import PlaceDetails from "@/app/map/place-details";
 import { PlaceMarker } from "@/components/map/markers/place-marker";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupAction,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarInput,
-  SidebarMenuBadge,
-  SidebarSeparator,
-  useSidebar,
-} from "@/components/ui/sidebar";
 import { WeatAPI } from "@/lib/api";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
+import { Inter } from "@/lib/font";
 import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
-import { cn } from "@/lib/utils";
+import { cn, sleep } from "@/lib/utils";
 import { API } from "@/types/api";
 import { useQuery } from "@tanstack/react-query";
-import { useDebounce } from "@uidotdev/usehooks";
 import type { MapCameraChangedEvent, MapProps } from "@vis.gl/react-google-maps";
 import { AdvancedMarker, ControlPosition, Map as GoogleMap, MapControl, useMap } from "@vis.gl/react-google-maps";
 import {
@@ -56,9 +41,9 @@ const ICONS = {
 };
 
 // Delay (ms) before fetching places after bounds/query change
-const DEBOUNCE_DELAY = 500;
+// const DEBOUNCE_DELAY = 500;
 
-const listPlaces = async ({ bounds }: { bounds?: google.maps.LatLngBounds }) => {
+const getPlacesInBounds = async ({ bounds }: { bounds: google.maps.LatLngBounds }) => {
   if (!bounds) {
     return null;
   }
@@ -73,17 +58,27 @@ const listPlaces = async ({ bounds }: { bounds?: google.maps.LatLngBounds }) => 
   return response.data;
 };
 
-const searchPlaces = async ({ q }: { q?: string }) => {
-  if (!q) {
+const getSelectedPlace = async ({ id }: { id: string }) => {
+  if (!id) {
     return null;
   }
 
-  const response = await WeatAPI.get<API.Paginated<API.Place>>(`/places/search`, {
-    params: { q, page_size: 9999 },
-  });
+  const response = await WeatAPI.get<API.Place>(`/places/${id}`);
 
   return response.data;
 };
+
+// const searchPlaces = async ({ q }: { q: string }) => {
+//   if (!q) {
+//     return null;
+//   }
+//
+//   const response = await WeatAPI.get<API.Paginated<API.Place>>(`/places/search`, {
+//     params: { q, page_size: 9999 },
+//   });
+//
+//   return response.data;
+// };
 
 export default function Page() {
   const map = useMap();
@@ -91,30 +86,39 @@ export default function Page() {
     draggableCursor: "default",
   });
 
-  const { toggleSidebar } = useSidebar();
-
   const [location, setLocation] = useState<google.maps.LatLng>();
 
   const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
 
-  const [places, setPlaces] = useState<API.Place[]>();
-  const [query, setQuery] = useState("");
+  const [places, setPlaces] = useState<API.BasePlace[]>([]);
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+  // const [query, setQuery] = useState<string>("");
   // Wait for user to stop typing before searching
-  const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY);
+  // const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY);
 
   const placesQuery = useQuery({
     queryKey: ["places"],
     queryFn: async () => {
-      const result = await listPlaces({ bounds });
+      const result = await getPlacesInBounds({ bounds: bounds! });
       return result?.items;
     },
     enabled: false,
   });
-  const searchQuery = useQuery({
-    queryKey: ["places", "search", debouncedQuery],
-    queryFn: () => searchPlaces({ q: debouncedQuery }),
-    enabled: !!debouncedQuery,
+
+  const selectedPlaceQuery = useQuery({
+    queryKey: ["places", selectedPlaceId],
+    queryFn: async () => {
+      await sleep(500);
+      return getSelectedPlace({ id: selectedPlaceId! });
+    },
+    enabled: !!selectedPlaceId,
   });
+
+  // const searchQuery = useQuery({
+  //   queryKey: ["places", "search", debouncedQuery],
+  //   queryFn: () => searchPlaces({ q: debouncedQuery }),
+  //   enabled: !!debouncedQuery,
+  // });
 
   const [canSearchThisArea, setCanSearchThisArea] = useState(true);
   const [locateIcon, setLocateIcon] = useState<ReactNode>(ICONS.locateOff);
@@ -170,7 +174,7 @@ export default function Page() {
         setTimeout(() => {
           // Re-fetch data once the map is idle (animation finished)
           placesQuery.refetch().then((res) => {
-            setPlaces(res.data);
+            setPlaces(res.data ?? []);
             setCanSearchThisArea(false);
           });
         }, delay);
@@ -241,14 +245,10 @@ export default function Page() {
     }
   };
 
-  const handleSelectedChange = (item: API.Place) => {
-    if (!map) {
-      return;
-    }
-
-    zoomAndPanTo(item.location.latitude, item.location.longitude, DEFAULT_CAMERA_PROPS.defaultZoom + 4);
-    searchPlacesOnIdle();
-  };
+  const handleSelectedChange = useCallback((id: string) => {
+    // Place will be re-fetched on place ID change
+    setSelectedPlaceId(id);
+  }, []);
 
   // Actions on first load
   useEffect(() => {
@@ -300,132 +300,91 @@ export default function Page() {
   }, [map]);
 
   return (
-    <div className="flex h-dvh w-full overflow-hidden">
-      <Sidebar>
-        <SidebarHeader />
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupContent className="relative">
-              <Label htmlFor="search" className="sr-only">
-                Search
-              </Label>
-              <SidebarInput
-                type="text"
-                id="search"
-                placeholder="Search places..."
-                tabIndex={-1}
-                className="pl-8"
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                }}
-              />
-              <LucideSearch className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
-              {searchQuery.isLoading && (
-                <LucideLoader2 className="pointer-events-none absolute right-2 top-1/4 size-4 animate-spin select-none opacity-50" />
-              )}
-            </SidebarGroupContent>
-          </SidebarGroup>
-          <SidebarSeparator />
-          <SidebarGroup>
-            <SidebarGroupLabel>Filter</SidebarGroupLabel>
-            <SidebarGroupContent></SidebarGroupContent>
-          </SidebarGroup>
-          <SidebarSeparator />
-          <SidebarGroup>
-            <SidebarGroupLabel>Results</SidebarGroupLabel>
-            <SidebarGroupAction title="Total results" asChild>
-              <SidebarMenuBadge>{searchQuery.data?.items.length}</SidebarMenuBadge>
-            </SidebarGroupAction>
-            <SidebarGroupContent>
-              <SearchResult items={searchQuery.data?.items} onSelectedChange={handleSelectedChange} />
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter />
-      </Sidebar>
-      <main className="flex-1">
-        <GoogleMap
-          {...DEFAULT_CAMERA_PROPS}
-          onBoundsChanged={handleBoundsChange}
-          onCameraChanged={handleCameraChange}
-          mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_RESTAURANTS_MAP_WEB_ID}
-          gestureHandling={"greedy"}
-          disableDefaultUI
-          reuseMaps
-        >
-          <MapControl position={ControlPosition.TOP_LEFT}>
-            <div className="p-4">
-              <Button size={"icon"} variant={"outline"} onClick={toggleSidebar}>
-                <LucideSearch />
-              </Button>
-            </div>
-          </MapControl>
-          <MapControl position={ControlPosition.TOP_CENTER}>
-            <div
-              className={cn(
-                "mt-4 transition-all duration-300 ease-in-out",
-                canSearchThisArea ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0",
-              )}
-            >
-              <Button
-                disabled={placesQuery.isFetching}
-                onClick={async () => {
-                  placesQuery.refetch().then((res) => {
-                    setPlaces(res.data);
-                    setCanSearchThisArea(false);
-                  });
-                }}
-              >
-                {placesQuery.isFetching ? <LucideLoader2 className="animate-spin" /> : <LucideSearch />}
-                Search this area
-              </Button>
-            </div>
-          </MapControl>
-          <MapControl position={ControlPosition.RIGHT_BOTTOM}>
-            <div className="p-4">
-              <div className="flex flex-col items-end gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  disabled={location && map?.getCenter()?.equals(location)}
-                  onClick={locateUser}
-                >
-                  {locateIcon}
-                </Button>
-                <Button variant="outline" size="icon" onClick={toggleMapType}>
-                  {mapTypeIcon}
-                </Button>
-              </div>
-            </div>
-          </MapControl>
-          <AdvancedMarker
-            position={location}
-            zIndex={999} // Always on top
+    <div className="h-[calc(100dvh-3rem)] overflow-hidden">
+      <GoogleMap
+        {...DEFAULT_CAMERA_PROPS}
+        onBoundsChanged={handleBoundsChange}
+        onCameraChanged={handleCameraChange}
+        mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_RESTAURANTS_MAP_WEB_ID}
+        gestureHandling={"greedy"}
+        disableDefaultUI
+        reuseMaps
+      >
+        <MapControl position={ControlPosition.TOP_LEFT}>
+          <PlaceDetails
+            isOpen={!!selectedPlaceId}
+            isLoading={selectedPlaceQuery.isLoading}
+            place={selectedPlaceQuery.data ?? ({} as API.Place)}
+            setSelectedPlaceId={setSelectedPlaceId}
+          />
+        </MapControl>
+        <MapControl position={ControlPosition.TOP_CENTER}>
+          <div
+            className={cn(
+              Inter.className,
+              "mt-4 transition-all ease-in-out",
+              canSearchThisArea ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0",
+            )}
           >
-            <div
-              className={cn(
-                "flex",
-                "rounded-full",
-                "bg-blue-500",
-                "border-2",
-                "border-white",
-                "size-6",
-                "justify-center",
-                "items-center",
-                "transition",
-                "shadow-sm",
-                "shadow-blue-500",
-                "hover:shadow-md",
-                "hover:shadow-blue-500",
-              )}
+            <Button
+              disabled={placesQuery.isFetching}
+              onClick={async () => {
+                placesQuery.refetch().then((res) => {
+                  setPlaces(res.data ?? []);
+                  setCanSearchThisArea(false);
+                });
+              }}
             >
-              <LucideUser size={12} color="#fff" />
+              {placesQuery.isFetching ? <LucideLoader2 className="animate-spin" /> : <LucideSearch />}
+              Search this area
+            </Button>
+          </div>
+        </MapControl>
+        <MapControl position={ControlPosition.RIGHT_BOTTOM}>
+          <div className="p-4">
+            <div className="flex flex-col items-end gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={location && map?.getCenter()?.equals(location)}
+                onClick={locateUser}
+              >
+                {locateIcon}
+              </Button>
+              <Button variant="outline" size="icon" onClick={toggleMapType}>
+                {mapTypeIcon}
+              </Button>
             </div>
-          </AdvancedMarker>
-          {places?.map((p) => <PlaceMarker key={p.id} place={p} />)}
-        </GoogleMap>
-      </main>
+          </div>
+        </MapControl>
+        <AdvancedMarker
+          position={location}
+          zIndex={999} // Always on top
+        >
+          <div
+            className={cn(
+              "flex",
+              "rounded-full",
+              "bg-blue-500",
+              "border-2",
+              "border-white",
+              "size-6",
+              "justify-center",
+              "items-center",
+              "transition",
+              "shadow-sm",
+              "shadow-blue-500",
+              "hover:shadow-md",
+              "hover:shadow-blue-500",
+            )}
+          >
+            <LucideUser size={12} color="#fff" />
+          </div>
+        </AdvancedMarker>
+        {places.map((p) => (
+          <PlaceMarker key={p.id} place={p} onClick={handleSelectedChange} />
+        ))}
+      </GoogleMap>
     </div>
   );
 }

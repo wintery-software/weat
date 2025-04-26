@@ -1,17 +1,13 @@
 import "./globals.css";
 import { Providers } from "@/app/providers";
+import { Navigation } from "@/components/navigation";
 import { Toaster } from "@/components/ui/sonner";
+import { Inter } from "@/lib/font";
 import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import { type ReactNode } from "react";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Weat - Wintery Software",
@@ -23,16 +19,6 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   viewportFit: "cover",
-  // themeColor: [
-  //   {
-  //     media: "(prefers-color-scheme: light)",
-  //     color: "#ffffff",
-  //   },
-  //   {
-  //     media: "(prefers-color-scheme: dark)",
-  //     color: "#0a0a0a",
-  //   },
-  // ],
 };
 
 const RootLayout = ({
@@ -42,8 +28,9 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(inter.className, "antialiased")}>
+      <body className={cn(Inter.className, "antialiased")}>
         <Providers>
+          <Navigation />
           {children}
           <Toaster richColors />
           <Analytics />
