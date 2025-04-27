@@ -7,7 +7,7 @@ import { WeatAPI } from "@/lib/api";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
 import { Inter } from "@/lib/font";
 import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
-import { cn, sleep } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { API } from "@/types/api";
 import { useQuery } from "@tanstack/react-query";
 import type { MapCameraChangedEvent, MapProps } from "@vis.gl/react-google-maps";
@@ -107,10 +107,7 @@ export default function Page() {
 
   const selectedPlaceQuery = useQuery({
     queryKey: ["places", selectedPlaceId],
-    queryFn: async () => {
-      await sleep(500);
-      return getSelectedPlace({ id: selectedPlaceId! });
-    },
+    queryFn: () => getSelectedPlace({ id: selectedPlaceId! }),
     enabled: !!selectedPlaceId,
   });
 
