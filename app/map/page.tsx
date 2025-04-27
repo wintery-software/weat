@@ -82,6 +82,7 @@ const getSelectedPlace = async ({ id }: { id: string }) => {
 
 export default function Page() {
   const map = useMap();
+
   map?.setOptions({
     draggableCursor: "default",
   });
@@ -100,6 +101,7 @@ export default function Page() {
     queryKey: ["places"],
     queryFn: async () => {
       const result = await getPlacesInBounds({ bounds: bounds! });
+
       return result?.items;
     },
     enabled: false,

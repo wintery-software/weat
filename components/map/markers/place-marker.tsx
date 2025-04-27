@@ -28,6 +28,7 @@ export const PlaceMarker = ({ place, onClick }: PlaceMarkerProps) => {
   if (!type) {
     throw new Error(`Missing place type: ${JSON.stringify(place)}`);
   }
+
   const theme = PLACE_MARKER_TYPES[type];
   const color = theme.color;
   const textColor = theme.textColor;

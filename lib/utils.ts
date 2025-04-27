@@ -11,6 +11,7 @@ export const getGoogleChromeURLScheme = () => {
   }
 
   const href = window.location.href;
+
   return `googlechrome://${href.substring(href.indexOf("://") + 3)}`;
 };
 
