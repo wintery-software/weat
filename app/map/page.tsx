@@ -3,13 +3,12 @@
 import PlaceDetails from "@/app/map/place-details";
 import { PlaceMarker } from "@/components/map/markers/place-marker";
 import { Button } from "@/components/ui/button";
-import { WeatAPI } from "@/lib/api";
+import { useBasePlacesQuery, usePlaceQuery } from "@/hooks/map/use-places";
 import { LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
 import { Inter } from "@/lib/font";
 import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
 import { cn } from "@/lib/utils";
-import { API } from "@/types/api";
-import { useQuery } from "@tanstack/react-query";
+import type { API } from "@/types/api";
 import type { MapCameraChangedEvent, MapProps } from "@vis.gl/react-google-maps";
 import { AdvancedMarker, ControlPosition, Map as GoogleMap, MapControl, useMap } from "@vis.gl/react-google-maps";
 import {
@@ -40,46 +39,6 @@ const ICONS = {
   mapSatellite: <LucideEarth />,
 };
 
-// Delay (ms) before fetching places after bounds/query change
-// const DEBOUNCE_DELAY = 500;
-
-const getPlacesInBounds = async ({ bounds }: { bounds: google.maps.LatLngBounds }) => {
-  if (!bounds) {
-    return null;
-  }
-
-  const { lat: south, lng: west } = bounds.getSouthWest().toJSON();
-  const { lat: north, lng: east } = bounds.getNorthEast().toJSON();
-
-  const response = await WeatAPI.get<API.Paginated<API.Place>>(`/places/`, {
-    params: { sw_lat: south, sw_lng: west, ne_lat: north, ne_lng: east, page_size: 9999 },
-  });
-
-  return response.data;
-};
-
-const getSelectedPlace = async ({ id }: { id: string }) => {
-  if (!id) {
-    return null;
-  }
-
-  const response = await WeatAPI.get<API.Place>(`/places/${id}`);
-
-  return response.data;
-};
-
-// const searchPlaces = async ({ q }: { q: string }) => {
-//   if (!q) {
-//     return null;
-//   }
-//
-//   const response = await WeatAPI.get<API.Paginated<API.Place>>(`/places/search`, {
-//     params: { q, page_size: 9999 },
-//   });
-//
-//   return response.data;
-// };
-
 export default function Page() {
   const map = useMap();
 
@@ -88,36 +47,10 @@ export default function Page() {
   });
 
   const [location, setLocation] = useState<google.maps.LatLng>();
-
   const [bounds, setBounds] = useState<google.maps.LatLngBounds>();
-
-  const [places, setPlaces] = useState<API.BasePlace[]>([]);
+  const placesQuery = useBasePlacesQuery(bounds, 100);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
-  // const [query, setQuery] = useState<string>("");
-  // Wait for user to stop typing before searching
-  // const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY);
-
-  const placesQuery = useQuery({
-    queryKey: ["places"],
-    queryFn: async () => {
-      const result = await getPlacesInBounds({ bounds: bounds! });
-
-      return result?.items;
-    },
-    enabled: false,
-  });
-
-  const selectedPlaceQuery = useQuery({
-    queryKey: ["places", selectedPlaceId],
-    queryFn: () => getSelectedPlace({ id: selectedPlaceId! }),
-    enabled: !!selectedPlaceId,
-  });
-
-  // const searchQuery = useQuery({
-  //   queryKey: ["places", "search", debouncedQuery],
-  //   queryFn: () => searchPlaces({ q: debouncedQuery }),
-  //   enabled: !!debouncedQuery,
-  // });
+  const selectedPlaceQuery = usePlaceQuery(selectedPlaceId);
 
   const [canSearchThisArea, setCanSearchThisArea] = useState(true);
   const [locateIcon, setLocateIcon] = useState<ReactNode>(ICONS.locateOff);
@@ -172,8 +105,7 @@ export default function Page() {
       google.maps.event.addListenerOnce(map, "idle", () => {
         setTimeout(() => {
           // Re-fetch data once the map is idle (animation finished)
-          placesQuery.refetch().then((res) => {
-            setPlaces(res.data ?? []);
+          placesQuery.refetch().then(() => {
             setCanSearchThisArea(false);
           });
         }, delay);
@@ -328,8 +260,7 @@ export default function Page() {
             <Button
               disabled={placesQuery.isFetching}
               onClick={async () => {
-                placesQuery.refetch().then((res) => {
-                  setPlaces(res.data ?? []);
+                placesQuery.refetch().then(() => {
                   setCanSearchThisArea(false);
                 });
               }}
@@ -380,9 +311,7 @@ export default function Page() {
             <LucideUser size={12} color="#fff" />
           </div>
         </AdvancedMarker>
-        {places.map((p) => (
-          <PlaceMarker key={p.id} place={p} onClick={handleSelectedChange} />
-        ))}
+        {placesQuery.data?.map((p) => <PlaceMarker key={p.id} place={p} onClick={handleSelectedChange} />)}
       </GoogleMap>
     </div>
   );
