@@ -8,7 +8,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       throwOnError: (error, query) => {
-        toast.error("Failed to fetch", {
+        toast.error("Failed to fetch data", {
           id: query.queryKey.toString(), // Make sure no duplicate toasts are shown
           description: error.message,
         });
