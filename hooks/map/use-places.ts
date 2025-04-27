@@ -4,11 +4,7 @@ import type { API } from "@/types/api";
 // hooks/useSelectedPlace.ts
 import { useQuery } from "@tanstack/react-query";
 
-const fetchPlace = async (id: string) => {
-  if (!id) {
-    return null;
-  }
-
+export const fetchPlace = async (id: string) => {
   const response = await WeatAPI.get<API.Place>(`/places/${id}`);
 
   return response.data;
@@ -22,12 +18,8 @@ export const usePlaceQuery = (id: string | null) =>
   });
 
 const fetchBasePlaces = async (bounds: google.maps.LatLngBounds | undefined, pageSize: number) => {
-  if (!bounds) {
-    return [] as API.BasePlace[];
-  }
-
-  const sw = bounds.getSouthWest().toJSON();
-  const ne = bounds.getNorthEast().toJSON();
+  const sw = bounds!.getSouthWest().toJSON();
+  const ne = bounds!.getNorthEast().toJSON();
 
   const response = await WeatAPI.get<API.Paginated<API.BasePlace>>("/places/", {
     params: {
