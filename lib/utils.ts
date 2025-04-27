@@ -18,4 +18,12 @@ export const getGoogleChromeURLScheme = () => {
 /**
  * Sleep for a specified number of milliseconds.
  */
-export const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+export const sleep = (ms: number) => {
+  // Don't sleep in non-dev mode
+  // https://github.com/wintery-software/weat/commit/ec7a79c82024f6f337aaf56d9a943cbd70bc9766
+  if (process.env.NODE_ENV !== "development") {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
