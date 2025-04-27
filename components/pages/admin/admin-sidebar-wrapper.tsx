@@ -1,8 +1,9 @@
 "use client";
 
-import { BreadcrumbItemProps, SidebarGroupProps, SidebarLayout } from "@/components/layouts/sidebar-layout";
+import type { BreadcrumbItemProps, SidebarGroupProps} from "@/components/layouts/sidebar-layout";
+import { SidebarLayout } from "@/components/layouts/sidebar-layout";
 import { usePathname } from "next/navigation";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export const AdminLayoutWrapper = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();

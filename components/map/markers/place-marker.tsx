@@ -1,6 +1,6 @@
 import { Inter } from "@/lib/font";
 import { cn } from "@/lib/utils";
-import { API } from "@/types/api";
+import type { API } from "@/types/api";
 import { AdvancedMarker, CollisionBehavior, useAdvancedMarkerRef } from "@vis.gl/react-google-maps";
 import { type LucideIcon, LucideUtensils } from "lucide-react";
 import * as React from "react";

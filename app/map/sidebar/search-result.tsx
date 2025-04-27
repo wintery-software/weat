@@ -1,5 +1,5 @@
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import { API } from "@/types/api";
+import type { API } from "@/types/api";
 
 interface SearchResultProps {
   items: API.Place[] | undefined;

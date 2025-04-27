@@ -10,10 +10,17 @@ const eslintConfig = [
     extends: ["next/core-web-vitals", "next/typescript", "plugin:import/recommended", "prettier"],
     ...pluginQuery.configs["flat/recommended"],
     rules: {
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        {
+          prefer: "type-imports",
+          disallowTypeAnnotations: false,
+        },
+      ],
+      "brace-style": ["error", "1tbs", { allowSingleLine: false }],
+      curly: ["error", "all"],
       "import/no-named-as-default": "off",
-      "prefer-const": "error",
-      curly: "error",
-      semi: "error",
+      "no-multiple-empty-lines": ["error", { max: 1, maxEOF: 0 }],
       "padding-line-between-statements": [
         "error",
         // --- around all block-like statements ---
@@ -35,7 +42,8 @@ const eslintConfig = [
           next: "*",
         },
       ],
-      "no-multiple-empty-lines": ["error", { max: 1, maxEOF: 0 }],
+      "prefer-const": "error",
+      semi: ["error", "always"],
     },
   }),
 ];

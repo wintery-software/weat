@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Inter } from "@/lib/font";
 import { cn } from "@/lib/utils";
-import { API } from "@/types/api";
+import type { API } from "@/types/api";
 import { parsePhoneNumberWithError } from "libphonenumber-js/min";
 import { LucideExternalLink, LucideMapPin, LucidePhone, LucideX } from "lucide-react";
 import Link from "next/link";
