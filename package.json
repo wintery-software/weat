@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --experimental-https",
-    "build": "prettier --check . && next build",
+    "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint && prettier --check .",
     "format": "prettier --write ."
   },
   "dependencies": {
