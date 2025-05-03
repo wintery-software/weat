@@ -1,5 +1,5 @@
 import { type LucideProps } from "lucide-react";
-import { dynamicIconImports } from "lucide-react/dynamic";
+import type { dynamicIconImports } from "lucide-react/dynamic";
 
 export {};
 
