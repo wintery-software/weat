@@ -16,6 +16,7 @@ const Page = ({ searchParams }: PageProps) => {
     const previousPage = document.referrer;
     const redirectTo = redirect_to ?? previousPage ?? "/";
 
+    // noinspection JSIgnoredPromiseFromCall
     signIn("cognito", { redirectTo });
   }, [redirect_to]);
 
@@ -23,7 +24,7 @@ const Page = ({ searchParams }: PageProps) => {
     <CenterLogoLayout>
       <div className="flex items-center gap-1 self-center text-sm">
         <LucideLoader2 className="size-4 animate-spin" />
-        Logging in...
+        Signing in...
       </div>
     </CenterLogoLayout>
   );
