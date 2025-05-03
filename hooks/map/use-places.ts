@@ -1,4 +1,3 @@
-// hooks/usePlaces.ts
 import { WeatAPI } from "@/lib/api";
 import type { API } from "@/types/api";
 // hooks/useSelectedPlace.ts
