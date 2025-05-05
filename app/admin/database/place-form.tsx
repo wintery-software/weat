@@ -109,7 +109,7 @@ const PlaceForm = ({ action, place }: PlaceFormProps) => {
     mutationFn: async (data: z.infer<typeof formSchema>) => {
       const response = await WeatAPI.request({
         method: REQUEST_METHODS[action],
-        url: action === "update" ? `/admin/places/${place!.id}` : "/admin/places",
+        url: action === "update" ? `/admin/places/${place!.id}` : "/admin/places/",
         data,
         headers: {
           Authorization: `Bearer ${session!.accessToken}`,

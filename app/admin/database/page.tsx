@@ -22,7 +22,7 @@ const Page = () => {
     queryKey: ["places", paginationState.pageIndex, paginationState.pageSize],
     queryFn: async () =>
       (
-        await WeatAPI.get<API.Paginated<API.Place>>("/admin/places", {
+        await WeatAPI.get<API.Paginated<API.Place>>("/admin/places/", {
           params: {
             // Index starts from 0 so we need to add 1
             page: paginationState.pageIndex + 1,
