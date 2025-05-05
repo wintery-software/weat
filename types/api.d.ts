@@ -1,5 +1,7 @@
+import type { PlaceTypes } from "@/lib/constants";
+
 export namespace API {
-  interface Base {
+  export interface Base {
     id: string;
     created_at: string;
     updated_at: string;
@@ -28,10 +30,12 @@ export namespace API {
     google_maps_place_id: string;
     phone_number: string | null;
     website_url: string | null;
-    opening_hours: never[] | null;
-    properties: Record<string, unknown> | null;
+    opening_hours: string[];
+    properties: Record<string, unknown>;
     tags: string[];
   }
 
-  type PlaceType = "food";
+  interface OpeningHour {}
+
+  type PlaceType = PlaceTypes;
 }

@@ -15,7 +15,7 @@ pnpm install
 Make a copy of `.env.example` file and fill in all environment variables:
 
 ```bash
-cp .env.example .env
+cp .env.example .env.local
 ```
 
 Run the development server:
