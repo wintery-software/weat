@@ -97,16 +97,21 @@
   }
 }
 
+html,
+body {
+  height: 100%;
+}
+
 h1 {
-  @apply text-2xl font-bold;
+  @apply text-2xl font-bold tracking-tight;
 }
 
 h2 {
-  @apply text-xl font-semibold;
+  @apply text-xl font-semibold tracking-tight;
 }
 
 h3 {
-  @apply text-lg font-semibold;
+  @apply text-lg font-semibold tracking-tight;
 }
 
 .link {

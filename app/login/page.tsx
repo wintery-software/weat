@@ -1,6 +1,6 @@
 "use client";
 
-import CenterLogoLayout from "@/components/layouts/center-logo-layout";
+import BottomLogoLayout from "@/components/layouts/bottom-logo-layout";
 import { LucideLoader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { use, useEffect } from "react";
@@ -21,12 +21,12 @@ const Page = ({ searchParams }: PageProps) => {
   }, [redirect_to]);
 
   return (
-    <CenterLogoLayout>
+    <BottomLogoLayout>
       <div className="flex items-center gap-1 self-center text-sm">
         <LucideLoader2 className="size-4 animate-spin" />
         Signing in...
       </div>
-    </CenterLogoLayout>
+    </BottomLogoLayout>
   );
 };
 

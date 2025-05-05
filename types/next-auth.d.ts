@@ -1,13 +1,20 @@
-// noinspection ES6UnusedImports
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import NextAuth from "next-auth";
+import type { CognitoUserGroup } from "@/types/index";
+import type { JWT as DefaultJWT, DefaultSession, DefaultUser } from "next-auth";
 
 declare module "next-auth" {
-  interface Session {
+  interface Session extends DefaultSession {
     accessToken?: string;
+    expires: Date;
   }
 
-  interface JWT {
+  interface JWT extends DefaultJWT {
     accessToken?: string;
+    refreshToken?: string;
+    idToken?: string;
+    groups?: CognitoUserGroup[];
+  }
+
+  interface User extends DefaultUser {
+    groups?: CognitoUserGroup[];
   }
 }

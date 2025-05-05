@@ -1,34 +1,31 @@
-import type { NextAuthConfig } from "next-auth";
-import NextAuth from "next-auth";
-import Cognito from "next-auth/providers/cognito";
+import { auth } from "@/lib/next-auth";
 
-export const config = {
-  providers: [
-    Cognito({
-      authorization: {
-        params: {
-          scope: "openid email profile",
-        },
-      },
-    }),
-  ],
-  session: {
-    strategy: "jwt",
-  },
-  callbacks: {
-    async jwt({ token, account }) {
-      if (account?.access_token) {
-        token.accessToken = account.access_token;
-      }
+export const isAuthenticated = async () => {
+  const session = await auth();
 
-      return token;
-    },
-    async session({ session, token }) {
-      session.accessToken = token.accessToken as string;
+  if (!session) {
+    return false;
+  }
 
-      return session;
-    },
-  },
-} satisfies NextAuthConfig;
+  const hasEmail = !!session.user?.email;
+  const isExpired = new Date() > new Date(session.expires);
+  const hasAccessToken = !!session.accessToken;
 
-export const { handlers, signIn, signOut, auth } = NextAuth(config);
+  return hasEmail && !isExpired && hasAccessToken;
+};
+
+export const isAuthorized = async (groups: string[]) => {
+  const session = await auth();
+
+  if (!session) {
+    return false;
+  }
+
+  const userGroups = session.user?.groups;
+
+  if (!userGroups) {
+    return false;
+  }
+
+  return userGroups.some((group) => groups.includes(group));
+};

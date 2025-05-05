@@ -28,10 +28,10 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(Inter.className, "antialiased")}>
+      <body className={cn(Inter.className, "flex min-h-screen flex-col antialiased")}>
         <Providers>
           <Navigation />
-          {children}
+          <div className="flex flex-1">{children}</div>
           <Toaster richColors />
           <Analytics />
           <SpeedInsights />

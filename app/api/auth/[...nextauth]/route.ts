@@ -1,4 +1,4 @@
-import { handlers } from "@/lib/auth";
+import { handlers } from "@/lib/next-auth";
 
-// Referring to the auth.ts we just created
+// Referring to the next-auth.ts we just created
 export const { GET, POST } = handlers;
