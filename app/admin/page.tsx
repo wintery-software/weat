@@ -7,7 +7,7 @@ import "highlight.js/styles/github.css";
 hljs.registerLanguage("json", json);
 
 const Page = async () => {
-  const redirectTo = `${process.env.AUTH_COGNITO_DOMAIN}/logout?client_id=${process.env.AUTH_COGNITO_ID}}`;
+  const redirectTo = `${process.env.AUTH_COGNITO_DOMAIN}/logout?client_id=${process.env.AUTH_COGNITO_ID}`;
 
   const session = await auth();
   const raw = JSON.stringify(session, null, 2);
