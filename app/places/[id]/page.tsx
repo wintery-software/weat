@@ -3,8 +3,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePlaceQuery } from "@/hooks/map/use-places";
+import { LucideExternalLink, LucidePhone, LucideRoute } from "lucide-react";
 // Import your Skeleton component
-import { RiExternalLinkLine, RiPhoneFill, RiRouteLine } from "@remixicon/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -50,11 +50,11 @@ const Page = () => {
             className="flex items-center gap-1 text-sm hover:underline"
           >
             {place?.address}
-            <RiExternalLinkLine size={14} />
+            <LucideExternalLink className="size-3.5" />
           </Link>
         )}
         <div className="flex items-center gap-1 text-sm text-muted-foreground" id="distance">
-          <RiRouteLine size={14} />
+          <LucideRoute className="size-3.5" />
           {isLoading ? <Skeleton className="h-5 w-12" /> : "3 mi"}
         </div>
       </div>
@@ -63,7 +63,7 @@ const Page = () => {
         <h2 className="mb-2">Contact</h2>
         <div className="flex flex-col items-center gap-4 md:flex-row">
           <div className="flex items-center gap-1 text-sm">
-            <RiPhoneFill size={14} />
+            <LucidePhone className="size-3.5" />
             {isLoading ? (
               <Skeleton className="h-4 w-24" />
             ) : place?.phone_number ? (
@@ -75,7 +75,7 @@ const Page = () => {
             )}
           </div>
           <div className="flex items-center gap-1 text-sm">
-            <RiRouteLine size={14} />
+            <LucideRoute className="size-3.5" />
             {isLoading ? (
               <Skeleton className="h-4 w-24" />
             ) : place?.website_url ? (
