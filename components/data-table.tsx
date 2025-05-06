@@ -305,7 +305,7 @@ export const DataTableViewOptions = <TData,>({ table }: DataTableViewOptionsProp
         View
       </Button>
     </DropdownMenuTrigger>
-    <DropdownMenuContent align="end" className="w-[150px]">
+    <DropdownMenuContent align="end" className="w-fit">
       <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
       <DropdownMenuSeparator />
       {table
