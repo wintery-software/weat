@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { WeatAPI } from "@/lib/api";
 import type { API } from "@/types/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { LucideTrash } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -35,13 +36,17 @@ export const DeletePlaceDialog = ({ place }: DeletePlaceDialogProps) => {
 
   const mutatePlaceQuery = useMutation({
     mutationFn: async () => {
-      const response = await WeatAPI.delete(`/admin/places/${place!.id}`, {
-        headers: {
-          Authorization: `Bearer ${session!.accessToken}`,
-        },
-      });
+      try {
+        const response = await WeatAPI.delete(`/admin/places/${place!.id}`, {
+          headers: {
+            Authorization: `Bearer ${session!.accessToken}`,
+          },
+        });
 
-      return response.data;
+        return response.data;
+      } catch (e) {
+        return new Error(((e as AxiosError).response?.data as API.Error).detail);
+      }
     },
     onSuccess: () => {
       // Invalidate the places query to refetch the data in the table
@@ -57,7 +62,6 @@ export const DeletePlaceDialog = ({ place }: DeletePlaceDialogProps) => {
       loading: `Deleting place ${place.name} (${place.id})...`,
       success: `Place ${place.name} (${place.id}) deleted successfully`,
       error: (error) => `Failed to delete place ${place.name} (${place.id}): ${error.message}`,
-      duration: 5000,
     });
   };
 

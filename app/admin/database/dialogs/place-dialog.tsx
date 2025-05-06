@@ -19,14 +19,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { WeatAPI } from "@/lib/api";
 import { DEFAULT_MAP_CAMERA_PROPS, PlaceTypes } from "@/lib/constants";
+import { capitalize } from "@/lib/utils";
 import type { API } from "@/types/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { flatten } from "flat";
 import { LucideCheck, LucideCircleHelp, LucideCopy, LucidePencil, LucideSend } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const FORM_ID = "admin-place-form";
@@ -40,19 +43,25 @@ type PlaceFormProps =
 
 const ACTIONS = {
   create: {
-    action: "Create",
+    action: "create",
+    actioning: "creating",
+    actioned: "created",
     icon: null,
     title: "Create Place",
     method: "POST",
   },
   update: {
-    action: "Edit",
+    action: "edit",
+    actioning: "Updating",
+    actioned: "updated",
     icon: <LucidePencil />,
     title: "Edit Place",
     method: "PUT",
   },
   duplicate: {
-    action: "Duplicate",
+    action: "duplicate",
+    actioning: "duplicating",
+    actioned: "duplicated",
     icon: <LucideCopy />,
     title: "Duplicate Place",
     method: "POST",
@@ -119,16 +128,20 @@ export const PlaceDialog = ({ action, place }: PlaceFormProps) => {
 
   const mutatePlaceQuery = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      const response = await WeatAPI.request({
-        method: ACTIONS[action].method,
-        url: action === "create" ? "/admin/places" : `/admin/places/${place!.id}`,
-        data,
-        headers: {
-          Authorization: `Bearer ${session!.accessToken}`,
-        },
-      });
+      try {
+        const response = await WeatAPI.request({
+          method: ACTIONS[action].method,
+          url: action === "update" ? `/admin/places/${place!.id}` : "/admin/places",
+          data,
+          headers: {
+            Authorization: `Bearer ${session!.accessToken}`,
+          },
+        });
 
-      return response.data;
+        return response.data;
+      } catch (e) {
+        return new Error(((e as AxiosError).response?.data as API.Error).detail);
+      }
     },
     onSuccess: () => {
       // Invalidate the places query to refetch the data in the table
@@ -157,14 +170,11 @@ export const PlaceDialog = ({ action, place }: PlaceFormProps) => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema> | null) => {
-    // if (!session || status !== "authenticated") {
-    //   toast.error("Not authenticated. Please log in.");
-    //
-    //   return;
-    // }
-
-    console.log(values);
-    // mutatePlaceQuery.mutate(values);
+    toast.promise(mutatePlaceQuery.mutateAsync(values!), {
+      loading: `${ACTIONS[action].actioning} place...`,
+      success: `Place ${ACTIONS[action].actioned}`,
+      error: (error) => `Failed to ${ACTIONS[action].action} place: ${error.message}`,
+    });
   };
 
   const watchedValues = useWatch({ control: form.control });
@@ -192,7 +202,7 @@ export const PlaceDialog = ({ action, place }: PlaceFormProps) => {
       <DialogTrigger asChild>
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           {ACTIONS[action].icon}
-          {ACTIONS[action].action}
+          {capitalize(ACTIONS[action].action)}
         </DropdownMenuItem>
       </DialogTrigger>
       <DialogContent>

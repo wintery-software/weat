@@ -7,6 +7,10 @@ export namespace API {
     updated_at: string;
   }
 
+  export interface Error {
+    detail: string;
+  }
+
   interface Paginated<T> {
     items: T[];
     total: number;
