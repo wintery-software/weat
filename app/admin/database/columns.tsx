@@ -1,22 +1,13 @@
 "use client";
 
 import { DeletePlaceDialog } from "@/app/admin/database/delete-place-dialog";
-import PlaceForm from "@/app/admin/database/place-form";
+import { PlaceDialog } from "@/app/admin/database/place-dialog";
 import { DataTableColumnHeader } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -28,7 +19,8 @@ import { createColumnHelper } from "@tanstack/react-table";
 import hljs from "highlight.js/lib/core";
 import json from "highlight.js/lib/languages/json";
 import "highlight.js/styles/github.css";
-import { LucideCopy, LucideCurlyBraces, LucideEllipsis, LucideInfo, LucidePencil } from "lucide-react";
+import { LucideCurlyBraces, LucideEllipsis, LucideInfo } from "lucide-react";
+import Link from "next/link";
 
 hljs.registerLanguage("json", json);
 
@@ -77,45 +69,55 @@ export const columns: ColumnDef<API.Place, never>[] = [
   columnHelper.accessor("name", {
     id: "Name",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+    size: 300,
+    minSize: 150,
   }),
   columnHelper.accessor("name_zh", {
     id: "Name (zh)",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name (zh)" />,
+    size: 200,
+    minSize: 150,
   }),
   columnHelper.accessor("type", {
     id: "Type",
     header: "Type",
+    minSize: 150,
   }),
   columnHelper.accessor((row) => row.location?.latitude, {
     id: "Latitude",
     header: "Latitude",
+    minSize: 150,
   }),
   columnHelper.accessor((row) => row.location?.longitude, {
     id: "Longitude",
     header: "Longitude",
+    minSize: 150,
   }),
   {
     accessorKey: "address",
     header: "Address",
+    size: 400,
+    minSize: 150,
   },
   {
     accessorKey: "google_maps_url",
     header: "Google Maps URL",
+    cell: (info) => {
+      const raw = info.getValue() as string;
+
+      return (
+        raw && (
+          <Link href={raw} target="_blank" rel="noopener noreferrer" className="text-link hover:underline">
+            {raw.replace(/https:\/\/maps.app.goo.gl\//, "")}
+          </Link>
+        )
+      );
+    },
   },
   {
     accessorKey: "google_maps_place_id",
     header: "Google Maps Place ID",
-    cell: (info) => (
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger className="flex items-center">
-          <LucideInfo className="size-4" />
-        </TooltipTrigger>
-        <TooltipContent>
-          <p className="font-mono">{info.getValue()}</p>
-        </TooltipContent>
-      </Tooltip>
-    ),
-    size: 200,
+    cell: (info) => <p className="font-mono">{info.getValue()}</p>,
     enableSorting: false,
     enableResizing: false,
   },
@@ -126,6 +128,18 @@ export const columns: ColumnDef<API.Place, never>[] = [
   {
     accessorKey: "website_url",
     header: "Website URL",
+    cell: (info) => {
+      const raw = info.getValue() as string;
+
+      return (
+        raw && (
+          <Link href={raw} target="_blank" rel="noopener noreferrer" className="text-link hover:underline">
+            {raw}
+          </Link>
+        )
+      );
+    },
+    minSize: 150,
   },
   {
     accessorKey: "opening_hours",
@@ -133,7 +147,7 @@ export const columns: ColumnDef<API.Place, never>[] = [
   },
   {
     accessorKey: "properties",
-    header: "Properties (JSON)",
+    header: "Properties",
     cell: (info) => {
       const raw = JSON.stringify(info.getValue(), null, 2);
       const __html = hljs.highlight(raw, { language: "json" }).value;
@@ -141,8 +155,9 @@ export const columns: ColumnDef<API.Place, never>[] = [
       return (
         <Popover>
           <PopoverTrigger asChild>
-            <Button size={"icon"} variant={"ghost"}>
+            <Button variant={"secondary"} size={"sm"}>
               <LucideCurlyBraces />
+              Show
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-fit">
@@ -165,37 +180,9 @@ export const columns: ColumnDef<API.Place, never>[] = [
             <LucideEllipsis />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-48">
-          <Dialog>
-            <DialogTrigger asChild>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                <LucidePencil />
-                Edit
-              </DropdownMenuItem>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Edit Place</DialogTitle>
-                <DialogDescription></DialogDescription>
-              </DialogHeader>
-              <PlaceForm action={"update"} place={row.original} />
-            </DialogContent>
-          </Dialog>
-          <Dialog>
-            <DialogTrigger asChild>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                <LucideCopy />
-                Duplicate
-              </DropdownMenuItem>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Duplicate Place</DialogTitle>
-                <DialogDescription></DialogDescription>
-              </DialogHeader>
-              <PlaceForm action={"duplicate"} place={row.original} />
-            </DialogContent>
-          </Dialog>
+        <DropdownMenuContent>
+          <PlaceDialog action={"update"} place={row.original} />
+          <PlaceDialog action={"duplicate"} place={row.original} />
           <DropdownMenuSeparator />
           <DeletePlaceDialog place={row.original} />
         </DropdownMenuContent>

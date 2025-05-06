@@ -30,12 +30,30 @@ export namespace API {
     google_maps_place_id: string;
     phone_number: string | null;
     website_url: string | null;
-    opening_hours: string[];
+    opening_hours: OpeningHours[];
     properties: Record<string, unknown>;
-    tags: string[];
+    tags: Tag[];
   }
 
-  interface OpeningHour {}
+  interface Tag {
+    id: string;
+    name: string;
+    tag_type_id: string;
+    tag_type_name: string;
+  }
+
+  interface OpeningHours {
+    day: number;
+    periods: [
+      {
+        open: string;
+        close: string;
+      },
+    ];
+  }
+
+  type CreatePlace = Omit<Place, "id" | "created_at" | "updated_at">;
+  type UpdatePlace = CreatePlace;
 
   type PlaceType = PlaceTypes;
 }

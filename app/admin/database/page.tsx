@@ -1,64 +1,78 @@
 "use client";
 
-import { columns } from "@/app/admin/database/columns";
-import { DataTable } from "@/components/data-table";
+import { PlaceTable } from "@/app/admin/database/tables/place-table";
 import { FullscreenLoader } from "@/components/fullscreen-loader";
-import { WeatAPI } from "@/lib/api";
-import type { API } from "@/types/api";
-import { useQuery } from "@tanstack/react-query";
-import type { PaginationState } from "@tanstack/table-core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LucideDatabase } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
+const TABLES = [
+  {
+    value: "places",
+    label: "Places",
+    table: PlaceTable,
+  },
+  {
+    value: "tags",
+    label: "Tags",
+    table: null,
+  },
+  {
+    value: "tag-types",
+    label: "Tag Types",
+    table: null,
+  },
+];
+
 const Page = () => {
-  const { data: session, status } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
+  const [table, setTable] = useState(searchParams.get("table") || TABLES[0].value);
+  const selected = TABLES.find((t) => t.value === table);
 
-  const placesQuery = useQuery<API.Paginated<API.Place>>({
-    queryKey: ["places", paginationState.pageIndex, paginationState.pageSize],
-    queryFn: async () =>
-      (
-        await WeatAPI.get<API.Paginated<API.Place>>("/admin/places/", {
-          params: {
-            // Index starts from 0 so we need to add 1
-            page: paginationState.pageIndex + 1,
-            page_size: paginationState.pageSize,
-          },
-          headers: {
-            Authorization: `Bearer ${session!.accessToken}`,
-          },
-        })
-      ).data,
-    enabled: status === "authenticated",
-  });
+  const { status } = useSession();
 
   if (status === "loading") {
     return <FullscreenLoader label="Authenticating..." />;
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       <h1>Database</h1>
-      <div>
-        {placesQuery.isLoading ? (
-          <FullscreenLoader>
-            <p className="font-mono text-xs text-muted-foreground">
-              page={paginationState.pageIndex + 1}, page_size={paginationState.pageSize}
-            </p>
-          </FullscreenLoader>
-        ) : (
-          <DataTable
-            columns={columns}
-            data={placesQuery.data!}
-            pagination={paginationState}
-            onPaginationChange={setPaginationState}
-          />
-        )}
-      </div>
+      <Select
+        value={table}
+        onValueChange={(value) => {
+          setTable(value);
+          const params = new URLSearchParams(searchParams.toString());
+          params.set("table", value);
+          router.replace(`?${params.toString()}`);
+        }}
+      >
+        <SelectTrigger className="w-48">
+          <SelectValue placeholder="Table">
+            <div className="flex items-center gap-2">
+              <LucideDatabase className="size-3.5 text-muted-foreground" />
+              {selected?.label ?? "Select a table"}
+            </div>
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {TABLES.map((t) => (
+            <SelectItem key={t.value} value={t.value}>
+              {t.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {selected?.table ? (
+        <selected.table />
+      ) : (
+        <p className="text-sm text-muted-foreground">Under construction. Please check back later.</p>
+      )}
+      <div></div>
     </div>
   );
 };

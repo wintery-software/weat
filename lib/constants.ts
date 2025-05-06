@@ -11,3 +11,5 @@ export const DEFAULT_MAP_CAMERA_PROPS: Required<Pick<MapProps, "defaultCenter" |
 export enum PlaceTypes {
   FOOD = "food",
 }
+
+export const DEFAULT_PAGE_SIZE = 10;
