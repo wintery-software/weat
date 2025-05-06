@@ -1,7 +1,7 @@
 "use client";
 
-import { DeletePlaceDialog } from "@/app/admin/database/delete-place-dialog";
-import { PlaceDialog } from "@/app/admin/database/place-dialog";
+import { DeletePlaceDialog } from "@/app/admin/database/dialogs/delete-place-dialog";
+import { PlaceDialog } from "@/app/admin/database/dialogs/place-dialog";
 import { DataTableColumnHeader } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
