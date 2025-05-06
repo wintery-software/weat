@@ -17,7 +17,7 @@ export const getPlacesAdmin = async (
     throw new Error("Missing token");
   }
 
-  const res = await WeatAPI.get<API.Paginated<API.Place>>("/admin/places", {
+  const res = await WeatAPI.get<API.Paginated<API.Place>>("/admin/places/", {
     ...config,
     params: {
       page,

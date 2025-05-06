@@ -21,7 +21,7 @@ export const getPlaces = async (
   },
   config?: AxiosRequestConfig,
 ) => {
-  const res = await WeatAPI.get<API.Paginated<API.BasePlace>>("/places", {
+  const res = await WeatAPI.get<API.Paginated<API.BasePlace>>("/places/", {
     ...config,
     params: {
       sw_lat: swLat,
@@ -48,7 +48,7 @@ export const searchPlaces = async (
   },
   config?: AxiosRequestConfig,
 ) => {
-  const res = await WeatAPI.get<API.Paginated<API.Place>>("/places", {
+  const res = await WeatAPI.get<API.Paginated<API.Place>>("/places/", {
     ...config,
     params: {
       q,
