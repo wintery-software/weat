@@ -234,7 +234,7 @@ export const columns: ColumnDef<API.Place, never>[] = [
             <LucideEllipsis />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent align={"end"} className="w-fit">
           <PlaceDialog action={"update"} place={row.original} />
           <PlaceDialog action={"duplicate"} place={row.original} />
           <DropdownMenuSeparator />
