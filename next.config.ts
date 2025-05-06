@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
     },
   ],
   transpilePackages: ["lucide-react"],
+  experimental: {
+    authInterrupts: true,
+  },
 };
 
 export default nextConfig;

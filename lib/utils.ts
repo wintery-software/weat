@@ -27,3 +27,17 @@ export const sleep = (ms: number) => {
 
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
+
+/**
+ * Capitalize the first letter of a string.
+ *
+ * @param s The string to capitalize.
+ * @returns The capitalized string.
+ */
+export const capitalize = (s: string) => {
+  if (s.length === 0) {
+    return s;
+  }
+
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};

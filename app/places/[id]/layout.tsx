@@ -1,6 +1,6 @@
 import { SidebarLayout } from "@/components/layouts/sidebar-layout";
-import NotFound from "@/components/not-found";
-import { fetchPlace } from "@/hooks/map/use-places";
+import { getPlace } from "@/lib/api/places";
+import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 interface LayoutProps {
@@ -14,9 +14,9 @@ const Layout = async ({ params, children }: LayoutProps) => {
   let place;
 
   try {
-    place = await fetchPlace(id);
+    place = await getPlace(id);
   } catch {
-    return <NotFound />;
+    redirect("/not-found");
   }
 
   return (
