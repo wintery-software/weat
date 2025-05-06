@@ -91,14 +91,14 @@ export const columns: ColumnDef<API.Place, never>[] = [
     header: "Longitude",
     minSize: 150,
   }),
-  {
-    accessorKey: "address",
+  columnHelper.accessor((row) => row.address, {
+    id: "Address",
     header: "Address",
     size: 400,
     minSize: 150,
-  },
-  {
-    accessorKey: "google_maps_url",
+  }),
+  columnHelper.accessor((row) => row.google_maps_url, {
+    id: "google_maps_url",
     header: "Google Maps URL",
     cell: (info) => {
       const raw = info.getValue() as string;
@@ -111,20 +111,22 @@ export const columns: ColumnDef<API.Place, never>[] = [
         )
       );
     },
-  },
-  {
-    accessorKey: "google_maps_place_id",
+    minSize: 150,
+  }),
+  columnHelper.accessor((row) => row.google_maps_place_id, {
+    id: "google_maps_place_id",
     header: "Google Maps Place ID",
     cell: (info) => <p className="font-mono">{info.getValue()}</p>,
     enableSorting: false,
     enableResizing: false,
-  },
-  {
-    accessorKey: "phone_number",
+  }),
+  columnHelper.accessor((row) => row.phone_number, {
+    id: "phone_number",
     header: "Phone Number",
-  },
-  {
-    accessorKey: "website_url",
+    minSize: 150,
+  }),
+  columnHelper.accessor((row) => row.website_url, {
+    id: "website_url",
     header: "Website URL",
     cell: (info) => {
       const raw = info.getValue() as string;
@@ -138,13 +140,14 @@ export const columns: ColumnDef<API.Place, never>[] = [
       );
     },
     minSize: 150,
-  },
-  {
-    accessorKey: "opening_hours",
+  }),
+  columnHelper.accessor((row) => row.opening_hours, {
+    id: "opening_hours",
     header: "Opening Hours",
-  },
-  {
-    accessorKey: "properties",
+    minSize: 150,
+  }),
+  columnHelper.accessor((row) => row.properties, {
+    id: "properties",
     header: "Properties",
     cell: (info) => {
       const raw = JSON.stringify(info.getValue(), null, 2);
@@ -164,11 +167,14 @@ export const columns: ColumnDef<API.Place, never>[] = [
         </Popover>
       );
     },
-  },
-  {
-    accessorKey: "tags",
+    enableSorting: false,
+    enableResizing: false,
+  }),
+  columnHelper.accessor((row) => row.tags, {
+    id: "tags",
     header: "Tags",
-  },
+    minSize: 150,
+  }),
   columnHelper.display({
     id: "actions",
     cell: ({ row }) => (
