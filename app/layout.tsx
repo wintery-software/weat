@@ -2,6 +2,7 @@ import "./globals.css";
 import { Providers } from "@/app/providers";
 import { Navigation } from "@/components/navigation";
 import { Toaster } from "@/components/ui/sonner";
+import { DEFAULT_TOAST_DURATION } from "@/lib/constants";
 import { Inter } from "@/lib/font";
 import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/react";
@@ -33,7 +34,7 @@ const RootLayout = ({
         <Providers>
           <Navigation />
           <div className="flex flex-1">{children}</div>
-          <Toaster richColors />
+          <Toaster richColors toastOptions={{ duration: DEFAULT_TOAST_DURATION }} />
           <Analytics />
           <SpeedInsights />
         </Providers>

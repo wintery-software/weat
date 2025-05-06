@@ -13,3 +13,4 @@ export enum PlaceTypes {
 }
 
 export const DEFAULT_PAGE_SIZE = 10;
+export const DEFAULT_TOAST_DURATION = 5000;
