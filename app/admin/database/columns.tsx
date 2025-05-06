@@ -11,6 +11,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  RelativeTime,
+  RelativeTimeZone,
+  RelativeTimeZoneDate,
+  RelativeTimeZoneDisplay,
+  RelativeTimeZoneLabel,
+} from "@/components/ui/kibo-ui/relative-time";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { API } from "@/types/api";
@@ -25,6 +32,15 @@ import Link from "next/link";
 hljs.registerLanguage("json", json);
 
 const columnHelper = createColumnHelper<API.Place>();
+
+const timezones = [
+  { label: "UTC", zone: "UTC" },
+  { label: "PDT", zone: "America/Los_Angeles" },
+  // {
+  //   label: "EDT",
+  //   zone: "America/New_York",
+  // },
+];
 
 export const columns: ColumnDef<API.Place, never>[] = [
   columnHelper.display({
@@ -98,7 +114,7 @@ export const columns: ColumnDef<API.Place, never>[] = [
     minSize: 150,
   }),
   columnHelper.accessor((row) => row.google_maps_url, {
-    id: "google_maps_url",
+    id: "Google Maps URL",
     header: "Google Maps URL",
     cell: (info) => {
       const raw = info.getValue() as string;
@@ -114,19 +130,19 @@ export const columns: ColumnDef<API.Place, never>[] = [
     minSize: 150,
   }),
   columnHelper.accessor((row) => row.google_maps_place_id, {
-    id: "google_maps_place_id",
+    id: "Google Maps Place ID",
     header: "Google Maps Place ID",
     cell: (info) => <p className="font-mono">{info.getValue()}</p>,
     enableSorting: false,
     enableResizing: false,
   }),
   columnHelper.accessor((row) => row.phone_number, {
-    id: "phone_number",
+    id: "Phone Number",
     header: "Phone Number",
     minSize: 150,
   }),
   columnHelper.accessor((row) => row.website_url, {
-    id: "website_url",
+    id: "Website URL",
     header: "Website URL",
     cell: (info) => {
       const raw = info.getValue() as string;
@@ -142,12 +158,12 @@ export const columns: ColumnDef<API.Place, never>[] = [
     minSize: 150,
   }),
   columnHelper.accessor((row) => row.opening_hours, {
-    id: "opening_hours",
+    id: "Opening Hours",
     header: "Opening Hours",
     minSize: 150,
   }),
   columnHelper.accessor((row) => row.properties, {
-    id: "properties",
+    id: "Properties",
     header: "Properties",
     cell: (info) => {
       const raw = JSON.stringify(info.getValue(), null, 2);
@@ -171,12 +187,46 @@ export const columns: ColumnDef<API.Place, never>[] = [
     enableResizing: false,
   }),
   columnHelper.accessor((row) => row.tags, {
-    id: "tags",
+    id: "Tags",
     header: "Tags",
     minSize: 150,
   }),
+  columnHelper.accessor((row) => row.created_at, {
+    id: "Created At",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Created At" />,
+    cell: (info) => (
+      <RelativeTime time={new Date(info.getValue())} dateFormatOptions={{ dateStyle: "medium" }}>
+        {timezones.map(({ zone, label }) => (
+          <RelativeTimeZone key={zone} zone={zone}>
+            <RelativeTimeZoneLabel>{label}</RelativeTimeZoneLabel>
+            <RelativeTimeZoneDate />
+            <RelativeTimeZoneDisplay className="pl-0" />
+          </RelativeTimeZone>
+        ))}
+      </RelativeTime>
+    ),
+    size: 230,
+    enableResizing: false,
+  }),
+  columnHelper.accessor((row) => row.updated_at, {
+    id: "Updated At",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Updated At" />,
+    cell: (info) => (
+      <RelativeTime time={new Date(info.getValue())} dateFormatOptions={{ dateStyle: "medium" }}>
+        {timezones.map(({ zone, label }) => (
+          <RelativeTimeZone key={zone} zone={zone}>
+            <RelativeTimeZoneLabel>{label}</RelativeTimeZoneLabel>
+            <RelativeTimeZoneDate />
+            <RelativeTimeZoneDisplay className="pl-0" />
+          </RelativeTimeZone>
+        ))}
+      </RelativeTime>
+    ),
+    size: 230,
+    enableResizing: false,
+  }),
   columnHelper.display({
-    id: "actions",
+    id: "Actions",
     cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
