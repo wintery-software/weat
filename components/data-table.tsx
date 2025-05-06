@@ -51,6 +51,18 @@ interface DataTableProps<TData, TValue> {
   onPaginationChange?: Dispatch<SetStateAction<PaginationState>>;
 }
 
+const getStickyClass = (sticky?: "left" | "right") => {
+  if (sticky === "left") {
+    return "sticky left-0 z-10 bg-background shadow-[inset_-4px_0_4px_-4px_rgba(0,0,0,0.1)] border-r";
+  }
+
+  if (sticky === "right") {
+    return "sticky right-0 z-10 bg-background shadow-[inset_4px_0_4px_-4px_rgba(0,0,0,0.1)] border-l";
+  }
+
+  return "";
+};
+
 export const DataTable = <TData, TValue>({
   columns,
   data,
@@ -96,14 +108,18 @@ export const DataTable = <TData, TValue>({
   return (
     <div className="flex flex-col gap-4">
       <DataTableViewOptions table={table} />
-      <div className="rounded-lg border">
+      <div className="overflow-x-auto rounded-lg border">
         <Table style={{ width: table.getCenterTotalSize() }}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="relative" style={{ width: header.getSize() }}>
+                    <TableHead
+                      key={header.id}
+                      className={cn("relative", getStickyClass(header.column.columnDef.meta?.sticky))}
+                      style={{ width: header.getSize() }}
+                    >
                       {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                       {header.column.getCanResize() && (
                         <div
@@ -128,7 +144,11 @@ export const DataTable = <TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
+                    <TableCell
+                      key={cell.id}
+                      className={cn(getStickyClass(cell.column.columnDef.meta?.sticky))}
+                      style={{ width: cell.column.getSize() }}
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}

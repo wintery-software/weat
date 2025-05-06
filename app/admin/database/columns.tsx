@@ -33,20 +33,18 @@ export const columns: ColumnDef<API.Place, never>[] = [
       <Checkbox
         checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
+      <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} />
     ),
     size: 36,
     enableHiding: false,
     enableSorting: false,
     enableResizing: false,
+    meta: {
+      sticky: "left",
+    },
   }),
   columnHelper.accessor("id", {
     id: "ID",
@@ -192,5 +190,8 @@ export const columns: ColumnDef<API.Place, never>[] = [
     enableHiding: false,
     enableSorting: false,
     enableResizing: false,
+    meta: {
+      sticky: "right",
+    },
   }),
 ];
