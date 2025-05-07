@@ -316,6 +316,7 @@ export const DataTableViewOptions = <TData,>({ table }: DataTableViewOptionsProp
             <DropdownMenuCheckboxItem
               key={column.id}
               checked={column.getIsVisible()}
+              onSelect={(e) => e.preventDefault()}
               onCheckedChange={(value) => column.toggleVisibility(value)}
             >
               {column.id}
