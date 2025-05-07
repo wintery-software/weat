@@ -85,6 +85,7 @@ export const columns: ColumnDef<API.Place, never>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
     size: 300,
     minSize: 150,
+    enableHiding: false,
   }),
   columnHelper.accessor("name_zh", {
     id: "Name (zh)",
