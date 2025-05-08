@@ -11,6 +11,4 @@ declare global {
   interface LucideIconProps extends LucideProps {
     name: keyof typeof dynamicIconImports;
   }
-
-  type AlertType = "info" | "success" | "warning" | "error";
 }

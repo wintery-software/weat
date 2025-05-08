@@ -11,11 +11,10 @@ export interface PlaceMarkerProps {
   onClick?: (id: string) => void;
 }
 
-const PLACE_MARKER_TYPES: Record<API.PlaceType, { icon: LucideIcon; color: string; textColor: string }> = {
+const PLACE_MARKER_TYPES: Record<API.PlaceType, { icon: LucideIcon; color: string }> = {
   food: {
     icon: LucideUtensils,
     color: "#f97316", // amber-500
-    textColor: "#ea580c", // amber-600
   },
 };
 
@@ -31,7 +30,6 @@ export const PlaceMarker = ({ place, onClick }: PlaceMarkerProps) => {
 
   const theme = PLACE_MARKER_TYPES[type];
   const color = theme.color;
-  const textColor = theme.textColor;
   const Icon = theme.icon;
 
   // To make AdvancedMarkerElement clickable and provide better accessible experiences,
@@ -74,7 +72,6 @@ export const PlaceMarker = ({ place, onClick }: PlaceMarkerProps) => {
           )}
           style={
             {
-              "--marker-text-color": textColor,
               textShadow: `
                 -${TEXT_STROKE_WIDTH} -${TEXT_STROKE_WIDTH} 0 ${TEXT_STROKE_COLOR}, 
                 ${TEXT_STROKE_WIDTH} -${TEXT_STROKE_WIDTH} 0 ${TEXT_STROKE_COLOR}, 
