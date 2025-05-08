@@ -6,7 +6,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
@@ -22,7 +21,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { version } from "@/package.json";
 import type { LucideIcon } from "lucide-react";
+import { LucideShield } from "lucide-react";
 import type { ReactNode } from "react";
 import { Fragment } from "react";
 
@@ -53,9 +54,17 @@ interface SidebarLayoutProps {
 export const SidebarLayout = ({ content, footer, breadcrumbs, children }: SidebarLayoutProps) => (
   <SidebarProvider>
     <div className="flex w-full flex-1 overflow-hidden">
-      <Sidebar className="pt-12" collapsible={"icon"}>
+      <Sidebar className="pt-12">
         <SidebarHeader>
-          <Input />
+          <SidebarMenuButton size={"lg"} asChild>
+            <a href="#">
+              <LucideShield />
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">Weat Admin</span>
+                <span className="truncate text-xs">v{version}</span>
+              </div>
+            </a>
+          </SidebarMenuButton>
         </SidebarHeader>
         <SidebarContent>
           {content.map((item, index1) => (
