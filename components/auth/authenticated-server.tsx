@@ -19,7 +19,7 @@ const Authenticated = async ({ children, autoAuthenticate }: AuthenticatedProps)
       return (
         <CenterContentBottomLogoLayout>
           <p className="font-medium">User is not authenticated.</p>
-          <Button size={"sm"} asChild>
+          <Button className="w-full" size={"sm"} asChild>
             <Link href={`/login?redirect_to=${currentUrl.toString()}`}>Sign in</Link>
           </Button>
         </CenterContentBottomLogoLayout>
