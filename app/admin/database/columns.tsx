@@ -235,8 +235,8 @@ export const columns: ColumnDef<API.Place, never>[] = [
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <PlaceDialog action={"update"} place={row.original} />
-          <PlaceDialog action={"duplicate"} place={row.original} />
+          <PlaceDialog action={"update"} place={row.original} trigger={"dropdown"} />
+          <PlaceDialog action={"duplicate"} place={row.original} trigger={"dropdown"} />
           <DropdownMenuSeparator />
           <DeletePlaceDialog place={row.original} />
         </DropdownMenuContent>

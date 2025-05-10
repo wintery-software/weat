@@ -22,6 +22,7 @@ export const config = {
     async jwt({ token, account }) {
       // Initial login
       if (account) {
+        console.log("Initial login:", token.email);
         const { id_token, access_token, refresh_token, expires_at } = account;
         const payload = jwt.decode(id_token!) as Record<string, never>;
 
@@ -39,6 +40,8 @@ export const config = {
       if (Date.now() < (token.accessTokenExpiresAt as number)) {
         return token;
       }
+
+      console.log(`Access token expired at ${token.accessTokenExpiresAt}. Refreshing:`, token.email);
 
       // Refresh token
       try {

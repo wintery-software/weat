@@ -41,10 +41,11 @@ import {
   EyeOff,
   Settings2,
 } from "lucide-react";
-import type { Dispatch, HTMLAttributes, SetStateAction } from "react";
+import type { Dispatch, HTMLAttributes, RefObject, SetStateAction } from "react";
 import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
+  ref?: RefObject<TableType<TData> | null>;
   columns: ColumnDef<TData, TValue>[];
   data: API.Paginated<TData>;
   pagination?: PaginationState;
@@ -64,6 +65,7 @@ const getStickyClass = (sticky?: "left" | "right") => {
 };
 
 export const DataTable = <TData, TValue>({
+  ref,
   columns,
   data,
   pagination,
@@ -104,6 +106,10 @@ export const DataTable = <TData, TValue>({
       rowSelection,
     },
   });
+
+  if (ref) {
+    ref.current = table;
+  }
 
   return (
     <div className="flex flex-col gap-4">

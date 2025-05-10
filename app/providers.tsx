@@ -2,6 +2,7 @@
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { APIProvider } from "@vis.gl/react-google-maps";
 import { SessionProvider } from "next-auth/react";
 import { type ReactNode } from "react";
 import { toast } from "sonner";
@@ -29,7 +30,11 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <TooltipProvider>
       <SessionProvider>
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <QueryClientProvider client={queryClient}>
+          <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!} libraries={["core", "marker", "places"]}>
+            {children}
+          </APIProvider>
+        </QueryClientProvider>
       </SessionProvider>
     </TooltipProvider>
   );
