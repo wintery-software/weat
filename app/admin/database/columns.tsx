@@ -85,6 +85,7 @@ export const columns: ColumnDef<API.Place, never>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
     size: 300,
     minSize: 150,
+    enableHiding: false,
   }),
   columnHelper.accessor("name_zh", {
     id: "Name (zh)",
@@ -234,7 +235,7 @@ export const columns: ColumnDef<API.Place, never>[] = [
             <LucideEllipsis />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent align={"end"} className="w-fit">
           <PlaceDialog action={"update"} place={row.original} trigger={"dropdown"} />
           <PlaceDialog action={"duplicate"} place={row.original} trigger={"dropdown"} />
           <DropdownMenuSeparator />

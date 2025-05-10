@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Providers } from "@/app/providers";
+import { DynamicBanner } from "@/components/dynamic-banner";
 import { Navigation } from "@/components/navigation";
 import { Toaster } from "@/components/ui/sonner";
 import { DEFAULT_TOAST_DURATION } from "@/lib/constants";
@@ -32,6 +33,7 @@ const RootLayout = ({
     <html lang="en" suppressHydrationWarning>
       <body className={cn(Inter.className, "flex min-h-screen flex-col antialiased")}>
         <Providers>
+          <DynamicBanner />
           <Navigation />
           <div className="flex flex-1">{children}</div>
           <Toaster richColors toastOptions={{ duration: DEFAULT_TOAST_DURATION }} />

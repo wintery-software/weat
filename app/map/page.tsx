@@ -4,7 +4,7 @@ import PlaceDetails from "@/app/map/place-details";
 import { PlaceMarker } from "@/components/map/markers/place-marker";
 import { Button } from "@/components/ui/button";
 import { useBasePlacesQuery, usePlaceQuery } from "@/hooks/map/use-places";
-import { DEFAULT_MAP_CAMERA_PROPS, LOCAL_STORAGE_MAP_MAP_TYPE_ID } from "@/lib/constants";
+import { DEFAULT_MAP_CAMERA_PROPS } from "@/lib/constants";
 import { Inter } from "@/lib/font";
 import { getCurrentPosition, getGeolocationPermissionStatus, metersToLatLngDegrees } from "@/lib/maps";
 import { cn } from "@/lib/utils";
@@ -49,7 +49,6 @@ export default function Page() {
 
   const [canSearchThisArea, setCanSearchThisArea] = useState(true);
   const [locateIcon, setLocateIcon] = useState<ReactNode>(ICONS.locateOff);
-  const [mapTypeIcon, setMapTypeIcon] = useState<ReactNode>(ICONS.mapSatellite);
 
   const zoomAndPanTo = useCallback(
     (lat: number, lng: number, zoom: number) => {
@@ -109,23 +108,6 @@ export default function Page() {
     [map, placesQuery],
   );
 
-  const toggleMapType = () => {
-    if (!map) {
-      return;
-    }
-
-    // Do not use useState to manage mapTypeId as it causes delay
-    const newMapTypeId =
-      map.getMapTypeId() === google.maps.MapTypeId.ROADMAP
-        ? google.maps.MapTypeId.SATELLITE
-        : google.maps.MapTypeId.ROADMAP;
-
-    map.setMapTypeId(newMapTypeId);
-    localStorage.setItem(LOCAL_STORAGE_MAP_MAP_TYPE_ID, newMapTypeId);
-
-    setMapTypeIcon((prev) => (prev === ICONS.mapRoad ? ICONS.mapSatellite : ICONS.mapRoad));
-  };
-
   const handleBoundsChange = useCallback(() => {
     if (!map) {
       return;
@@ -180,13 +162,6 @@ export default function Page() {
   useEffect(() => {
     if (!map) {
       return;
-    }
-
-    // Restore map type from local storage if available
-    const mapTypeId = localStorage.getItem(LOCAL_STORAGE_MAP_MAP_TYPE_ID);
-
-    if (mapTypeId) {
-      map.setMapTypeId(mapTypeId);
     }
 
     // Locate user and search area if location access is granted
@@ -274,9 +249,6 @@ export default function Page() {
               onClick={locateUser}
             >
               {locateIcon}
-            </Button>
-            <Button variant="outline" size="icon" onClick={toggleMapType}>
-              {mapTypeIcon}
             </Button>
           </div>
         </div>
