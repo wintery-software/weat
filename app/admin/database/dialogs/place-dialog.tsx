@@ -486,7 +486,7 @@ export const PlaceDialog = ({ action, place, trigger }: PlaceFormProps) => {
                 <FormField
                   control={form.control}
                   name="phone_number"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>
                         Phone Number <span className="text-muted-foreground">(Optional)</span>
@@ -498,7 +498,6 @@ export const PlaceDialog = ({ action, place, trigger }: PlaceFormProps) => {
                           })}
                           type="tel"
                           inputMode={"numeric"}
-                          value={field.value ?? ""}
                           placeholder="(123) 456-7890"
                         />
                       </FormControl>
