@@ -173,7 +173,7 @@ export const PlaceDialog = ({ action, place, trigger }: PlaceFormProps) => {
       try {
         const response = await WeatAPI.request({
           method: ACTIONS[action].method,
-          url: action === "update" ? `/admin/places/${place!.id}` : "/admin/places",
+          url: action === "update" ? `/admin/places/${place!.id}` : "/admin/places/",
           data,
           headers: {
             Authorization: `Bearer ${session!.accessToken}`,
