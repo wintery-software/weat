@@ -56,7 +56,7 @@ export const ACTIONS = {
     action: "create",
     actioning: "creating",
     actioned: "created",
-    icon: null,
+    icon: <LucidePlus />,
     title: "Create Place",
     method: "POST",
   },
