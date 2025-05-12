@@ -41,7 +41,9 @@ export const PlaceTable = () => {
     </FullscreenLoader>
   ) : (
     <div className="flex flex-col gap-4">
-      <PlaceDialog action={"create"} trigger={"button"} />
+      <div className="flex items-center">
+        <PlaceDialog action={"create"} trigger={"button"} buttonProps={{ variant: "outline" }} />
+      </div>
       <DataTable
         ref={tableRef}
         columns={columns}

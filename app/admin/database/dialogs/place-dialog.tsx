@@ -2,6 +2,7 @@
 
 import { SearchAutoCompleteInput } from "@/components/search-auto-complete-input";
 import { Badge } from "@/components/ui/badge";
+import type { ButtonProps } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -30,7 +31,7 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { useMapsLibrary } from "@vis.gl/react-google-maps";
 import type { AxiosError } from "axios";
 import { flatten } from "flat";
-import { LucideCheck, LucideCircleHelp, LucideCopy, LucidePencil, LucideSend } from "lucide-react";
+import { LucideCheck, LucideCircleHelp, LucideCopy, LucidePencil, LucidePlus, LucideSend } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
@@ -44,11 +45,12 @@ const FORM_ID = "admin-place-form";
 type TriggerType = "button" | "dropdown";
 
 type PlaceFormProps =
-  | { action: "create"; place?: API.Place; trigger: TriggerType }
+  | { action: "create"; place?: API.Place; trigger: TriggerType; buttonProps?: ButtonProps }
   | {
       action: "update" | "duplicate";
       place: API.Place;
       trigger: TriggerType;
+      buttonProps?: ButtonProps;
     };
 
 export const ACTIONS = {
@@ -56,7 +58,7 @@ export const ACTIONS = {
     action: "create",
     actioning: "creating",
     actioned: "created",
-    icon: null,
+    icon: <LucidePlus />,
     title: "Create Place",
     method: "POST",
   },
@@ -132,7 +134,7 @@ const formSchema = z.object({
   ),
 });
 
-export const PlaceDialog = ({ action, place, trigger }: PlaceFormProps) => {
+export const PlaceDialog = ({ action, place, trigger, buttonProps }: PlaceFormProps) => {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
 
@@ -227,7 +229,7 @@ export const PlaceDialog = ({ action, place, trigger }: PlaceFormProps) => {
     >
       {trigger === "button" ? (
         <DialogTrigger asChild>
-          <Button size="sm" disabled={mutatePlaceQuery.isPending}>
+          <Button disabled={mutatePlaceQuery.isPending} {...buttonProps}>
             {ACTIONS[action].icon}
             {capitalize(ACTIONS[action].action)}
           </Button>

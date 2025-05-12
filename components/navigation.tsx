@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { LucideBanana } from "lucide-react";
 import Link from "next/link";
@@ -14,7 +15,9 @@ export const Navigation = () => {
         </Button>
         {/* Right side */}
         <div className="ml-auto flex items-center gap-2 px-2">
-          <div className="flex gap-2"></div>
+          <div className="flex gap-2">
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </nav>
