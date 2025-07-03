@@ -1,15 +1,14 @@
 "use client";
 
-import * as React from "react";
+import { cn } from "@/lib/utils";
 import * as MenubarPrimitive from "@radix-ui/react-menubar";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
+import * as React from "react";
 
-import { cn } from "@/lib/utils";
-
-function Menubar({
+const Menubar = ({
   className,
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Root>) {
+}: React.ComponentProps<typeof MenubarPrimitive.Root>) => {
   return (
     <MenubarPrimitive.Root
       data-slot="menubar"
@@ -20,38 +19,38 @@ function Menubar({
       {...props}
     />
   );
-}
+};
 
-function MenubarMenu({
+const MenubarMenu = ({
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Menu>) {
+}: React.ComponentProps<typeof MenubarPrimitive.Menu>) => {
   return <MenubarPrimitive.Menu data-slot="menubar-menu" {...props} />;
-}
+};
 
-function MenubarGroup({
+const MenubarGroup = ({
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Group>) {
+}: React.ComponentProps<typeof MenubarPrimitive.Group>) => {
   return <MenubarPrimitive.Group data-slot="menubar-group" {...props} />;
-}
+};
 
-function MenubarPortal({
+const MenubarPortal = ({
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Portal>) {
+}: React.ComponentProps<typeof MenubarPrimitive.Portal>) => {
   return <MenubarPrimitive.Portal data-slot="menubar-portal" {...props} />;
-}
+};
 
-function MenubarRadioGroup({
+const MenubarRadioGroup = ({
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.RadioGroup>) {
+}: React.ComponentProps<typeof MenubarPrimitive.RadioGroup>) => {
   return (
     <MenubarPrimitive.RadioGroup data-slot="menubar-radio-group" {...props} />
   );
-}
+};
 
-function MenubarTrigger({
+const MenubarTrigger = ({
   className,
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Trigger>) {
+}: React.ComponentProps<typeof MenubarPrimitive.Trigger>) => {
   return (
     <MenubarPrimitive.Trigger
       data-slot="menubar-trigger"
@@ -62,15 +61,15 @@ function MenubarTrigger({
       {...props}
     />
   );
-}
+};
 
-function MenubarContent({
+const MenubarContent = ({
   className,
   align = "start",
   alignOffset = -4,
   sideOffset = 8,
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Content>) {
+}: React.ComponentProps<typeof MenubarPrimitive.Content>) => {
   return (
     <MenubarPortal>
       <MenubarPrimitive.Content
@@ -86,9 +85,9 @@ function MenubarContent({
       />
     </MenubarPortal>
   );
-}
+};
 
-function MenubarItem({
+const MenubarItem = ({
   className,
   inset,
   variant = "default",
@@ -96,7 +95,7 @@ function MenubarItem({
 }: React.ComponentProps<typeof MenubarPrimitive.Item> & {
   inset?: boolean;
   variant?: "default" | "destructive";
-}) {
+}) => {
   return (
     <MenubarPrimitive.Item
       data-slot="menubar-item"
@@ -109,14 +108,14 @@ function MenubarItem({
       {...props}
     />
   );
-}
+};
 
-function MenubarCheckboxItem({
+const MenubarCheckboxItem = ({
   className,
   children,
   checked,
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.CheckboxItem>) {
+}: React.ComponentProps<typeof MenubarPrimitive.CheckboxItem>) => {
   return (
     <MenubarPrimitive.CheckboxItem
       data-slot="menubar-checkbox-item"
@@ -135,13 +134,13 @@ function MenubarCheckboxItem({
       {children}
     </MenubarPrimitive.CheckboxItem>
   );
-}
+};
 
-function MenubarRadioItem({
+const MenubarRadioItem = ({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.RadioItem>) {
+}: React.ComponentProps<typeof MenubarPrimitive.RadioItem>) => {
   return (
     <MenubarPrimitive.RadioItem
       data-slot="menubar-radio-item"
@@ -159,15 +158,15 @@ function MenubarRadioItem({
       {children}
     </MenubarPrimitive.RadioItem>
   );
-}
+};
 
-function MenubarLabel({
+const MenubarLabel = ({
   className,
   inset,
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.Label> & {
   inset?: boolean;
-}) {
+}) => {
   return (
     <MenubarPrimitive.Label
       data-slot="menubar-label"
@@ -179,12 +178,12 @@ function MenubarLabel({
       {...props}
     />
   );
-}
+};
 
-function MenubarSeparator({
+const MenubarSeparator = ({
   className,
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Separator>) {
+}: React.ComponentProps<typeof MenubarPrimitive.Separator>) => {
   return (
     <MenubarPrimitive.Separator
       data-slot="menubar-separator"
@@ -192,12 +191,12 @@ function MenubarSeparator({
       {...props}
     />
   );
-}
+};
 
-function MenubarShortcut({
+const MenubarShortcut = ({
   className,
   ...props
-}: React.ComponentProps<"span">) {
+}: React.ComponentProps<"span">) => {
   return (
     <span
       data-slot="menubar-shortcut"
@@ -208,22 +207,22 @@ function MenubarShortcut({
       {...props}
     />
   );
-}
+};
 
-function MenubarSub({
+const MenubarSub = ({
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Sub>) {
+}: React.ComponentProps<typeof MenubarPrimitive.Sub>) => {
   return <MenubarPrimitive.Sub data-slot="menubar-sub" {...props} />;
-}
+};
 
-function MenubarSubTrigger({
+const MenubarSubTrigger = ({
   className,
   inset,
   children,
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.SubTrigger> & {
   inset?: boolean;
-}) {
+}) => {
   return (
     <MenubarPrimitive.SubTrigger
       data-slot="menubar-sub-trigger"
@@ -238,12 +237,12 @@ function MenubarSubTrigger({
       <ChevronRightIcon className="ml-auto h-4 w-4" />
     </MenubarPrimitive.SubTrigger>
   );
-}
+};
 
-function MenubarSubContent({
+const MenubarSubContent = ({
   className,
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.SubContent>) {
+}: React.ComponentProps<typeof MenubarPrimitive.SubContent>) => {
   return (
     <MenubarPrimitive.SubContent
       data-slot="menubar-sub-content"
@@ -254,23 +253,23 @@ function MenubarSubContent({
       {...props}
     />
   );
-}
+};
 
 export {
   Menubar,
-  MenubarPortal,
-  MenubarMenu,
-  MenubarTrigger,
+  MenubarCheckboxItem,
   MenubarContent,
   MenubarGroup,
-  MenubarSeparator,
-  MenubarLabel,
   MenubarItem,
-  MenubarShortcut,
-  MenubarCheckboxItem,
+  MenubarLabel,
+  MenubarMenu,
+  MenubarPortal,
   MenubarRadioGroup,
   MenubarRadioItem,
+  MenubarSeparator,
+  MenubarShortcut,
   MenubarSub,
-  MenubarSubTrigger,
   MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
 };

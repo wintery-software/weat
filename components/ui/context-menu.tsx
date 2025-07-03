@@ -1,66 +1,65 @@
 "use client";
 
-import * as React from "react";
+import { cn } from "@/lib/utils";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
+import * as React from "react";
 
-import { cn } from "@/lib/utils";
-
-function ContextMenu({
+const ContextMenu = ({
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.Root>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.Root>) => {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />;
-}
+};
 
-function ContextMenuTrigger({
+const ContextMenuTrigger = ({
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.Trigger>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.Trigger>) => {
   return (
     <ContextMenuPrimitive.Trigger data-slot="context-menu-trigger" {...props} />
   );
-}
+};
 
-function ContextMenuGroup({
+const ContextMenuGroup = ({
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.Group>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.Group>) => {
   return (
     <ContextMenuPrimitive.Group data-slot="context-menu-group" {...props} />
   );
-}
+};
 
-function ContextMenuPortal({
+const ContextMenuPortal = ({
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.Portal>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.Portal>) => {
   return (
     <ContextMenuPrimitive.Portal data-slot="context-menu-portal" {...props} />
   );
-}
+};
 
-function ContextMenuSub({
+const ContextMenuSub = ({
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.Sub>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.Sub>) => {
   return <ContextMenuPrimitive.Sub data-slot="context-menu-sub" {...props} />;
-}
+};
 
-function ContextMenuRadioGroup({
+const ContextMenuRadioGroup = ({
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.RadioGroup>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.RadioGroup>) => {
   return (
     <ContextMenuPrimitive.RadioGroup
       data-slot="context-menu-radio-group"
       {...props}
     />
   );
-}
+};
 
-function ContextMenuSubTrigger({
+const ContextMenuSubTrigger = ({
   className,
   inset,
   children,
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.SubTrigger> & {
   inset?: boolean;
-}) {
+}) => {
   return (
     <ContextMenuPrimitive.SubTrigger
       data-slot="context-menu-sub-trigger"
@@ -75,12 +74,12 @@ function ContextMenuSubTrigger({
       <ChevronRightIcon className="ml-auto" />
     </ContextMenuPrimitive.SubTrigger>
   );
-}
+};
 
-function ContextMenuSubContent({
+const ContextMenuSubContent = ({
   className,
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.SubContent>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.SubContent>) => {
   return (
     <ContextMenuPrimitive.SubContent
       data-slot="context-menu-sub-content"
@@ -91,12 +90,12 @@ function ContextMenuSubContent({
       {...props}
     />
   );
-}
+};
 
-function ContextMenuContent({
+const ContextMenuContent = ({
   className,
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.Content>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.Content>) => {
   return (
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.Content
@@ -109,9 +108,9 @@ function ContextMenuContent({
       />
     </ContextMenuPrimitive.Portal>
   );
-}
+};
 
-function ContextMenuItem({
+const ContextMenuItem = ({
   className,
   inset,
   variant = "default",
@@ -119,7 +118,7 @@ function ContextMenuItem({
 }: React.ComponentProps<typeof ContextMenuPrimitive.Item> & {
   inset?: boolean;
   variant?: "default" | "destructive";
-}) {
+}) => {
   return (
     <ContextMenuPrimitive.Item
       data-slot="context-menu-item"
@@ -132,14 +131,14 @@ function ContextMenuItem({
       {...props}
     />
   );
-}
+};
 
-function ContextMenuCheckboxItem({
+const ContextMenuCheckboxItem = ({
   className,
   children,
   checked,
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.CheckboxItem>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.CheckboxItem>) => {
   return (
     <ContextMenuPrimitive.CheckboxItem
       data-slot="context-menu-checkbox-item"
@@ -158,13 +157,13 @@ function ContextMenuCheckboxItem({
       {children}
     </ContextMenuPrimitive.CheckboxItem>
   );
-}
+};
 
-function ContextMenuRadioItem({
+const ContextMenuRadioItem = ({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.RadioItem>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.RadioItem>) => {
   return (
     <ContextMenuPrimitive.RadioItem
       data-slot="context-menu-radio-item"
@@ -182,15 +181,15 @@ function ContextMenuRadioItem({
       {children}
     </ContextMenuPrimitive.RadioItem>
   );
-}
+};
 
-function ContextMenuLabel({
+const ContextMenuLabel = ({
   className,
   inset,
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Label> & {
   inset?: boolean;
-}) {
+}) => {
   return (
     <ContextMenuPrimitive.Label
       data-slot="context-menu-label"
@@ -202,12 +201,12 @@ function ContextMenuLabel({
       {...props}
     />
   );
-}
+};
 
-function ContextMenuSeparator({
+const ContextMenuSeparator = ({
   className,
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.Separator>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.Separator>) => {
   return (
     <ContextMenuPrimitive.Separator
       data-slot="context-menu-separator"
@@ -215,12 +214,12 @@ function ContextMenuSeparator({
       {...props}
     />
   );
-}
+};
 
-function ContextMenuShortcut({
+const ContextMenuShortcut = ({
   className,
   ...props
-}: React.ComponentProps<"span">) {
+}: React.ComponentProps<"span">) => {
   return (
     <span
       data-slot="context-menu-shortcut"
@@ -231,22 +230,22 @@ function ContextMenuShortcut({
       {...props}
     />
   );
-}
+};
 
 export {
   ContextMenu,
-  ContextMenuTrigger,
-  ContextMenuContent,
-  ContextMenuItem,
   ContextMenuCheckboxItem,
-  ContextMenuRadioItem,
+  ContextMenuContent,
+  ContextMenuGroup,
+  ContextMenuItem,
   ContextMenuLabel,
+  ContextMenuPortal,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
-  ContextMenuGroup,
-  ContextMenuPortal,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
-  ContextMenuRadioGroup,
+  ContextMenuTrigger,
 };

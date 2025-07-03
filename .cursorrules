@@ -1,0 +1,43 @@
+# Coding Preferences and Conventions
+
+## File Naming
+
+- Use kebab-case for all file names (lowercase with dashes between words)
+  - Example: `navbar.tsx`, `layout-wrapper.tsx`, `user-profile.tsx`
+
+## React
+
+- Use arrow functions with named exports by default
+  - Example: `export const Component = () => { ... }`
+- Use arrwo functions with default export for Next.js pages
+  - Example: `const Page = () => { ... }; export default Page;`
+- Use absolute imports from project root
+  - Example: `import { Button } from "@/components/ui/button"`
+- Import actual members instead of using React.xxx
+  - Example: `import { ReactNode } from "react"` instead of `React.ReactNode`
+
+## Package Management
+
+- Use pnpm for package management commands
+  - Example: `pnpm dev`, `pnpm install`, `pnpm add package-name`
+
+## Git Branching
+
+- Use `master` as the default branch name
+- Ask for confirmation before committing code changes
+
+## Code Style
+
+- Use TypeScript for type safety
+- Follow modern React patterns and best practices
+- Use Tailwind CSS for styling
+- Use shadcn/ui components when available
+- Use Lucide icons
+- Prefer functional components over class components
+- Use proper TypeScript interfaces for props
+
+## Project Structure
+
+- Keep components in the `components/` directory
+- Use descriptive and semantic component names
+- Follow Next.js 15+ app directory conventions

@@ -1,14 +1,13 @@
 "use client";
 
-import * as React from "react";
-import * as TabsPrimitive from "@radix-ui/react-tabs";
-
 import { cn } from "@/lib/utils";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
+import * as React from "react";
 
-function Tabs({
+const Tabs = ({
   className,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Root>) {
+}: React.ComponentProps<typeof TabsPrimitive.Root>) => {
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
@@ -16,12 +15,12 @@ function Tabs({
       {...props}
     />
   );
-}
+};
 
-function TabsList({
+const TabsList = ({
   className,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.List>) {
+}: React.ComponentProps<typeof TabsPrimitive.List>) => {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
@@ -32,12 +31,12 @@ function TabsList({
       {...props}
     />
   );
-}
+};
 
-function TabsTrigger({
+const TabsTrigger = ({
   className,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+}: React.ComponentProps<typeof TabsPrimitive.Trigger>) => {
   return (
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
@@ -48,12 +47,12 @@ function TabsTrigger({
       {...props}
     />
   );
-}
+};
 
-function TabsContent({
+const TabsContent = ({
   className,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Content>) {
+}: React.ComponentProps<typeof TabsPrimitive.Content>) => {
   return (
     <TabsPrimitive.Content
       data-slot="tabs-content"
@@ -61,6 +60,6 @@ function TabsContent({
       {...props}
     />
   );
-}
+};
 
-export { Tabs, TabsList, TabsTrigger, TabsContent };
+export { Tabs, TabsContent, TabsList, TabsTrigger };
