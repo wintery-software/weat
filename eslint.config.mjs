@@ -1,4 +1,5 @@
 import { FlatCompat } from "@eslint/eslintrc";
+import drizzlePlugin from "eslint-plugin-drizzle";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -10,7 +11,14 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  {
+    plugins: {
+      drizzle: drizzlePlugin,
+    },
+  },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.extends("plugin:@typescript-eslint/recommended"),
+  ...compat.extends("plugin:drizzle/recommended"),
   {
     rules: {
       // Enforce arrow function components for React
