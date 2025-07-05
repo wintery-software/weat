@@ -5,28 +5,9 @@ import type {
 } from "@/types/restaurant";
 import axios from "axios";
 
-// Helper function to get base URL safely
-const getBaseURL = () => {
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
-  }
-
-  // Only use window.location in browser environment
-  if (typeof window !== "undefined") {
-    return window.location.origin;
-  }
-
-  // Fallback for development
-  if (process.env.NODE_ENV === "development") {
-    return "http://localhost:3000/api";
-  }
-
-  throw new Error("NEXT_PUBLIC_API_URL is not set");
-};
-
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
