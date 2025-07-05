@@ -56,7 +56,7 @@ export const RestaurantCardGrid = ({ restaurant }: RestaurantCardGridProps) => {
             </div>
           </div>
 
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-1">
             {restaurant.tags.map((tag) => (
               <span
                 key={tag}
