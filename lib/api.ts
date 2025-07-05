@@ -16,8 +16,12 @@ const getBaseURL = () => {
     return window.location.origin;
   }
 
-  // Fallback for server-side rendering
-  return "http://localhost:3000";
+  // Fallback for development
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:3000/api";
+  }
+
+  throw new Error("API URL is not set");
 };
 
 // Create axios instance with default config
@@ -33,7 +37,7 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error);
+    console.error("Weat API Error:", error);
 
     return Promise.reject(error);
   },
@@ -41,7 +45,7 @@ api.interceptors.response.use(
 
 export const fetchRestaurants = async (): Promise<Restaurant[]> => {
   try {
-    const response = await api.get<RestaurantsResponse>("/api/restaurants");
+    const response = await api.get<RestaurantsResponse>("/restaurants");
 
     if (!response.data.success) {
       throw new Error("Failed to fetch restaurants");
@@ -61,23 +65,21 @@ export const fetchRestaurants = async (): Promise<Restaurant[]> => {
 
 export const fetchRestaurant = async (id: string): Promise<Restaurant> => {
   try {
-    const response = await api.get<RestaurantResponse>(
-      `/api/restaurants/${id}`,
-    );
+    const response = await api.get<RestaurantResponse>(`/restaurants/${id}`);
 
     if (!response.data.success) {
-      throw new Error("Failed to fetch restaurant");
+      throw new Error(`Failed to fetch restaurant ${id}`);
     }
 
     return response.data.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 404) {
-        throw new Error("Restaurant not found");
+        throw new Error(`Restaurant ${id} not found`);
       }
 
       throw new Error(
-        error.response?.data?.error || "Failed to fetch restaurant",
+        error.response?.data?.error || `Failed to fetch restaurant ${id}`,
       );
     }
 
