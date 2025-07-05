@@ -21,7 +21,7 @@ const getBaseURL = () => {
     return "http://localhost:3000/api";
   }
 
-  throw new Error("API URL is not set");
+  throw new Error("NEXT_PUBLIC_API_URL is not set");
 };
 
 // Create axios instance with default config
