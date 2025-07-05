@@ -15,15 +15,20 @@ export const cn = (...inputs: ClassValue[]) => {
 };
 
 /**
- * Get an environment variable and throw an error if it is not set.
+ * Get an environment variable.
  * @param key - The environment variable key
+ * @param defaultValue - The default value to return if the environment variable is not set
  * @returns The environment variable value
  */
-export const env = (key: string) => {
+export const env = (key: string, defaultValue?: string) => {
   const value = process.env[key];
 
   if (value === undefined || value === null) {
-    throw new Error(`Environment variable is not set: ${key}`);
+    if (!defaultValue) {
+      throw new Error(`Environment variable is not set: ${key}`);
+    }
+
+    return defaultValue;
   }
 
   return value;
