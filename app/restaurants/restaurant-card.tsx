@@ -5,6 +5,7 @@ import { Rating } from "@/components/rating";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { getGoogleMapsSearchUrl } from "@/lib/navigation";
 import { formatAddress } from "@/lib/utils";
 import { Share2 } from "lucide-react";
 import Link from "next/link";
@@ -51,11 +52,11 @@ export const RestaurantCard = ({ restaurant, view }: RestaurantCardProps) => {
                 <span>({restaurant.reviewCount ?? 0})</span>
               </div>
               <Link
-                href={
-                  restaurant.googleMapsPlaceId
-                    ? `https://www.google.com/maps/place/?q=place_id:${restaurant.googleMapsPlaceId}`
-                    : "#"
-                }
+                href={getGoogleMapsSearchUrl({
+                  placeId: restaurant.googleMapsPlaceId,
+                  name: restaurant.nameEn ?? restaurant.nameZh,
+                  address: formatAddress(restaurant.address),
+                })}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary text-xs transition-colors hover:underline"

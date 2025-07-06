@@ -14,7 +14,12 @@ import {
 } from "@/components/ui/carousel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSuspenseRestaurant } from "@/hooks/use-restaurants";
+import {
+  getAppleMapsSearchUrl,
+  getGoogleMapsSearchUrl,
+} from "@/lib/navigation";
 import { formatAddress } from "@/lib/utils";
+import { SiApple, SiGooglemaps } from "@icons-pack/react-simple-icons";
 import { AdvancedMarker, Map } from "@vis.gl/react-google-maps";
 import {
   Clock,
@@ -22,7 +27,6 @@ import {
   Home,
   MapPin,
   Phone,
-  Route,
   Share2,
   Sparkles,
   Utensils,
@@ -132,11 +136,11 @@ export const RestaurantDetail = ({
             <div className="flex gap-2">
               <Button size="sm" variant="outline" asChild>
                 <a
-                  href={
-                    restaurant.googleMapsPlaceId
-                      ? `https://www.google.com/maps/place/?q=place_id:${restaurant.googleMapsPlaceId}`
-                      : "#"
-                  }
+                  href={getGoogleMapsSearchUrl({
+                    placeId: restaurant.googleMapsPlaceId,
+                    name: restaurant.nameEn ?? restaurant.nameZh,
+                    address: formatAddress(restaurant.address),
+                  })}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -247,18 +251,7 @@ export const RestaurantDetail = ({
                         <div className="flex flex-col gap-2 text-sm">
                           <div className="flex items-center gap-2">
                             <MapPin className="text-primary size-4" />
-                            <Link
-                              href={
-                                restaurant.googleMapsPlaceId
-                                  ? `https://www.google.com/maps/place/?q=place_id:${restaurant.googleMapsPlaceId}`
-                                  : "#"
-                              }
-                              className="hover:underline"
-                              rel="noopener noreferrer"
-                              target="_blank"
-                            >
-                              {formatAddress(restaurant.address)}
-                            </Link>
+                            {formatAddress(restaurant.address)}
                           </div>
                           <div className="flex items-center gap-2">
                             <Phone className="text-primary size-4" />
@@ -276,24 +269,45 @@ export const RestaurantDetail = ({
                             <span>{mockData.hours}</span>
                           </div>
                         </div>
-                        <Button
-                          className="w-full"
-                          asChild
-                          disabled={!restaurant.googleMapsPlaceId}
-                        >
-                          <a
-                            href={
-                              restaurant.googleMapsPlaceId
-                                ? `https://www.google.com/maps/place/?q=place_id:${restaurant.googleMapsPlaceId}`
-                                : "#"
-                            }
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        <div className="flex gap-2">
+                          <Button
+                            className="flex-1"
+                            asChild
+                            disabled={!restaurant.googleMapsPlaceId}
                           >
-                            <Route className="size-4" />
-                            开始导航
-                          </a>
-                        </Button>
+                            <a
+                              href={getGoogleMapsSearchUrl({
+                                placeId: restaurant.googleMapsPlaceId,
+                                name: restaurant.nameEn ?? restaurant.nameZh,
+                                address: formatAddress(restaurant.address),
+                              })}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <SiGooglemaps className="size-4" />
+                              <span>Google&nbsp;Maps</span>
+                            </a>
+                          </Button>
+                          <Button
+                            className="flex-1"
+                            asChild
+                            disabled={
+                              !restaurant.latitude || !restaurant.longitude
+                            }
+                          >
+                            <a
+                              href={getAppleMapsSearchUrl({
+                                name: restaurant.nameEn ?? restaurant.nameZh,
+                                address: formatAddress(restaurant.address),
+                              })}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <SiApple className="size-4" />
+                              <span>Apple&nbsp;Maps</span>
+                            </a>
+                          </Button>
+                        </div>
                       </CardContent>
                     </Card>
                   </div>
