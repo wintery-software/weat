@@ -1,5 +1,4 @@
 import { db } from "@/db";
-import { generateRestaurantInsightsById } from "@/lib/ai";
 import { APIError } from "@/types/types";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -39,8 +38,6 @@ export const GET = async (
         { status: 404 },
       );
     }
-
-    restaurant.summary.summary = await generateRestaurantInsightsById(id);
 
     return NextResponse.json(restaurant);
   } catch (error) {
