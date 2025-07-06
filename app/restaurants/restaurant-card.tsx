@@ -59,7 +59,7 @@ export const RestaurantCard = ({ restaurant, view }: RestaurantCardProps) => {
                 })}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary text-xs transition-colors hover:underline"
+                className="text-muted-foreground hover:text-primary text-xs underline decoration-dotted underline-offset-2 transition-colors"
               >
                 {formatAddress(restaurant.address)}
               </Link>
