@@ -18,7 +18,7 @@ export const RestaurantResults = () => {
   const [view, setView] = useState("grid");
   const [pageSize, setPageSize] = useState(30);
   const [page, setPage] = useState(1);
-  const { data: restaurants } = useSuspenseRestaurants();
+  const { data: restaurants = [] } = useSuspenseRestaurants();
 
   const totalPages = Math.ceil(restaurants.length / pageSize);
   const paginatedRestaurants = restaurants.slice(

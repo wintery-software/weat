@@ -16,10 +16,9 @@ interface Route {
 
 interface NavbarProps {
   routes: Route[];
-  brandName?: string;
 }
 
-export const Navbar = ({ routes, brandName = "Weat" }: NavbarProps) => {
+export const Navbar = ({ routes }: NavbarProps) => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -33,7 +32,7 @@ export const Navbar = ({ routes, brandName = "Weat" }: NavbarProps) => {
     <div className="flex items-center justify-between">
       <div className="flex items-center">
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-primary text-xl font-bold">{brandName}</span>
+          <span className="text-primary text-xl font-bold">Weat</span>
         </Link>
       </div>
 

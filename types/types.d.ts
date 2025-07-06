@@ -6,3 +6,7 @@ export interface Paginated<T> {
   limit?: number;
   totalPages?: number;
 }
+
+export interface APIError {
+  error: string;
+}

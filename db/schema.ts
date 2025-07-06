@@ -1,3 +1,4 @@
+import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { relations, sql } from "drizzle-orm";
 import {
   check,
@@ -15,7 +16,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-// Enums
+// Enum for task status
 export const taskStatusEnum = pgEnum("task_status", [
   "PENDING",
   "STARTED",
@@ -30,10 +31,9 @@ export const addresses = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     address1: varchar("address_1", { length: 150 }).notNull(),
     address2: varchar("address_2", { length: 100 }),
-    city: varchar("city", { length: 80 }).notNull(),
-    state: varchar("state", { length: 80 }).notNull(),
-    country: varchar("country", { length: 80 }).notNull(),
-    postalCode: varchar("postal_code", { length: 20 }).notNull(),
+    city: varchar("city", { length: 50 }).notNull(),
+    state: varchar("state", { length: 2 }).notNull(),
+    zipCode: varchar("zip_code", { length: 5 }).notNull(),
   },
   (table) => [
     unique().on(
@@ -41,8 +41,7 @@ export const addresses = pgTable(
       table.address2,
       table.city,
       table.state,
-      table.country,
-      table.postalCode,
+      table.zipCode,
     ),
   ],
 );
@@ -65,8 +64,8 @@ export const restaurants = pgTable(
       .references(() => addresses.id),
     latitude: doublePrecision("latitude").notNull(),
     longitude: doublePrecision("longitude").notNull(),
-    phoneNumber: varchar("phone_number", { length: 20 }),
-    googleMapsPlaceId: varchar("google_maps_place_id", { length: 50 })
+    phoneNumber: varchar("phone_number", { length: 10 }),
+    googleMapsPlaceId: varchar("google_maps_place_id", { length: 100 })
       .notNull()
       .unique(),
     externalLinks: jsonb("external_links"),
@@ -94,7 +93,7 @@ export const restaurantDishes = pgTable(
       .notNull()
       .references(() => restaurants.id),
     name: varchar("name", { length: 100 }).notNull(),
-    mentionCount: integer("mention_count").notNull().default(0),
+    mentionCount: integer("mention_count").notNull(),
   },
   (table) => [
     unique().on(table.restaurantId, table.name),
@@ -110,13 +109,13 @@ export const restaurantSummaries = pgTable(
     restaurantId: uuid("restaurant_id")
       .notNull()
       .references(() => restaurants.id),
-    summaryText: text("summary_text").notNull(),
+    summary: text("summary").notNull(),
     topTags: jsonb("top_tags").notNull(),
     averageRating: numeric("average_rating", {
       precision: 2,
       scale: 1,
     }).notNull(),
-    lastUpdated: timestamp("last_updated", { withTimezone: true })
+    updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
@@ -154,7 +153,7 @@ export const reviews = pgTable(
     source: varchar("source", { length: 30 }).notNull(),
     sourceId: varchar("source_id", { length: 255 }).notNull(),
     publishedAt: timestamp("published_at", { withTimezone: true }).notNull(),
-    crawledAt: timestamp("crawled_at", { withTimezone: true })
+    createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
@@ -172,15 +171,21 @@ export const reviewSummaries = pgTable(
     reviewId: uuid("review_id")
       .notNull()
       .references(() => reviews.id),
-    summaryText: text("summary_text").notNull(),
-    tags: jsonb("tags"),
-    dishes: jsonb("dishes"),
+    summary: text("summary").notNull(),
+    tags: text("tags")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    dishes: text("dishes")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
     rating: numeric("rating", { precision: 2, scale: 1 }).notNull(),
     authenticityScore: numeric("authenticity_score", {
       precision: 3,
       scale: 2,
     }).notNull(),
-    generatedAt: timestamp("generated_at", { withTimezone: true })
+    createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
@@ -297,38 +302,42 @@ export const reviewSummariesRelations = relations(
 );
 
 // Export types
-export type Address = typeof addresses.$inferSelect;
+export type AddressSelect = InferSelectModel<typeof addresses>;
 
-export type NewAddress = typeof addresses.$inferInsert;
+export type AddressInsert = InferInsertModel<typeof addresses>;
 
-export type Restaurant = typeof restaurants.$inferSelect;
+export type RestaurantSelect = InferSelectModel<typeof restaurants>;
 
-export type NewRestaurant = typeof restaurants.$inferInsert;
+export type RestaurantInsert = InferInsertModel<typeof restaurants>;
 
-export type Tag = typeof tags.$inferSelect;
+export type TagSelect = InferSelectModel<typeof tags>;
 
-export type NewTag = typeof tags.$inferInsert;
+export type TagInsert = InferInsertModel<typeof tags>;
 
-export type RestaurantDish = typeof restaurantDishes.$inferSelect;
+export type RestaurantDishSelect = InferSelectModel<typeof restaurantDishes>;
 
-export type NewRestaurantDish = typeof restaurantDishes.$inferInsert;
+export type RestaurantDishInsert = InferInsertModel<typeof restaurantDishes>;
 
-export type RestaurantSummary = typeof restaurantSummaries.$inferSelect;
+export type RestaurantSummarySelect = InferSelectModel<
+  typeof restaurantSummaries
+>;
 
-export type NewRestaurantSummary = typeof restaurantSummaries.$inferInsert;
+export type RestaurantSummaryInsert = InferInsertModel<
+  typeof restaurantSummaries
+>;
 
-export type RestaurantTag = typeof restaurantsTags.$inferSelect;
+export type RestaurantTagSelect = InferSelectModel<typeof restaurantsTags>;
 
-export type NewRestaurantTag = typeof restaurantsTags.$inferInsert;
+export type RestaurantTagInsert = InferInsertModel<typeof restaurantsTags>;
 
-export type Review = typeof reviews.$inferSelect;
+export type ReviewSelect = InferSelectModel<typeof reviews>;
 
-export type NewReview = typeof reviews.$inferInsert;
+export type ReviewInsert = InferInsertModel<typeof reviews>;
 
-export type ReviewSummary = typeof reviewSummaries.$inferSelect;
+export type ReviewSummarySelect = InferSelectModel<typeof reviewSummaries>;
 
-export type NewReviewSummary = typeof reviewSummaries.$inferInsert;
+export type ReviewSummaryInsert = InferInsertModel<typeof reviewSummaries>;
 
-export type TaskQueue = typeof taskQueue.$inferSelect;
+export type TaskQueueSelect = InferSelectModel<typeof taskQueue>;
 
-export type NewTaskQueue = typeof taskQueue.$inferInsert;
+export type TaskQueueInsert = InferInsertModel<typeof taskQueue>;

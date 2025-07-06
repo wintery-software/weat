@@ -89,6 +89,8 @@ const eslintConfig = [
         "always",
         { exceptAfterSingleLine: true },
       ],
+      // Forbid one-line if statements (require curly braces)
+      curly: ["error", "all"],
     },
   },
   {
@@ -96,6 +98,12 @@ const eslintConfig = [
     rules: {
       // Allow namespace imports in UI components
       "import/no-namespace": "off",
+      // Allow unused variables
+      "@typescript-eslint/no-unused-vars": "off",
+      // Allow any type
+      "@typescript-eslint/no-explicit-any": "off",
+      // Allow display name for React components
+      "react/display-name": "off",
     },
   },
 ];

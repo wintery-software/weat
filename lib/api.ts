@@ -1,8 +1,5 @@
-import type {
-  Restaurant,
-  RestaurantResponse,
-  RestaurantsResponse,
-} from "@/types/restaurant";
+import { RestaurantGETResponse } from "@/app/api/restaurants/[id]/route";
+import { RestaurantsGETResponse } from "@/app/api/restaurants/route";
 import axios from "axios";
 
 // Create axios instance with default config
@@ -24,15 +21,11 @@ api.interceptors.response.use(
   },
 );
 
-export const fetchRestaurants = async (): Promise<Restaurant[]> => {
+export const fetchRestaurants = async () => {
   try {
-    const response = await api.get<RestaurantsResponse>("/restaurants");
+    const response = await api.get<RestaurantsGETResponse>("/restaurants");
 
-    if (!response.data.success) {
-      throw new Error("Failed to fetch restaurants");
-    }
-
-    return response.data.data;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(
@@ -44,15 +37,11 @@ export const fetchRestaurants = async (): Promise<Restaurant[]> => {
   }
 };
 
-export const fetchRestaurant = async (id: string): Promise<Restaurant> => {
+export const fetchRestaurant = async (id: string) => {
   try {
-    const response = await api.get<RestaurantResponse>(`/restaurants/${id}`);
+    const response = await api.get<RestaurantGETResponse>(`/restaurants/${id}`);
 
-    if (!response.data.success) {
-      throw new Error(`Failed to fetch restaurant ${id}`);
-    }
-
-    return response.data.data;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 404) {

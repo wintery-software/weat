@@ -1,24 +1,47 @@
-import restaurantsData from "@/data/restaurants.json";
+import { db } from "@/db";
+import { APIError } from "@/types/types";
+import { sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
+
+// Extract the query outside the function
+const getRestaurantsQuery = () =>
+  db.query.restaurants.findMany({
+    with: {
+      address: true,
+      summary: true,
+      tags: {
+        with: {
+          tag: true,
+        },
+      },
+    },
+    extras: {
+      reviewCount:
+        sql<number>`(SELECT COUNT(*)::int FROM reviews WHERE reviews.restaurant_id = restaurants.id)`.as(
+          "reviewCount",
+        ),
+      dishCount:
+        sql<number>`(SELECT COUNT(*)::int FROM restaurant_dishes WHERE restaurant_dishes.restaurant_id = restaurants.id)`.as(
+          "dishCount",
+        ),
+    },
+  });
+
+// Type inferred from the extracted query
+export type RestaurantsGETResponse = Awaited<
+  ReturnType<typeof getRestaurantsQuery>
+>;
 
 export const GET = async () => {
   try {
-    // Simulate a small delay to mimic real API behavior
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    const data = await getRestaurantsQuery();
 
-    return NextResponse.json({
-      success: true,
-      data: restaurantsData.restaurants,
-      count: restaurantsData.restaurants.length,
-    });
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Failed to fetch restaurants:", error);
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to fetch restaurants",
-      },
+    return NextResponse.json<APIError>(
+      { error: "Failed to fetch restaurants" },
       { status: 500 },
     );
   }
