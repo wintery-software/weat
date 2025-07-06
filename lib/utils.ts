@@ -1,9 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
-import dotenv from "dotenv";
 import { twMerge } from "tailwind-merge";
-
-// Load environment variables from .env file
-dotenv.config();
 
 /**
  * Merge class values into a single string.
