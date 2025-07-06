@@ -46,7 +46,11 @@ export const RestaurantCard = ({ restaurant, view }: RestaurantCardProps) => {
                   {restaurant.summary?.averageRating ?? "-"}
                 </span>
                 <Rating
-                  value={Number(restaurant.summary?.averageRating) ?? 0}
+                  value={
+                    restaurant.summary?.averageRating
+                      ? Number(restaurant.summary.averageRating)
+                      : 0
+                  }
                   size={12}
                 />
                 <span>({restaurant.reviewCount ?? 0})</span>
