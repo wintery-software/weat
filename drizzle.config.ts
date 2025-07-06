@@ -8,10 +8,7 @@ export default {
   schema: "./db/schema.ts",
   out: "./db/migrations",
   dialect: "postgresql",
-  dbCredentials: {
-    url,
-    ssl: true,
-  },
+  dbCredentials: { url },
   verbose: true,
   strict: true,
 } satisfies Config;
