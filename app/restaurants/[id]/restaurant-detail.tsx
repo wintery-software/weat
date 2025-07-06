@@ -301,9 +301,7 @@ export const RestaurantDetail = ({
 
                 <TabsContent value="photos">
                   <Card id="photos">
-                    <CardContent className="flex flex-col gap-4">
-                      <h3 className="text-lg font-semibold">照片</h3>
-
+                    <CardContent>
                       {/* Carousel for mobile */}
                       <div className="sm:hidden">
                         <Carousel className="w-full">
