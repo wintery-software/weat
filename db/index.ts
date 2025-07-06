@@ -1,6 +1,5 @@
 import { env } from "@/lib/utils";
 import { drizzle } from "drizzle-orm/postgres-js";
-import fs from "fs";
 import postgres from "postgres";
 // eslint-disable-next-line import/no-namespace
 import * as schema from "./schema";
@@ -15,10 +14,9 @@ if (isLocal) {
   // Local development - no SSL
   client = postgres(url, { prepare: false });
 } else {
-  // Production - with SSL
-  const ca = fs.readFileSync(env("DATABASE_CA_CERT_PATH")).toString();
+  // Production - with SSL (no CA needed for Supabase)
   // Vercel is IPv4-only. Disable prefetch as it is not supported for "Transaction" pool mode
-  client = postgres(url, { prepare: false, ssl: { ca } });
+  client = postgres(url, { prepare: false, ssl: true });
 }
 
 // Create the database instance

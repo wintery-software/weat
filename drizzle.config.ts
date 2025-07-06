@@ -1,5 +1,4 @@
 import type { Config } from "drizzle-kit";
-import { readFileSync } from "fs";
 import { env } from "./lib/utils";
 
 const url = env("DATABASE_URL");
@@ -11,9 +10,7 @@ export default {
   dialect: "postgresql",
   dbCredentials: {
     url,
-    ssl: {
-      ca: readFileSync(env("DATABASE_CA_CERT_PATH")).toString(),
-    },
+    ssl: true,
   },
   verbose: true,
   strict: true,
