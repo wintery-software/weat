@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fetchRestaurant } from "@/lib/api/restaurant";
+import { AI_NAME } from "@/lib/constants";
 import { MessageCircleMore, Sparkles } from "lucide-react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
@@ -71,7 +72,7 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
                     <div className="flex items-center gap-2">
                       <Sparkles className="size-5 text-violet-600" />
                       <h3 className="bg-gradient-to-r from-violet-500 to-rose-400 bg-clip-text text-lg font-semibold text-transparent">
-                        Weat AI
+                        {AI_NAME}
                       </h3>
                     </div>
 

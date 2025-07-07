@@ -2,6 +2,7 @@
 
 import { RestaurantGETResponse } from "@/app/api/restaurants/[id]/route";
 import { Button } from "@/components/ui/button";
+import { APP_NAME } from "@/lib/constants";
 import { Navigation, Share } from "lucide-react";
 
 interface RestaurantActionsProps {
@@ -22,7 +23,7 @@ export const RestaurantActions = ({ restaurant }: RestaurantActionsProps) => {
 
   const handleShareClick = async () => {
     const shareData = {
-      title: `我在 Weat 上发现了一家餐厅：${restaurant.name_zh || restaurant.name_en}，快来看看吧！`,
+      title: `我在 ${APP_NAME} 上发现了一家餐厅：${restaurant.name_zh || restaurant.name_en}，快来看看吧！`,
       url: `${window.location.origin}/restaurants/${restaurant.id}`,
     };
 

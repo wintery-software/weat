@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { APP_NAME } from "@/lib/constants";
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -32,7 +33,7 @@ export const Navbar = ({ routes }: NavbarProps) => {
     <div className="flex items-center justify-between">
       <div className="flex items-center">
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-primary text-xl font-bold">Weat</span>
+          <span className="text-primary text-xl font-bold">{APP_NAME}</span>
         </Link>
       </div>
 

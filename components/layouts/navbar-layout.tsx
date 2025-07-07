@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/navbar";
+import { COMPANY_NAME } from "@/lib/constants";
 import { Home, Search } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -33,7 +34,7 @@ export const NavbarLayout = ({ children }: NavbarLayoutProps) => {
       <footer className="border-t py-6 md:py-0">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-16 md:flex-row">
           <p className="text-muted-foreground text-center text-sm md:text-left">
-            &copy; {new Date().getFullYear()} Wintery Software. All rights
+            &copy; {new Date().getFullYear()} {COMPANY_NAME}. All rights
             reserved.
           </p>
         </div>

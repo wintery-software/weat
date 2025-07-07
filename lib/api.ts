@@ -1,4 +1,5 @@
 import axios from "axios";
+import { APP_NAME } from "./constants";
 
 // Create axios instance with default config
 export const api = axios.create({
@@ -13,7 +14,7 @@ export const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("Weat API Error:", error);
+    console.error(`${APP_NAME} API Error:`, error);
 
     return Promise.reject(error);
   },
