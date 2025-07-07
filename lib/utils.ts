@@ -1,4 +1,4 @@
-import { AddressSelect } from "@/db/schema";
+import { Address } from "@/types/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -31,19 +31,19 @@ export const env = (key: string, defaultValue?: string) => {
   return value;
 };
 
-export const formatAddress = (address: AddressSelect | null | undefined) => {
+export const formatAddress = (address: Address | null | undefined) => {
   if (!address) {
     return "";
   }
 
-  let result = address.address1;
+  let result = address.address_1;
 
-  if (address.address2) {
-    // No comma before address2
-    result += ` ${address.address2}`;
+  if (address.address_2) {
+    // No comma before address_2
+    result += ` ${address.address_2}`;
   }
 
-  result += `, ${address.city}, ${address.state} ${address.zipCode}`;
+  result += `, ${address.city}, ${address.state} ${address.zip_code}`;
 
   return result;
 };

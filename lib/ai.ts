@@ -170,8 +170,12 @@ export const generateRestaurantInsightsById = async (
 ): Promise<string> => {
   // Import database and schema here to avoid circular dependencies
   const { db } = await import("@/db");
-  const { restaurants, restaurantSummaries, restaurantsTags, tags } =
-    await import("@/db/schema");
+  const {
+    restaurants,
+    restaurantSummaries,
+    restaurantTags: restaurantsTags,
+    tags,
+  } = await import("@/db/schema");
   const { eq } = await import("drizzle-orm");
 
   try {

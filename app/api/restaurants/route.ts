@@ -1,47 +1,46 @@
-import { db } from "@/db";
-import { APIError } from "@/types/types";
-import { sql } from "drizzle-orm";
+import { createClient } from "@/lib/supabase/server";
+import {
+  Address,
+  APIError,
+  Restaurant,
+  RestaurantSummary,
+  TopTag,
+} from "@/types/types";
 import { NextResponse } from "next/server";
 
-// Extract the query outside the function
-const getRestaurantsQuery = () =>
-  db.query.restaurants.findMany({
-    with: {
-      address: true,
-      summary: true,
-      tags: {
-        with: {
-          tag: true,
-        },
-      },
-    },
-    extras: {
-      reviewCount:
-        sql<number>`(SELECT COUNT(*)::int FROM reviews WHERE reviews.restaurant_id = restaurants.id)`.as(
-          "reviewCount",
-        ),
-      dishCount:
-        sql<number>`(SELECT COUNT(*)::int FROM restaurant_dishes WHERE restaurant_dishes.restaurant_id = restaurants.id)`.as(
-          "dishCount",
-        ),
-    },
-  });
-
-// Type inferred from the extracted query
-export type RestaurantsGETResponse = Awaited<
-  ReturnType<typeof getRestaurantsQuery>
->;
+export type RestaurantsGETResponse = (Restaurant & {
+  address: Address;
+  summary:
+    | (RestaurantSummary & {
+        top_tags: TopTag[];
+      })
+    | null;
+})[];
 
 export const GET = async () => {
   try {
-    const data = await getRestaurantsQuery();
+    const supabase = await createClient();
+
+    // Fetch restaurants with their relations
+    const { data, error } = (await supabase.from("restaurants").select(`
+        *,
+        address:addresses(*),
+        summary:restaurant_summaries(*)
+      `)) as {
+      data: RestaurantsGETResponse;
+      error: unknown;
+    };
+
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json(data);
   } catch (error) {
     console.error("Failed to fetch restaurants:", error);
 
     return NextResponse.json<APIError>(
-      { error: "Failed to fetch restaurants" },
+      { error: "Failed to fetch restaurants." },
       { status: 500 },
     );
   }

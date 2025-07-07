@@ -49,3 +49,10 @@ next-env.d.ts
 
 # Certificates
 *.crt
+
+# Temp files
+/tmp
+
+# Supabase
+.supabase
+supabase/*

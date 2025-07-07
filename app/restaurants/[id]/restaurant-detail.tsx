@@ -23,9 +23,9 @@ import { SiApple, SiGooglemaps } from "@icons-pack/react-simple-icons";
 import { AdvancedMarker, Map } from "@vis.gl/react-google-maps";
 import {
   Clock,
-  Dot,
   Home,
   MapPin,
+  MessageCircleMore,
   Phone,
   Share2,
   Sparkles,
@@ -66,9 +66,7 @@ export const RestaurantDetail = ({
 
   // Mock data for fields not in our Restaurant interface
   const mockData = {
-    phone: restaurant.phoneNumber || "-",
     hours: "11:00 AM - 10:00 PM",
-    priceRange: "$$",
     image: "/placeholder.svg",
     gallery: [
       "/placeholder.svg",
@@ -76,20 +74,7 @@ export const RestaurantDetail = ({
       "/placeholder.svg",
       "/placeholder.svg",
     ],
-    description: restaurant.summary?.summary || "没有描述",
-    popularDishes: restaurant.dishes?.map((dish) => dish.name) || [
-      "招牌菜",
-      "特色菜",
-      "推荐菜",
-      "经典菜",
-      "创新菜",
-    ],
   };
-
-  // Calculate rating from averageRating
-  const rating = restaurant.summary?.averageRating
-    ? parseFloat(restaurant.summary.averageRating.toString())
-    : 0;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -110,25 +95,21 @@ export const RestaurantDetail = ({
             <div className="flex flex-col gap-2">
               <div id="name">
                 <h1 className="text-2xl font-bold sm:text-3xl">
-                  {restaurant.nameZh || restaurant.nameEn}
+                  {restaurant.name_zh || restaurant.name_en}
                 </h1>
                 <p className="text-muted-foreground">
-                  {restaurant.nameEn || restaurant.nameZh}
+                  {restaurant.name_en || restaurant.name_zh}
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <div id="rating" className="flex items-center gap-2">
-                  <span className="font-medium">{rating.toFixed(1)}</span>
-                  <Rating value={rating} size={16} />
-                </div>
-                <Dot className="text-muted-foreground hidden size-4 sm:block" />
-                <div id="tags" className="flex flex-wrap gap-2">
-                  {(restaurant.tags ?? []).map((tag, i: number) => (
-                    <Badge key={tag?.id ?? i} variant="default">
-                      {tag?.tag?.name}
-                    </Badge>
-                  ))}
-                  <Badge variant="outline">{mockData.priceRange}</Badge>
+                  <span className="font-medium">
+                    {restaurant.summary?.average_rating?.toFixed(1) ?? "-"}
+                  </span>
+                  <Rating
+                    value={restaurant.summary?.average_rating ?? 0}
+                    size={16}
+                  />
                 </div>
               </div>
             </div>
@@ -137,8 +118,8 @@ export const RestaurantDetail = ({
               <Button size="sm" variant="outline" asChild>
                 <a
                   href={getGoogleMapsSearchUrl({
-                    placeId: restaurant.googleMapsPlaceId,
-                    name: restaurant.nameEn ?? restaurant.nameZh,
+                    placeId: restaurant.google_maps_place_id,
+                    name: restaurant.name_en ?? restaurant.name_zh,
                     address: formatAddress(restaurant.address),
                   })}
                   target="_blank"
@@ -183,10 +164,25 @@ export const RestaurantDetail = ({
                             </h3>
                           </div>
 
+                          <h3 className="text-lg font-semibold">评测</h3>
                           <div className="prose prose-sm dark:prose-invert max-w-none">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                               {restaurant.summary?.summary || "暂无分析内容"}
                             </ReactMarkdown>
+                          </div>
+
+                          <h3 className="text-lg font-semibold">标签</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {(restaurant.tags ?? []).map(
+                              (tagData, i: number) => (
+                                <Badge key={i} variant="outline">
+                                  {tagData.tag.name}
+                                  <span className="text-muted-foreground ml-1">
+                                    {tagData.mention_count}
+                                  </span>
+                                </Badge>
+                              ),
+                            )}
                           </div>
                         </CardContent>
                       </Card>
@@ -195,20 +191,68 @@ export const RestaurantDetail = ({
                         <CardContent className="flex flex-col gap-4">
                           <h3 className="text-lg font-semibold">热门菜品</h3>
 
-                          <div className="grid gap-2 sm:grid-cols-2">
-                            {mockData.popularDishes.map(
-                              (dish: string, index: number) => (
-                                <div
-                                  key={index}
-                                  className="flex items-center gap-2"
-                                >
-                                  <span className="bg-primary/10 text-primary flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium">
-                                    {index + 1}
-                                  </span>
-                                  <span>{dish}</span>
-                                </div>
-                              ),
-                            )}
+                          <div className="flex flex-col gap-4">
+                            {/* Top 3 Column */}
+                            <div className="flex flex-col gap-2">
+                              {restaurant.dishes
+                                ?.slice(0, 3)
+                                .map((dish, index: number) => (
+                                  <div
+                                    key={index}
+                                    className={`flex items-center gap-2 rounded-lg p-2 transition-all ${
+                                      index === 0
+                                        ? "border border-yellow-200 bg-gradient-to-r from-yellow-50 to-amber-100 shadow-sm"
+                                        : index === 1
+                                          ? "border border-gray-200 bg-gradient-to-r from-gray-50 to-slate-100 shadow-sm"
+                                          : "border border-orange-200 bg-gradient-to-r from-orange-50 to-red-100 shadow-sm"
+                                    }`}
+                                  >
+                                    <span
+                                      className={`flex h-6 w-6 items-center justify-center rounded-full border text-xs font-medium ${
+                                        index === 0
+                                          ? "bg-yellow-200 text-white"
+                                          : index === 1
+                                            ? "bg-gray-100 text-white"
+                                            : "bg-orange-200 text-white"
+                                      }`}
+                                    >
+                                      {index === 0
+                                        ? "🥇"
+                                        : index === 1
+                                          ? "🥈"
+                                          : "🥉"}
+                                    </span>
+                                    <span className="text-foreground text-sm font-medium">
+                                      {dish.name}
+                                    </span>
+                                    <Badge variant="outline">
+                                      <MessageCircleMore className="size-3" />
+                                      {dish.mention_count}
+                                    </Badge>
+                                  </div>
+                                ))}
+                            </div>
+
+                            {/* Other dishes Grid */}
+                            <div className="grid sm:grid-cols-2">
+                              {restaurant.dishes
+                                ?.slice(3)
+                                .map((dish, index: number) => (
+                                  <div
+                                    key={index + 3}
+                                    className="hover:bg-muted/50 flex items-center gap-2 rounded-lg p-2 transition-all"
+                                  >
+                                    <span className="bg-primary/10 text-primary flex size-6 items-center justify-center rounded-full text-xs font-medium">
+                                      {index + 4}
+                                    </span>
+                                    <span className="text-sm">{dish.name}</span>
+                                    <Badge variant="secondary">
+                                      <MessageCircleMore className="size-3" />
+                                      {dish.mention_count}
+                                    </Badge>
+                                  </div>
+                                ))}
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
@@ -237,7 +281,7 @@ export const RestaurantDetail = ({
                                   lat: restaurant.latitude,
                                   lng: restaurant.longitude,
                                 }}
-                                title={restaurant.nameZh || restaurant.nameEn}
+                                title={restaurant.name_zh || restaurant.name_en}
                               />
                             </Map>
                           ) : (
@@ -256,12 +300,12 @@ export const RestaurantDetail = ({
                           <div className="flex items-center gap-2">
                             <Phone className="text-primary size-4" />
                             <Link
-                              href={`tel:${mockData.phone}`}
+                              href={`tel:${restaurant.phone_number}`}
                               className="hover:underline"
                               rel="noopener noreferrer"
                               target="_blank"
                             >
-                              {mockData.phone}
+                              {restaurant.phone_number}
                             </Link>
                           </div>
                           <div className="flex items-center gap-2">
@@ -273,12 +317,12 @@ export const RestaurantDetail = ({
                           <Button
                             className="flex-1"
                             asChild
-                            disabled={!restaurant.googleMapsPlaceId}
+                            disabled={!restaurant.google_maps_place_id}
                           >
                             <a
                               href={getGoogleMapsSearchUrl({
-                                placeId: restaurant.googleMapsPlaceId,
-                                name: restaurant.nameEn ?? restaurant.nameZh,
+                                placeId: restaurant.google_maps_place_id,
+                                name: restaurant.name_en ?? restaurant.name_zh,
                                 address: formatAddress(restaurant.address),
                               })}
                               target="_blank"
@@ -297,7 +341,7 @@ export const RestaurantDetail = ({
                           >
                             <a
                               href={getAppleMapsSearchUrl({
-                                name: restaurant.nameEn ?? restaurant.nameZh,
+                                name: restaurant.name_en ?? restaurant.name_zh,
                                 address: formatAddress(restaurant.address),
                               })}
                               target="_blank"
@@ -325,7 +369,7 @@ export const RestaurantDetail = ({
                                 <div className="group relative aspect-square overflow-hidden rounded-lg">
                                   <Image
                                     src={photo || "/placeholder.svg"}
-                                    alt={`${restaurant.nameZh || restaurant.nameEn || "-"} photo ${index + 1}`}
+                                    alt={`${restaurant.name_zh || restaurant.name_en || "-"} photo ${index + 1}`}
                                     fill
                                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                                   />
@@ -348,7 +392,7 @@ export const RestaurantDetail = ({
                           >
                             <Image
                               src={photo || "/placeholder.svg"}
-                              alt={`${restaurant.nameZh || restaurant.nameEn || "-"} photo ${index + 1}`}
+                              alt={`${restaurant.name_zh || restaurant.name_en || "-"} photo ${index + 1}`}
                               fill
                               className="object-cover transition-transform duration-300 group-hover:scale-105"
                             />

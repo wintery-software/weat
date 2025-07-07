@@ -1,4 +1,4 @@
-import { fetchRestaurant, fetchRestaurants } from "@/lib/api";
+import { fetchRestaurant, fetchRestaurants } from "@/lib/api/restaurant";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 // Query keys for React Query

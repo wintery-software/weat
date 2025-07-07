@@ -1,26 +1,30 @@
-import { db } from "@/db";
-import { APIError } from "@/types/types";
+import { createClient } from "@/lib/supabase/server";
+import {
+  APIError,
+  Address,
+  Restaurant,
+  RestaurantDish,
+  RestaurantSummary,
+  RestaurantTag,
+  TopTag,
+} from "@/types/types";
+import { PostgrestError } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
-const getRestaurantQuery = (id: string) =>
-  db.query.restaurants.findFirst({
-    where: (restaurants, { eq }) => eq(restaurants.id, id),
-    with: {
-      address: true,
-      dishes: true,
-      summary: true,
-      tags: {
-        with: {
-          tag: true,
-        },
-      },
-    },
-  });
-
-export type RestaurantGETResponse = Awaited<
-  ReturnType<typeof getRestaurantQuery>
-> & {
-  summary: string;
+export type RestaurantGETResponse = Restaurant & {
+  address: Address;
+  summary:
+    | (RestaurantSummary & {
+        top_tags: TopTag[];
+      })
+    | null;
+  tags: (RestaurantTag & {
+    tag: {
+      id: string;
+      name: string;
+    };
+  })[];
+  dishes: RestaurantDish[];
 };
 
 export const GET = async (
@@ -30,16 +34,48 @@ export const GET = async (
   const { id } = await params;
 
   try {
-    const restaurant = await getRestaurantQuery(id);
+    const supabase = await createClient();
 
-    if (!restaurant) {
+    // Fetch restaurant with all its relations
+    const { data, error } = (await supabase
+      .from("restaurants")
+      .select(
+        `
+        *,
+        address:addresses(*),
+        summary:restaurant_summaries(*),
+        tags:restaurant_tags(
+          *,
+          tag:tags(*)
+        ),
+        dishes:restaurant_dishes(*)
+      `,
+      )
+      .eq("id", id)
+      .single()) as {
+      data: RestaurantGETResponse;
+      error: unknown;
+    };
+
+    if (error) {
+      if ((error as PostgrestError).code === "PGRST116") {
+        return NextResponse.json<APIError>(
+          { error: "Restaurant not found" },
+          { status: 404 },
+        );
+      }
+
+      throw error;
+    }
+
+    if (!data) {
       return NextResponse.json<APIError>(
         { error: "Restaurant not found" },
         { status: 404 },
       );
     }
 
-    return NextResponse.json(restaurant);
+    return NextResponse.json(data);
   } catch (error) {
     console.error(`Failed to fetch restaurant ${id}:`, error);
 

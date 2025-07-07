@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { getGoogleMapsSearchUrl } from "@/lib/navigation";
 import { formatAddress } from "@/lib/utils";
+import { TopTag } from "@/types/types";
 import { Share2 } from "lucide-react";
 import Link from "next/link";
 
@@ -38,27 +39,23 @@ export const RestaurantCard = ({ restaurant, view }: RestaurantCardProps) => {
                   href={`/restaurants/${restaurant.id}`}
                   className="hover:underline"
                 >
-                  {restaurant.nameZh || restaurant.nameEn || "-"}
+                  {restaurant.name_zh || restaurant.name_en || "-"}
                 </Link>
               </h3>
               <div className="text-muted-foreground flex items-center gap-1 text-xs">
                 <span className="font-medium">
-                  {restaurant.summary?.averageRating ?? "-"}
+                  {restaurant.summary?.average_rating ?? "-"}
                 </span>
                 <Rating
-                  value={
-                    restaurant.summary?.averageRating
-                      ? Number(restaurant.summary.averageRating)
-                      : 0
-                  }
+                  value={restaurant.summary?.average_rating ?? 0}
                   size={12}
                 />
-                <span>({restaurant.reviewCount ?? 0})</span>
+                <span>({restaurant.summary?.review_count ?? 0})</span>
               </div>
               <Link
                 href={getGoogleMapsSearchUrl({
-                  placeId: restaurant.googleMapsPlaceId,
-                  name: restaurant.nameEn ?? restaurant.nameZh,
+                  placeId: restaurant.google_maps_place_id,
+                  name: restaurant.name_en ?? restaurant.name_zh,
                   address: formatAddress(restaurant.address),
                 })}
                 target="_blank"
@@ -70,18 +67,16 @@ export const RestaurantCard = ({ restaurant, view }: RestaurantCardProps) => {
             </div>
 
             <div className="mt-3 flex flex-wrap gap-1">
-              {restaurant.tags?.map((tag, i) => (
-                <Badge
-                  key={tag?.tag?.id ?? i}
-                  variant="secondary"
-                  className="text-xs"
-                >
-                  {tag?.tag?.name}
-                  <span className="text-muted-foreground text-xs font-medium">
-                    {tag?.reviewCount ?? 0}
-                  </span>
-                </Badge>
-              ))}
+              {(restaurant.summary?.top_tags as TopTag[])?.map(
+                ([name, mention_count], i) => (
+                  <Badge key={i} variant="secondary" className="text-xs">
+                    {name}
+                    <span className="text-muted-foreground text-xs font-medium">
+                      {mention_count}
+                    </span>
+                  </Badge>
+                ),
+              )}
             </div>
           </CardContent>
 
