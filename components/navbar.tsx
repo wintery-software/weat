@@ -25,7 +25,7 @@ export const Navbar = ({ routes }: NavbarProps) => {
   // Update active state based on current pathname
   const routesWithActiveState = routes.map((route) => ({
     ...route,
-    active: route.active ?? pathname === route.href,
+    active: route.active ?? pathname.split("/")[1] === route.href.split("/")[1],
   }));
 
   return (
