@@ -89,7 +89,7 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
             <TabsTrigger value="photos">照片</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
+          <TabsContent value="overview">
             <div className="grid gap-4 lg:grid-cols-5 xl:grid-cols-6">
               <div className="flex flex-col gap-4 lg:col-span-3 xl:col-span-4">
                 <Card
