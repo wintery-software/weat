@@ -165,7 +165,10 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
                                   <span className="text-foreground text-sm font-medium">
                                     {dish.name}
                                   </span>
-                                  <Badge variant="outline">
+                                  <Badge
+                                    variant="outline"
+                                    className="select-none"
+                                  >
                                     <MessageCircleMore className="size-3" />
                                     {dish.mention_count}
                                   </Badge>
@@ -186,7 +189,10 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
                                     {index + 4}
                                   </span>
                                   <span className="text-sm">{dish.name}</span>
-                                  <Badge variant="secondary">
+                                  <Badge
+                                    variant="secondary"
+                                    className="select-none"
+                                  >
                                     <MessageCircleMore className="size-3" />
                                     {dish.mention_count}
                                   </Badge>
