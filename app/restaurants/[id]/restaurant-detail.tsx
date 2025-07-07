@@ -86,7 +86,7 @@ export const RestaurantDetail = ({
 
       <main className="flex-1">
         <div
-          className="h-64 w-full bg-cover bg-center sm:h-80"
+          className="h-64 w-full bg-cover bg-center md:h-80"
           style={{ backgroundImage: `url(${mockData.image})` }}
         />
 
@@ -94,14 +94,14 @@ export const RestaurantDetail = ({
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-2">
               <div id="name">
-                <h1 className="text-2xl font-bold sm:text-3xl">
+                <h1 className="text-2xl font-bold md:text-3xl">
                   {restaurant.name_zh || restaurant.name_en}
                 </h1>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-sm md:text-base">
                   {restaurant.name_en || restaurant.name_zh}
                 </p>
               </div>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <div className="flex flex-col gap-2 md:flex-row md:items-center">
                 <div id="rating" className="flex items-center gap-2">
                   <span className="font-medium">
                     {restaurant.summary?.average_rating?.toFixed(1) ?? "-"}
@@ -234,13 +234,13 @@ export const RestaurantDetail = ({
                             </div>
 
                             {/* Other dishes Grid */}
-                            <div className="grid sm:grid-cols-2">
+                            <div className="grid md:grid-cols-2">
                               {restaurant.dishes
                                 ?.slice(3)
                                 .map((dish, index: number) => (
                                   <div
                                     key={index + 3}
-                                    className="hover:bg-muted flex items-center gap-2 rounded-lg p-2 transition-all"
+                                    className="hover:bg-muted flex items-center gap-2 rounded-lg px-2 py-1 transition-all md:py-2"
                                   >
                                     <span className="bg-primary/10 text-primary flex size-6 items-center justify-center rounded-full text-xs font-medium">
                                       {index + 4}
@@ -359,7 +359,7 @@ export const RestaurantDetail = ({
                   <Card id="photos">
                     <CardContent>
                       {/* Carousel for mobile */}
-                      <div className="sm:hidden">
+                      <div className="md:hidden">
                         <Carousel className="w-full">
                           <CarouselContent>
                             {mockData.gallery.map((photo, index) => (
@@ -382,7 +382,7 @@ export const RestaurantDetail = ({
                       </div>
 
                       {/* Grid for larger screens */}
-                      <div className="hidden gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="hidden gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
                         {mockData.gallery.map((photo, index) => (
                           <div
                             key={index}
