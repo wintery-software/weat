@@ -141,10 +141,10 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
                                   key={index}
                                   className={`flex items-center gap-2 rounded-lg p-2 transition-all ${
                                     index === 0
-                                      ? "border border-yellow-200 bg-gradient-to-r from-yellow-50 to-amber-100 shadow-sm"
+                                      ? "border border-yellow-200 bg-gradient-to-r from-yellow-50 to-amber-100"
                                       : index === 1
-                                        ? "border border-gray-200 bg-gradient-to-r from-gray-50 to-slate-100 shadow-sm"
-                                        : "border border-orange-200 bg-gradient-to-r from-orange-50 to-red-100 shadow-sm"
+                                        ? "border border-gray-200 bg-gradient-to-r from-gray-50 to-slate-100"
+                                        : "border border-orange-200 bg-gradient-to-r from-orange-50 to-red-100"
                                   }`}
                                 >
                                   <span
