@@ -1,5 +1,6 @@
 import { RestaurantActions } from "@/app/restaurants/[id]/restaurant-actions";
 import { RestaurantContactCard } from "@/app/restaurants/[id]/restaurant-contact-card";
+import { RestaurantTags } from "@/app/restaurants/[id]/restaurant-tags";
 import { Rating } from "@/components/rating";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -83,21 +84,7 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
                       </ReactMarkdown>
                     </div>
 
-                    <h3 className="text-lg font-semibold">标签</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {(restaurant.tags ?? []).map((tagData, i: number) => (
-                        <Badge
-                          key={i}
-                          variant="outline"
-                          className="hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors duration-300 select-none"
-                        >
-                          {tagData.tag.name}
-                          <span className="text-muted-foreground ml-1">
-                            {tagData.mention_count}
-                          </span>
-                        </Badge>
-                      ))}
-                    </div>
+                    <RestaurantTags tags={restaurant.tags ?? []} />
                   </CardContent>
                 </Card>
 
