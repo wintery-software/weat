@@ -21,7 +21,10 @@ export const RestaurantTags = ({ tags }: RestaurantTagsProps) => {
 
   return (
     <>
-      <h3 className="text-lg font-semibold">标签</h3>
+      <div className="flex items-center gap-2">
+        <h3 className="text-lg font-semibold">标签</h3>
+        <span className="text-muted-foreground text-sm">{tags.length}</span>
+      </div>
       <div className="flex flex-wrap gap-2">
         {filteredTags.map((tagData, i: number) => (
           <Badge

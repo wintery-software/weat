@@ -1,8 +1,8 @@
 import { RestaurantActions } from "@/app/restaurants/[id]/restaurant-actions";
 import { RestaurantContactCard } from "@/app/restaurants/[id]/restaurant-contact-card";
+import { RestaurantDishes } from "@/app/restaurants/[id]/restaurant-dishes";
 import { RestaurantTags } from "@/app/restaurants/[id]/restaurant-tags";
 import { Rating } from "@/components/rating";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -14,7 +14,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fetchRestaurant } from "@/lib/api/restaurant";
 import { AI_NAME } from "@/lib/constants";
-import { MessageCircleMore, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -90,70 +90,7 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
 
                 <Card id="popular-dishes">
                   <CardContent className="flex flex-col gap-4">
-                    <h3 className="text-lg font-semibold">热门菜品</h3>
-
-                    <div className="flex flex-col gap-4">
-                      {/* Top 3 Column */}
-                      <div className="flex flex-col gap-2">
-                        {restaurant.dishes
-                          ?.slice(0, 3)
-                          .map((dish, index: number) => (
-                            <div
-                              key={index}
-                              className={`flex items-center gap-2 rounded-lg p-2 transition-all ${
-                                index === 0
-                                  ? "border border-yellow-200 bg-gradient-to-r from-yellow-50 to-amber-100"
-                                  : index === 1
-                                    ? "border border-gray-200 bg-gradient-to-r from-gray-50 to-slate-100"
-                                    : "border border-orange-200 bg-gradient-to-r from-orange-50 to-red-100"
-                              }`}
-                            >
-                              <span
-                                className={`flex h-6 w-6 items-center justify-center rounded-full border text-xs font-medium ${
-                                  index === 0
-                                    ? "bg-yellow-200 text-white"
-                                    : index === 1
-                                      ? "bg-gray-100 text-white"
-                                      : "bg-orange-200 text-white"
-                                }`}
-                              >
-                                {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
-                              </span>
-                              <span className="text-foreground text-sm font-medium">
-                                {dish.name}
-                              </span>
-                              <Badge variant="outline" className="select-none">
-                                <MessageCircleMore className="size-3" />
-                                {dish.mention_count}
-                              </Badge>
-                            </div>
-                          ))}
-                      </div>
-
-                      {/* Other dishes Grid */}
-                      <div className="grid md:grid-cols-2">
-                        {restaurant.dishes
-                          ?.slice(3)
-                          .map((dish, index: number) => (
-                            <div
-                              key={index + 3}
-                              className="hover:bg-muted flex items-center gap-2 rounded-lg px-2 py-1 transition-all md:py-2"
-                            >
-                              <span className="bg-primary/10 text-primary flex size-6 items-center justify-center rounded-full text-xs font-medium">
-                                {index + 4}
-                              </span>
-                              <span className="text-sm">{dish.name}</span>
-                              <Badge
-                                variant="secondary"
-                                className="select-none"
-                              >
-                                <MessageCircleMore className="size-3" />
-                                {dish.mention_count}
-                              </Badge>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
+                    <RestaurantDishes dishes={restaurant.dishes ?? []} />
                   </CardContent>
                 </Card>
               </div>
