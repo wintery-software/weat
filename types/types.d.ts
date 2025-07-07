@@ -1,5 +1,11 @@
 import { Tables } from "./db";
 
+export type SearchParams = Promise<{
+  [key: string]: string | string[] | undefined;
+}>;
+
+export type ResultViewMode = "grid" | "list";
+
 export interface Paginated<T> {
   success: boolean;
   data: T;

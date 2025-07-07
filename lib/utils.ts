@@ -12,6 +12,14 @@ export const cn = (...inputs: ClassValue[]) => {
 };
 
 /**
+ * Sleep for a given number of milliseconds.
+ * @param ms - The number of milliseconds to sleep
+ * @returns A promise that resolves after the given number of milliseconds
+ */
+export const sleep = async (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
  * Get an environment variable.
  * @param key - The environment variable key
  * @param defaultValue - The default value to return if the environment variable is not set
@@ -31,6 +39,27 @@ export const env = (key: string, defaultValue?: string) => {
   return value;
 };
 
+/**
+ * Format an address object into a string.
+ *
+ * For example, if the address is:
+ *
+ * ```json
+ * {
+ *   address_1: "123 Main St",
+ *   address_2: "Apt 4B",
+ *   city: "Santa Clara",
+ *   state: "CA",
+ *   zip_code: "95050"
+ * }
+ * ```
+ *
+ * The formatted address will be:
+ * "123 Main St Apt 4B, Santa Clara, CA 95050"
+ *
+ * @param address - The address object to format
+ * @returns The formatted address string
+ */
 export const formatAddress = (address: Address | null | undefined) => {
   if (!address) {
     return "";

@@ -1,13 +1,15 @@
 import { ErrorBoundary } from "@/components/error-boundary";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { Suspense } from "react";
-import { RestaurantDetail } from "./restaurant-detail";
+import { RestaurantContent } from "./restaurant-content";
 
-const Page = ({ params }: { params: Promise<{ id: string }> }) => {
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
+
   return (
     <ErrorBoundary>
       <Suspense fallback={<LoadingSpinner message="加载中" />}>
-        <RestaurantDetail params={params} />
+        <RestaurantContent id={id} />
       </Suspense>
     </ErrorBoundary>
   );

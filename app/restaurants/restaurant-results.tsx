@@ -11,28 +11,62 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSuspenseRestaurants } from "@/hooks/use-restaurants";
+import { ResultViewMode } from "@/types/types";
 import { ChevronLeft, ChevronRight, Grid3x3, List } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
-export const RestaurantResults = () => {
-  const [view, setView] = useState("grid");
-  const [pageSize, setPageSize] = useState(30);
-  const [page, setPage] = useState(1);
+interface RestaurantResultsProps {
+  defaultPage: number;
+  defaultPageSize: number;
+  defaultView: ResultViewMode;
+}
+
+export const RestaurantResults = ({
+  defaultPage,
+  defaultPageSize,
+  defaultView,
+}: RestaurantResultsProps) => {
+  const router = useRouter();
+  const [view, setView] = useState<ResultViewMode>(defaultView);
+  const [pageSize, setPageSize] = useState(defaultPageSize);
+  const [page, setPage] = useState(defaultPage);
   const { data: restaurants = [] } = useSuspenseRestaurants();
 
-  const totalPages = Math.ceil(restaurants.length / pageSize);
+  const totalPages = useMemo(
+    () => Math.ceil(restaurants.length / pageSize),
+    [restaurants.length, pageSize],
+  );
+
+  useEffect(() => {
+    if (page < 1) {
+      setPage(1);
+    } else if (page > totalPages) {
+      setPage(totalPages);
+    }
+
+    // Update URL params
+    router.push(`?page=${page}&page_size=${pageSize}&view=${view}`);
+  }, [router, totalPages, page, pageSize, view]);
+
   const paginatedRestaurants = restaurants.slice(
     (page - 1) * pageSize,
     page * pageSize,
   );
 
+  const handlePageChange = (value: number) => {
+    setPage(value);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
         <p className="text-muted-foreground text-sm">
           找到 {restaurants.length} 家餐厅
         </p>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm">
             <span>每页显示</span>
             <Select
@@ -53,7 +87,11 @@ export const RestaurantResults = () => {
               </SelectContent>
             </Select>
           </div>
-          <Tabs defaultValue="grid" value={view} onValueChange={setView}>
+          <Tabs
+            defaultValue="grid"
+            value={view}
+            onValueChange={(value) => setView(value as ResultViewMode)}
+          >
             <TabsList>
               <TabsTrigger value="grid" className="cursor-pointer">
                 <Grid3x3 className="mr-1 size-4" />
@@ -65,6 +103,32 @@ export const RestaurantResults = () => {
               </TabsTrigger>
             </TabsList>
           </Tabs>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-end gap-4">
+        <div className="text-muted-foreground text-sm">
+          第&nbsp;
+          <span className="text-primary font-semibold">{page}</span>
+          &nbsp;/&nbsp;{totalPages} 页
+        </div>
+        <div className="flex gap-2">
+          <Button
+            size={"icon"}
+            variant="outline"
+            onClick={() => handlePageChange(Math.max(1, page - 1))}
+            disabled={page === 1}
+          >
+            <ChevronLeft className="mr-1 size-4" />
+          </Button>
+          <Button
+            size={"icon"}
+            variant="outline"
+            onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
+            disabled={page === totalPages}
+          >
+            <ChevronRight className="ml-1 size-4" />
+          </Button>
         </div>
       </div>
 
@@ -83,28 +147,28 @@ export const RestaurantResults = () => {
           />
         ))}
       </div>
-      {/* Pagination Controls */}
-      <div className="mt-4 flex items-center justify-between">
+
+      <div className="flex items-center justify-end gap-4">
         <div className="text-muted-foreground text-sm">
-          第 {page} / {totalPages} 页
+          第&nbsp;
+          <span className="text-primary font-semibold">{page}</span>
+          &nbsp;/&nbsp;{totalPages} 页
         </div>
         <div className="flex gap-2">
           <Button
-            size="sm"
+            size={"icon"}
             variant="outline"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            onClick={() => handlePageChange(Math.max(1, page - 1))}
             disabled={page === 1}
           >
             <ChevronLeft className="mr-1 size-4" />
-            上一页
           </Button>
           <Button
-            size="sm"
+            size={"icon"}
             variant="outline"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
             disabled={page === totalPages}
           >
-            下一页
             <ChevronRight className="ml-1 size-4" />
           </Button>
         </div>
