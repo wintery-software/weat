@@ -116,7 +116,11 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
                         <h3 className="text-lg font-semibold">标签</h3>
                         <div className="flex flex-wrap gap-2">
                           {(restaurant.tags ?? []).map((tagData, i: number) => (
-                            <Badge key={i} variant="outline">
+                            <Badge
+                              key={i}
+                              variant="outline"
+                              className="hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors duration-300 select-none"
+                            >
                               {tagData.tag.name}
                               <span className="text-muted-foreground ml-1">
                                 {tagData.mention_count}
