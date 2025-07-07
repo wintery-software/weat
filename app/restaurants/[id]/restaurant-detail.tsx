@@ -301,9 +301,7 @@ export const RestaurantDetail = ({
                             <Phone className="text-primary size-4" />
                             <Link
                               href={`tel:${restaurant.phone_number}`}
-                              className="hover:underline"
-                              rel="noopener noreferrer"
-                              target="_blank"
+                              className="underline decoration-dotted underline-offset-2"
                             >
                               {restaurant.phone_number}
                             </Link>
