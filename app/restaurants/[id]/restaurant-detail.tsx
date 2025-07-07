@@ -240,7 +240,7 @@ export const RestaurantDetail = ({
                                 .map((dish, index: number) => (
                                   <div
                                     key={index + 3}
-                                    className="hover:bg-muted/50 flex items-center gap-2 rounded-lg p-2 transition-all"
+                                    className="hover:bg-muted flex items-center gap-2 rounded-lg p-2 transition-all"
                                   >
                                     <span className="bg-primary/10 text-primary flex size-6 items-center justify-center rounded-full text-xs font-medium">
                                       {index + 4}
