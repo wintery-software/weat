@@ -1,8 +1,11 @@
 import { ErrorBoundary } from "@/components/error-boundary";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { fetchRestaurant } from "@/lib/api/restaurant";
+import { APP_NAME } from "@/lib/constants";
 import { Suspense } from "react";
 import { RestaurantContent } from "./restaurant-content";
+
+const title = "餐厅详情";
 
 export const generateMetadata = async ({
   params,
@@ -14,30 +17,30 @@ export const generateMetadata = async ({
   try {
     const restaurant = await fetchRestaurant(id);
 
-    const title =
-      (restaurant.name_zh || restaurant.name_en) + " - 餐厅详情 - Weat";
+    const metadataTitle =
+      (restaurant.name_zh || restaurant.name_en) + ` - ${title} - ${APP_NAME}`;
 
     const description = restaurant.summary?.summary
       ? restaurant.summary.summary.slice(0, 160) + "..."
       : "餐厅详情";
 
     return {
-      title,
+      title: metadataTitle,
       description,
       openGraph: {
-        title,
+        title: metadataTitle,
         description,
         type: "website",
       },
       twitter: {
         card: "summary",
-        title,
+        title: metadataTitle,
         description,
       },
     };
   } catch {
     return {
-      title: "餐厅详情",
+      metadataTitle: "餐厅详情",
       description: "餐厅详情",
     };
   }

@@ -1,5 +1,6 @@
 import { ErrorBoundary } from "@/components/error-boundary";
 import { LoadingSpinner } from "@/components/loading-spinner";
+import { APP_NAME } from "@/lib/constants";
 import { ResultViewMode, SearchParams } from "@/types/types";
 import { Metadata } from "next";
 import { Suspense } from "react";
@@ -9,18 +10,23 @@ import { RestaurantResults } from "./restaurant-results";
 // Force dynamic rendering to prevent build-time API calls
 export const dynamic = "force-dynamic";
 
+const title = "发现餐厅";
+const description = "发现你附近的餐厅，并查看它们的评价和评分。";
+
+const metadataTitle = `${title} - ${APP_NAME}`;
+
 export const metadata: Metadata = {
-  title: "发现餐厅 - Weat",
-  description: "发现你附近的餐厅，并查看它们的评价和评分。",
+  title: metadataTitle,
+  description,
   openGraph: {
-    title: "发现餐厅 - Weat",
-    description: "发现你附近的餐厅，并查看它们的评价和评分。",
+    title: metadataTitle,
+    description,
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "发现餐厅 - Weat",
-    description: "发现你附近的餐厅，并查看它们的评价和评分。",
+    title: metadataTitle,
+    description,
   },
 };
 
@@ -55,9 +61,9 @@ const Page = async ({ searchParams }: PageProps) => {
     <>
       <div className="container flex flex-col gap-4 py-4 md:gap-6 md:py-8">
         <div>
-          <h1 className="text-2xl font-bold md:text-3xl">发现餐厅</h1>
+          <h1 className="text-2xl font-bold md:text-3xl">{title}</h1>
           <p className="text-muted-foreground mt-2 text-sm md:text-base">
-            发现你附近的餐厅，并查看它们的评价和评分。
+            {description}
           </p>
         </div>
         <RestaurantFilters />
