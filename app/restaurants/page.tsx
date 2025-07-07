@@ -1,12 +1,28 @@
 import { ErrorBoundary } from "@/components/error-boundary";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { ResultViewMode, SearchParams } from "@/types/types";
+import { Metadata } from "next";
 import { Suspense } from "react";
 import { RestaurantFilters } from "./restaurant-filters";
 import { RestaurantResults } from "./restaurant-results";
 
 // Force dynamic rendering to prevent build-time API calls
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "发现餐厅 - Weat",
+  description: "发现你附近的餐厅，并查看它们的评价和评分。",
+  openGraph: {
+    title: "发现餐厅 - Weat",
+    description: "发现你附近的餐厅，并查看它们的评价和评分。",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "发现餐厅 - Weat",
+    description: "发现你附近的餐厅，并查看它们的评价和评分。",
+  },
+};
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 30;
