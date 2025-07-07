@@ -1,7 +1,7 @@
+import { RestaurantActions } from "@/app/restaurants/[id]/restaurant-actions";
 import { RestaurantContactCard } from "@/app/restaurants/[id]/restaurant-contact-card";
 import { Rating } from "@/components/rating";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fetchRestaurant } from "@/lib/api/restaurant";
-import { MessageCircleMore, Navigation, Share, Sparkles } from "lucide-react";
+import { MessageCircleMore, Sparkles } from "lucide-react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -51,36 +51,7 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              size={"icon"}
-              variant="secondary"
-              title="导航"
-              className="cursor-pointer"
-              asChild
-            >
-              <a href="#contact">
-                <Navigation />
-                <span className="sr-only">导航</span>
-              </a>
-            </Button>
-            <Button
-              size={"icon"}
-              variant="secondary"
-              title="分享"
-              className="cursor-pointer"
-              asChild
-            >
-              <a
-                href={`https://twitter.com/intent/tweet?text=在 Weat 上发现了一个餐厅：${restaurant.name_zh || restaurant.name_en || "this restaurant"}&url=${encodeURIComponent(`https://yourdomain.com/restaurants/${id}`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Share />
-                <span className="sr-only">分享</span>
-              </a>
-            </Button>
-          </div>
+          <RestaurantActions restaurant={restaurant} />
         </div>
 
         <Tabs defaultValue="overview">
