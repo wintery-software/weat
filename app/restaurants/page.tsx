@@ -46,7 +46,7 @@ const Page = async ({ searchParams }: PageProps) => {
         </div>
         <RestaurantFilters />
         <ErrorBoundary>
-          <Suspense fallback={<LoadingSpinner message="加载中" />}>
+          <Suspense fallback={<LoadingSpinner />}>
             <RestaurantResults
               defaultPage={page}
               defaultPageSize={pageSize}

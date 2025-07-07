@@ -8,7 +8,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <ErrorBoundary>
-      <Suspense fallback={<LoadingSpinner message="加载中" />}>
+      <Suspense fallback={<LoadingSpinner />}>
         <RestaurantContent id={id} />
       </Suspense>
     </ErrorBoundary>

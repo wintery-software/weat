@@ -6,7 +6,7 @@ interface LoadingSpinnerProps {
 }
 
 export const LoadingSpinner = ({
-  message = "加载中...",
+  message = "加载中",
   size = "md",
 }: LoadingSpinnerProps) => {
   const sizeConfig = {
