@@ -23,7 +23,7 @@ export const NavbarLayout = ({ children }: NavbarLayoutProps) => {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="glass sticky top-0 z-50 w-full">
+      <header className="bg-background sticky top-0 z-50 w-full">
         <div className="container py-3">
           <Navbar routes={routes} />
         </div>
