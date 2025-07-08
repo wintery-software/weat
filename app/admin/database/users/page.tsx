@@ -1,7 +1,7 @@
 const Page = () => {
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-xl font-medium">Welcome back, Admin!</h2>
+      <h1 className="text-2xl font-bold">Users</h1>
     </div>
   );
 };
