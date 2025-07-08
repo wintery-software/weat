@@ -13,18 +13,11 @@ import { AdvancedMarker, Map } from "@vis.gl/react-google-maps";
 import { Clock, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 
-interface RestaurantContactCardProps {
+interface RestaurantContactProps {
   restaurant: RestaurantGETResponse;
 }
 
-export const RestaurantContactCard = ({
-  restaurant,
-}: RestaurantContactCardProps) => {
-  // Mock data for fields not in our Restaurant interface
-  const mockData = {
-    hours: "11:00 AM - 10:00 PM",
-  };
-
+export const RestaurantContact = ({ restaurant }: RestaurantContactProps) => {
   return (
     <Card id="contact" className="lg:col-span-2 xl:col-span-2">
       <CardContent className="flex flex-col gap-4">
@@ -65,16 +58,23 @@ export const RestaurantContactCard = ({
           </div>
           <div className="flex items-center gap-2">
             <Phone className="text-primary size-4" />
-            <Link
-              href={`tel:${restaurant.phone_number}`}
-              className="underline decoration-dotted underline-offset-2"
-            >
-              {restaurant.phone_number}
-            </Link>
+            {restaurant.phone_number ? (
+              <Link
+                href={`tel:${restaurant.phone_number}`}
+                className="underline decoration-dotted underline-offset-2"
+              >
+                {restaurant.phone_number.replace(
+                  /^(\d{3})(\d{3})(\d{4})$/,
+                  "($1) $2-$3",
+                )}
+              </Link>
+            ) : (
+              <span>-</span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Clock className="text-primary size-4" />
-            <span>{mockData.hours}</span>
+            <span>11:00 AM - 9:00 PM</span>
           </div>
         </div>
         <div className="flex gap-2">
