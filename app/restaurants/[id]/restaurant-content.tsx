@@ -1,5 +1,5 @@
 import { RestaurantActions } from "@/app/restaurants/[id]/restaurant-actions";
-import { RestaurantContactCard } from "@/app/restaurants/[id]/restaurant-contact-card";
+import { RestaurantContact } from "@/app/restaurants/[id]/restaurant-contact";
 import { RestaurantDishes } from "@/app/restaurants/[id]/restaurant-dishes";
 import { RestaurantTags } from "@/app/restaurants/[id]/restaurant-tags";
 import { Rating } from "@/components/rating";
@@ -96,7 +96,7 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
               </div>
 
               <div className="lg:col-span-2 xl:col-span-2">
-                <RestaurantContactCard restaurant={restaurant} />
+                <RestaurantContact restaurant={restaurant} />
               </div>
             </div>
           </TabsContent>
