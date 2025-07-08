@@ -55,3 +55,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.glass {
+  @apply bg-background/90 supports-[backdrop-filter]:bg-background/50 backdrop-blur-sm;
+}
