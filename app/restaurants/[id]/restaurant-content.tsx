@@ -103,7 +103,7 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
 
           <TabsContent value="photos">
             <Card id="photos">
-              <CardContent>
+              <CardContent className="relative">
                 {/* Carousel for mobile */}
                 <div className="md:hidden">
                   <Carousel className="w-full">
@@ -122,8 +122,14 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
                         </CarouselItem>
                       ))}
                     </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
+                    <CarouselPrevious
+                      variant={"ghost"}
+                      className="absolute top-1/2 left-0 z-10 h-full w-12 -translate-y-1/2 rounded-none disabled:hidden data-[state=disabled]:hidden"
+                    />
+                    <CarouselNext
+                      variant={"ghost"}
+                      className="absolute top-1/2 right-0 z-10 h-full w-12 -translate-y-1/2 rounded-none disabled:hidden data-[state=disabled]:hidden"
+                    />
                   </Carousel>
                 </div>
 
