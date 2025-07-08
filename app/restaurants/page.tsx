@@ -61,7 +61,7 @@ const Page = async ({ searchParams }: PageProps) => {
     <>
       <div className="container flex flex-col gap-4 py-4 md:gap-6 md:py-8">
         <div>
-          <h1 className="text-2xl font-bold md:text-3xl">{title}</h1>
+          <h1 className="text-2xl font-bold">{title}</h1>
           <p className="text-muted-foreground mt-2 text-sm md:text-base">
             {description}
           </p>

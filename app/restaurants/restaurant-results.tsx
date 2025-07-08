@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSuspenseRestaurants } from "@/hooks/use-restaurants";
+import { useSuspenseRestaurants } from "@/hooks/db/use-restaurants";
 import { ResultViewMode } from "@/types/types";
 import { ChevronLeft, ChevronRight, Grid3x3, List } from "lucide-react";
 import { useRouter } from "next/navigation";

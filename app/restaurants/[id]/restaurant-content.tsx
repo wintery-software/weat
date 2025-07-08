@@ -33,7 +33,7 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <div id="name">
-              <h1 className="text-2xl font-bold md:text-3xl">
+              <h1 className="text-2xl font-bold">
                 {restaurant.name_zh || restaurant.name_en}
               </h1>
               <p className="text-muted-foreground text-sm md:text-base">
