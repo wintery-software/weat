@@ -1,28 +1,17 @@
 "use client";
 
 import { AppSidebar, AppSidebarGroup } from "@/components/app-sidebar";
-import { ErrorBoundary } from "@/components/error-boundary";
-import { LoadingSpinner } from "@/components/loading-spinner";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { SearchIcon, TagIcon, UsersIcon, UtensilsIcon } from "lucide-react";
+import { TagIcon, UsersIcon, UtensilsIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { PropsWithChildren, Suspense, useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 
 const groups: AppSidebarGroup[] = [
-  {
-    items: [
-      {
-        label: "Search",
-        icon: <SearchIcon />,
-        href: "/admin",
-      },
-    ],
-  },
   {
     label: "Database",
     items: [
@@ -49,7 +38,7 @@ const Layout = ({ children }: PropsWithChildren) => {
   const pathname = usePathname();
 
   const { groupsWithActive, activeTitle } = useMemo(() => {
-    let activeTitle = "Admin Dashboard";
+    let activeTitle = "Dashboard";
 
     const groupsWithActive = groups.map((group) => ({
       ...group,
@@ -84,11 +73,7 @@ const Layout = ({ children }: PropsWithChildren) => {
             <h1>{activeTitle}</h1>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <ErrorBoundary>
-            <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
-          </ErrorBoundary>
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

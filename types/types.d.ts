@@ -1,4 +1,4 @@
-import { Tables } from "./db";
+import { Enums, Tables } from "./db";
 
 export type SearchParams = Promise<{
   [key: string]: string | string[] | undefined;
@@ -33,6 +33,8 @@ export type Tag = Tables<"tags">;
 export type RestaurantDish = Tables<"restaurant_dishes">;
 
 export type Review = Tables<"reviews">;
+
+export type TaskStatus = Enums<"task_status">;
 
 // [tag_name, mention_count]
 export type TopTag = [string, number];
