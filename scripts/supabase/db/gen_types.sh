@@ -8,5 +8,5 @@ if [ -z "$project_id" ]; then
   exit 1
 fi
 
-supabase gen types typescript --project-id $project_id --schema public > types/db.d.ts
-pnpx prettier --write types/db.d.ts
+supabase gen types typescript --project-id $project_id --schema public > types/db.ts
+pnpx prettier --write types/db.ts
