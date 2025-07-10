@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { TaskStatus } from "@/types/types";
 import { NextResponse } from "next/server";
 
-export type TaskQueueStatus = Record<TaskStatus, number>;
+export type TaskQueueStatus = Partial<Record<TaskStatus, number>>;
 
 export const GET = async () => {
   const supabase = await createClient();

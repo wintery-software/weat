@@ -1,9 +1,10 @@
-import { TaskQueueCard } from "@/app/admin/task-queue-card";
+import { TaskQueueStatusCard } from "@/app/admin/task-queue-status-card";
 import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getTaskQueueStatus } from "@/lib/api/task-queue";
 import { DatabaseIcon, UsersIcon } from "lucide-react";
 
-const Page = () => {
+const Page = async () => {
   return (
     <div className="flex flex-col gap-6">
       <h2 className="text-xl font-medium">Welcome back, Admin!</h2>
@@ -50,7 +51,7 @@ const Page = () => {
       </div>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
         <SuspenseWrapper>
-          <TaskQueueCard />
+          <TaskQueueStatusCard status={getTaskQueueStatus()} />
         </SuspenseWrapper>
       </div>
     </div>

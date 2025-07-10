@@ -1,8 +1,13 @@
 import { TaskQueueStatus } from "@/app/api/admin/task-queue/status/route";
-import { api } from "@/lib/api";
+import { createClient } from "@/lib/supabase/server";
 
 export const getTaskQueueStatus = async () => {
-  const response = await api.get<TaskQueueStatus>("/admin/task-queue/status");
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_task_queue_status");
 
-  return response.data;
+  if (error) {
+    throw error;
+  }
+
+  return data as TaskQueueStatus;
 };

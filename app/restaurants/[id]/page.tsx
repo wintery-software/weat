@@ -1,6 +1,6 @@
 import { ErrorBoundary } from "@/components/error-boundary";
 import { LoadingSpinner } from "@/components/loading-spinner";
-import { fetchRestaurant } from "@/lib/api/restaurant";
+import { getRestaurant } from "@/lib/api/restaurant";
 import { APP_NAME } from "@/lib/constants";
 import { Suspense } from "react";
 import { RestaurantContent } from "./restaurant-content";
@@ -15,7 +15,7 @@ export const generateMetadata = async ({
   const { id } = await params;
 
   try {
-    const restaurant = await fetchRestaurant(id);
+    const restaurant = await getRestaurant(id);
 
     const metadataTitle =
       (restaurant.name_zh || restaurant.name_en) + ` - ${title} - ${APP_NAME}`;

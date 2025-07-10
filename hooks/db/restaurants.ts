@@ -1,4 +1,4 @@
-import { fetchRestaurant, fetchRestaurants } from "@/lib/api/restaurant";
+import { getRestaurant, getRestaurants } from "@/lib/api/restaurant";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 /**
@@ -9,7 +9,7 @@ export const DEFAULT_STALE_TIME = 5 * 60 * 1000;
 export const useSuspenseRestaurants = () => {
   return useSuspenseQuery({
     queryKey: ["restaurants"],
-    queryFn: fetchRestaurants,
+    queryFn: getRestaurants,
     staleTime: DEFAULT_STALE_TIME,
   });
 };
@@ -17,7 +17,7 @@ export const useSuspenseRestaurants = () => {
 export const useSuspenseRestaurant = (id: string) => {
   return useSuspenseQuery({
     queryKey: ["restaurants", id],
-    queryFn: () => fetchRestaurant(id),
+    queryFn: () => getRestaurant(id),
     staleTime: DEFAULT_STALE_TIME,
   });
 };

@@ -1,6 +1,3 @@
-// Force dynamic rendering to prevent build-time API calls
-export const dynamic = "force-dynamic";
-
 const Page = () => {
   return (
     <div className="flex flex-col gap-4">

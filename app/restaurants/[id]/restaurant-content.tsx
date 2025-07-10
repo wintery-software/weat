@@ -12,7 +12,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { fetchRestaurant } from "@/lib/api/restaurant";
+import { getRestaurant } from "@/lib/api/restaurant";
 import { AI_NAME } from "@/lib/constants";
 import { Sparkles } from "lucide-react";
 import Image from "next/image";
@@ -20,7 +20,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 export const RestaurantContent = async ({ id }: { id: string }) => {
-  const restaurant = await fetchRestaurant(id);
+  const restaurant = await getRestaurant(id);
 
   return (
     <>
