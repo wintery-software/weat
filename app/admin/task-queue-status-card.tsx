@@ -1,5 +1,6 @@
 "use client";
 
+import { TaskQueueStatus } from "@/app/api/admin/task-queue/status/route";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartConfig,
@@ -7,18 +8,20 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useTaskQueueStatus } from "@/hooks/db/task-queue";
 import { ALL_TASK_STATUSES } from "@/lib/constants";
 import { TaskStatus } from "@/types/types";
 import { ListChecksIcon } from "lucide-react";
+import { use } from "react";
 import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
+
+interface TaskQueueStatusCardProps {
+  status: Promise<TaskQueueStatus>;
+}
 
 // Override ChartConfig to use TaskStatus keys
 type TaskQueueChartConfig = ChartConfig & {
   [K in TaskStatus]: ChartConfig[string];
 };
-
-export const description = "A donut chart with text";
 
 const chartConfig = {
   PENDING: { label: "Pending", color: "var(--color-pending)" },
@@ -27,14 +30,12 @@ const chartConfig = {
   FAILURE: { label: "Failure", color: "var(--color-failure)" },
 } satisfies TaskQueueChartConfig;
 
-export const TaskQueueCard = () => {
-  const { data } = useTaskQueueStatus();
+export const TaskQueueStatusCard = ({ status }: TaskQueueStatusCardProps) => {
+  const data = use(status);
   const chartData = [
-    Object.fromEntries(
-      ALL_TASK_STATUSES.map((status) => [status, data[status] ?? 10482]),
-    ),
+    Object.fromEntries(ALL_TASK_STATUSES.map((s) => [s, data[s] ?? 0])),
   ];
-  console.log(chartData);
+
   const totalTasks = Object.values(data).reduce((acc, curr) => acc + curr, 0);
 
   return (

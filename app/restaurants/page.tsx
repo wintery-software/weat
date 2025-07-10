@@ -7,9 +7,6 @@ import { Suspense } from "react";
 import { RestaurantFilters } from "./restaurant-filters";
 import { RestaurantResults } from "./restaurant-results";
 
-// Force dynamic rendering to prevent build-time API calls
-export const dynamic = "force-dynamic";
-
 const title = "发现餐厅";
 const description = "发现你附近的餐厅，并查看它们的评价和评分。";
 
