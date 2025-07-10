@@ -1,8 +1,8 @@
-import SuspenseLayout from "@/components/layouts/suspense-wrapper";
+import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
 import { PropsWithChildren } from "react";
 
 const Layout = ({ children }: PropsWithChildren) => (
-  <SuspenseLayout>{children}</SuspenseLayout>
+  <SuspenseWrapper>{children}</SuspenseWrapper>
 );
 
 export default Layout;
