@@ -5,7 +5,7 @@ import { getRestaurants } from "@/lib/api/restaurant";
 // Force dynamic rendering to avoid build-time API calls
 export const dynamic = "force-dynamic";
 
-const Page = () => (
+const Page = async () => (
   <SuspenseWrapper>
     <RestaurantData data={getRestaurants()} />
   </SuspenseWrapper>

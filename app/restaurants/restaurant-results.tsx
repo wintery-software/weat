@@ -1,137 +1,103 @@
 "use client";
 
+import { RestaurantsData } from "@/app/api/restaurants/route";
 import { RestaurantCard } from "@/app/restaurants/restaurant-card";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { LoadingSpinner } from "@/components/loading-spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSuspenseRestaurants } from "@/hooks/db/restaurants";
-import { ResultViewMode } from "@/types/types";
-import { ChevronLeft, ChevronRight, Grid3x3, List } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
+import { api, DEFAULT_FETCH_LIMIT } from "@/lib/api";
+import { DEFAULT_VIEW } from "@/lib/constants";
+import type { Paginated, ViewMode } from "@/types/types";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { Grid3x3, List } from "lucide-react";
+import { useMemo, useState } from "react";
 
-interface RestaurantResultsProps {
-  defaultPage: number;
-  defaultPageSize: number;
-  defaultView: ResultViewMode;
-}
+export const RestaurantResults = () => {
+  const [view, setView] = useState<ViewMode>(DEFAULT_VIEW);
 
-export const RestaurantResults = ({
-  defaultPage,
-  defaultPageSize,
-  defaultView,
-}: RestaurantResultsProps) => {
-  const router = useRouter();
-  const [view, setView] = useState<ResultViewMode>(defaultView);
-  const [pageSize, setPageSize] = useState(defaultPageSize);
-  const [page, setPage] = useState(defaultPage);
-  const { data: restaurants = [] } = useSuspenseRestaurants();
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    error,
+  } = useInfiniteQuery({
+    queryKey: ["restaurants", DEFAULT_FETCH_LIMIT],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await api.get<Paginated<RestaurantsData[]>>(
+        `/restaurants?page=${pageParam}&limit=${DEFAULT_FETCH_LIMIT}`,
+      );
 
-  const totalPages = useMemo(
-    () => Math.ceil(restaurants.length / pageSize),
-    [restaurants.length, pageSize],
+      return response.data;
+    },
+    getNextPageParam: (lastPage) => {
+      if (lastPage.page >= lastPage.totalPages) {
+        return undefined;
+      }
+
+      return lastPage.page + 1;
+    },
+    initialPageParam: 1,
+  });
+
+  // Use infinite scroll hook
+  const { loadingRef } = useInfiniteScroll(
+    () => fetchNextPage(),
+    hasNextPage ?? false,
+    isFetchingNextPage,
   );
 
-  useEffect(() => {
-    if (page < 1) {
-      setPage(1);
-    } else if (page > totalPages) {
-      setPage(totalPages);
-    }
+  // Flatten all pages into a single array
+  const allRestaurants = useMemo(() => {
+    return data?.pages.flatMap((page) => page.data) ?? [];
+  }, [data]);
 
-    // Update URL params
-    router.push(`?page=${page}&page_size=${pageSize}&view=${view}`);
-  }, [router, totalPages, page, pageSize, view]);
+  // Get total count from first page
+  const totalCount = data?.pages[0]?.count ?? 0;
 
-  const paginatedRestaurants = restaurants.slice(
-    (page - 1) * pageSize,
-    page * pageSize,
-  );
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
-  const handlePageChange = (value: number) => {
-    setPage(value);
-    // Scroll to top when page changes
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <p className="text-destructive">加载餐厅时出错了</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
+      {/* Top controls */}
       <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
         <p className="text-muted-foreground text-sm">
-          找到 {restaurants.length} 家餐厅
+          找到 {totalCount} 家餐厅
         </p>
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm">
-            <span>每页显示</span>
-            <Select
-              value={String(pageSize)}
-              onValueChange={(v) => {
-                setPageSize(Number(v));
-                // Return to the first page
-                setPage(1);
-              }}
-            >
-              <SelectTrigger size="sm" className="w-20 cursor-pointer">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="30">30</SelectItem>
-                <SelectItem value="60">60</SelectItem>
-                <SelectItem value="120">120</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Tabs
-            defaultValue="grid"
-            value={view}
-            onValueChange={(value) => setView(value as ResultViewMode)}
-          >
-            <TabsList>
-              <TabsTrigger value="grid" className="cursor-pointer">
-                <Grid3x3 className="mr-1 size-4" />
-                网格
-              </TabsTrigger>
-              <TabsTrigger value="list" className="cursor-pointer">
-                <List className="mr-1 size-4" />
-                列表
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        <Tabs
+          defaultValue={DEFAULT_VIEW}
+          value={view}
+          onValueChange={(value) => setView(value as ViewMode)}
+        >
+          <TabsList>
+            <TabsTrigger value="grid" className="cursor-pointer">
+              <Grid3x3 className="mr-1 size-4" />
+              网格
+            </TabsTrigger>
+            <TabsTrigger value="list" className="cursor-pointer">
+              <List className="mr-1 size-4" />
+              列表
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
-      <div className="flex items-center justify-end gap-4">
-        <div className="text-muted-foreground text-sm">
-          第&nbsp;
-          <span className="text-primary font-semibold">{page}</span>
-          &nbsp;/&nbsp;{totalPages} 页
-        </div>
-        <div className="flex gap-2">
-          <Button
-            size={"icon"}
-            variant="outline"
-            onClick={() => handlePageChange(Math.max(1, page - 1))}
-            disabled={page === 1}
-          >
-            <ChevronLeft className="mr-1 size-4" />
-          </Button>
-          <Button
-            size={"icon"}
-            variant="outline"
-            onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
-            disabled={page === totalPages}
-          >
-            <ChevronRight className="ml-1 size-4" />
-          </Button>
-        </div>
-      </div>
-
+      {/* Results */}
       <div
         className={
           view === "grid"
@@ -139,7 +105,7 @@ export const RestaurantResults = ({
             : "space-y-4"
         }
       >
-        {paginatedRestaurants.map((restaurant) => (
+        {allRestaurants.map((restaurant) => (
           <RestaurantCard
             key={restaurant.id}
             restaurant={restaurant}
@@ -148,31 +114,31 @@ export const RestaurantResults = ({
         ))}
       </div>
 
-      <div className="flex items-center justify-end gap-4">
-        <div className="text-muted-foreground text-sm">
-          第&nbsp;
-          <span className="text-primary font-semibold">{page}</span>
-          &nbsp;/&nbsp;{totalPages} 页
+      {/* Loading indicator and infinite scroll trigger */}
+      {hasNextPage && (
+        <div ref={loadingRef} className="flex items-center justify-center py-8">
+          {isFetchingNextPage ? (
+            <LoadingSpinner />
+          ) : (
+            <div className="text-muted-foreground text-sm">
+              滚动到底部加载更多
+            </div>
+          )}
         </div>
-        <div className="flex gap-2">
-          <Button
-            size={"icon"}
-            variant="outline"
-            onClick={() => handlePageChange(Math.max(1, page - 1))}
-            disabled={page === 1}
-          >
-            <ChevronLeft className="mr-1 size-4" />
-          </Button>
-          <Button
-            size={"icon"}
-            variant="outline"
-            onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
-            disabled={page === totalPages}
-          >
-            <ChevronRight className="ml-1 size-4" />
-          </Button>
+      )}
+
+      {/* End of results indicator */}
+      {!hasNextPage && allRestaurants.length > 0 && (
+        <div className="flex items-center justify-center py-8">
+          <div className="text-sm">
+            <span className="text-muted-foreground">已显示所有</span>
+            &nbsp;
+            <span className="font-medium">{totalCount}</span>
+            &nbsp;
+            <span className="text-muted-foreground">家餐厅</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

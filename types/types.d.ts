@@ -4,15 +4,18 @@ export type SearchParams = Promise<{
   [key: string]: string | string[] | undefined;
 }>;
 
-export type ResultViewMode = "grid" | "list";
+export type ViewMode = (typeof VIEW_MODES)[number];
 
-export interface Paginated<T> {
-  success: boolean;
-  data: T;
-  count?: number;
+export interface PaginatedParams {
   page?: number;
-  limit?: number;
-  totalPages?: number;
+  pageSize?: number;
+}
+export interface Paginated<T> {
+  data: T;
+  count: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
 
 export interface APIError {
@@ -38,3 +41,5 @@ export type TaskStatus = Enums<"task_status">;
 
 // [tag_name, mention_count]
 export type TopTag = [string, number];
+
+export type TaskQueueStatus = Record<TaskStatus, number>;

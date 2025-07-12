@@ -1,5 +1,5 @@
+import { APP_NAME } from "@/lib/constants";
 import axios from "axios";
-import { APP_NAME } from "./constants";
 
 // Create axios instance with default config
 export const api = axios.create({
@@ -19,3 +19,5 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export const DEFAULT_FETCH_LIMIT = 20;
