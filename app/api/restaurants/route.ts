@@ -20,15 +20,14 @@ export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url);
   const page = Number(searchParams.get("page") ?? "1");
   const limit = Number(searchParams.get("limit") ?? DEFAULT_FETCH_LIMIT);
+  const query = searchParams.get("q"); // Add search query parameter
   const from = (page - 1) * limit;
   const to = page * limit - 1;
 
   const supabase = await createSSRClient();
-  // Query all restaurants within range, including tags and summary
-  const { data, error, count } = await supabase
-    .from("restaurants")
-    .select(
-      `id,
+  let queryBuilder = supabase.from("restaurants").select(
+    `
+      id,
       name_zh,
       name_en,
       latitude,
@@ -41,10 +40,20 @@ export const GET = async (request: NextRequest) => {
       tags:restaurant_tags(
         *, 
         tag:tags(*)
-      )`,
-      { count: "exact" },
-    )
-    .range(from, to);
+      )
+    `,
+    { count: "exact" },
+  );
+
+  // Add search filter if query parameter is provided
+  if (query) {
+    queryBuilder = queryBuilder.or(
+      `name_zh.ilike.%${query}%,name_en.ilike.%${query}%`,
+    );
+  }
+
+  // Apply pagination
+  const { data, error, count } = await queryBuilder.range(from, to);
 
   if (error) {
     console.error(error);
@@ -60,5 +69,6 @@ export const GET = async (request: NextRequest) => {
     page,
     pageSize: limit,
     totalPages,
+    query: query ?? null,
   } as Paginated<RestaurantsData[]>);
 };

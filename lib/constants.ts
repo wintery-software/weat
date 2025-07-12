@@ -12,3 +12,5 @@ export const ALL_TASK_STATUSES = Constants.public.Enums.task_status;
 export const VIEW_MODES = ["grid", "list", "map"] as const;
 
 export const DEFAULT_VIEW = "grid" as ViewMode;
+
+export const DEFAULT_DEBOUNCE_DELAY = 300;

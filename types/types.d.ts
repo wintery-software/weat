@@ -16,6 +16,7 @@ export interface Paginated<T> {
   page: number;
   pageSize: number;
   totalPages: number;
+  query?: string | null;
 }
 
 export interface APIError {
