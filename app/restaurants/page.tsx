@@ -1,6 +1,5 @@
-import { RestaurantFilters } from "@/app/restaurants/restaurant-filters";
-import { RestaurantResults } from "@/app/restaurants/restaurant-results";
-import { ErrorBoundary } from "@/components/error-boundary";
+import { RestaurantsContent } from "@/app/restaurants/restaurant-content";
+import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
 import { APP_NAME } from "@/lib/constants";
 import { Metadata } from "next";
 
@@ -14,19 +13,18 @@ export const metadata: Metadata = {
   twitter: { card: "summary", title: `${title} - ${APP_NAME}`, description },
 };
 
-const Page = async () => {
+const Page = () => {
   return (
-    <div className="container flex flex-col gap-4 py-4 md:gap-6 md:py-8">
+    <div className="container flex flex-col gap-2 py-4 md:gap-4">
       <div>
         <h1 className="text-2xl font-bold">{title}</h1>
         <p className="text-muted-foreground mt-2 text-sm md:text-base">
           {description}
         </p>
       </div>
-      <ErrorBoundary>
-        <RestaurantFilters />
-        <RestaurantResults />
-      </ErrorBoundary>
+      <SuspenseWrapper>
+        <RestaurantsContent />
+      </SuspenseWrapper>
     </div>
   );
 };
