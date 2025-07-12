@@ -7,6 +7,7 @@ export const GET = async () => {
 
   if (error) {
     console.error(error);
+
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 

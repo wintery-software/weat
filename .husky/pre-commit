@@ -1,2 +1,2 @@
-pnpm lint --fix
+pnpm lint
 pnpm format
