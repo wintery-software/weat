@@ -7,13 +7,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import {
-  ListChecksIcon,
-  StarIcon,
-  TagIcon,
-  UsersIcon,
-  UtensilsIcon,
-} from "lucide-react";
+import { ListChecksIcon, TagIcon, UsersIcon, UtensilsIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { PropsWithChildren, useMemo } from "react";
 
@@ -30,11 +24,6 @@ const groups: AppSidebarGroup[] = [
         label: "Tags",
         icon: <TagIcon />,
         href: "/admin/database/tags",
-      },
-      {
-        label: "Reviews",
-        icon: <StarIcon />,
-        href: "/admin/database/reviews",
       },
       {
         label: "Users",
