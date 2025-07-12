@@ -1,12 +1,12 @@
 "use client";
 
-import { RestaurantGETResponse } from "@/app/api/restaurants/[id]/route";
+import { RestaurantData } from "@/app/api/restaurants/[id]/route";
 import { Button } from "@/components/ui/button";
 import { APP_NAME } from "@/lib/constants";
 import { Navigation, Share } from "lucide-react";
 
 interface RestaurantActionsProps {
-  restaurant: RestaurantGETResponse;
+  restaurant: RestaurantData;
 }
 
 export const RestaurantActions = ({ restaurant }: RestaurantActionsProps) => {

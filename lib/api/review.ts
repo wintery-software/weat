@@ -1,3 +1,3 @@
-import { getTableCount } from "@/lib/api";
+import { getTableCount } from "@/lib/supabase";
 
 export const getReviewsCount = async () => getTableCount("reviews");

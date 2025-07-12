@@ -1,14 +1,12 @@
 "use client";
 
+import { RestaurantData } from "@/app/api/restaurants/[id]/route";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 interface RestaurantTagsProps {
-  tags: Array<{
-    tag: { name: string };
-    mention_count: number;
-  }>;
+  tags: RestaurantData["tags"];
 }
 
 export const RestaurantTags = ({ tags }: RestaurantTagsProps) => {

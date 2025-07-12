@@ -123,7 +123,7 @@ const Page = async () => {
         </Label>
         <div
           id="aggregated-data"
-          className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3"
+          className="grid grid-cols-1 gap-4 lg:grid-cols-2"
         >
           <SuspenseWrapper>
             <TaskQueueStatusCard status={getTaskQueueStatus()} />

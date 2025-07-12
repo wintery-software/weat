@@ -1,12 +1,5 @@
-import { api } from "@/lib/api";
 import { getTableCount } from "@/lib/supabase";
 import { createSSRClient } from "@/lib/supabase/clients/ssr";
-
-export const getRestaurant = async (id: string) => {
-  const response = await api.get(`/restaurants/${id}`);
-
-  return response.data;
-};
 
 export const getRestaurantsCount = async () => getTableCount("restaurants");
 

@@ -1,4 +1,4 @@
-import { getTableCount } from "@/lib/api";
+import { getTableCount } from "@/lib/supabase";
 import { createSSRClient } from "@/lib/supabase/clients/ssr";
 import { Tag } from "@/types/types";
 
