@@ -1,3 +1,4 @@
+import { RestaurantData } from "@/app/api/restaurants/[id]/route";
 import { RestaurantActions } from "@/app/restaurants/[id]/restaurant-actions";
 import { RestaurantContact } from "@/app/restaurants/[id]/restaurant-contact";
 import { RestaurantDishes } from "@/app/restaurants/[id]/restaurant-dishes";
@@ -12,16 +13,20 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getRestaurant } from "@/lib/api/restaurant";
 import { AI_NAME } from "@/lib/constants";
 import { Sparkles } from "lucide-react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-export const RestaurantContent = async ({ id }: { id: string }) => {
-  const restaurant = await getRestaurant(id);
+// Optionally, you can import the RestaurantData type for clarity:
+// import type { RestaurantData } from "@/app/api/restaurants/[id]/route";
 
+interface RestaurantContentProps {
+  restaurant: RestaurantData;
+}
+
+export const RestaurantContent = ({ restaurant }: RestaurantContentProps) => {
   return (
     <>
       <div
@@ -29,7 +34,7 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
         style={{ backgroundImage: `url(/placeholder.svg)` }}
       />
 
-      <div className="container flex flex-col gap-2 py-4 md:py-8">
+      <div className="container flex flex-col gap-4 py-4 md:py-8">
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <div id="name">
@@ -154,6 +159,9 @@ export const RestaurantContent = async ({ id }: { id: string }) => {
             </Card>
           </TabsContent>
         </Tabs>
+        <div className="text-muted-foreground text-xs">
+          最近更新于: {new Date(restaurant.updated_at).toLocaleString()}
+        </div>
       </div>
     </>
   );

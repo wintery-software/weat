@@ -49,7 +49,7 @@ export const RestaurantResults = () => {
   );
 
   // Flatten all pages into a single array
-  const allRestaurants = useMemo(() => {
+  const restaurants = useMemo(() => {
     return data?.pages.flatMap((page) => page.data) ?? [];
   }, [data]);
 
@@ -105,11 +105,11 @@ export const RestaurantResults = () => {
             : "space-y-4"
         }
       >
-        {allRestaurants.map((restaurant) => (
+        {restaurants.map((restaurant) => (
           <RestaurantCard
             key={restaurant.id}
             restaurant={restaurant}
-            view={view as "grid" | "list"}
+            view={view}
           />
         ))}
       </div>
@@ -128,7 +128,7 @@ export const RestaurantResults = () => {
       )}
 
       {/* End of results indicator */}
-      {!hasNextPage && allRestaurants.length > 0 && (
+      {!hasNextPage && restaurants.length > 0 && (
         <div className="flex items-center justify-center py-8">
           <div className="text-sm">
             <span className="text-muted-foreground">已显示所有</span>

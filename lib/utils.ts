@@ -1,3 +1,4 @@
+import { APP_NAME } from "@/lib/constants";
 import { Address } from "@/types/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -76,3 +77,10 @@ export const formatAddress = (address: Address | null | undefined) => {
 
   return result;
 };
+
+/**
+ * Generate a title for the page: "[title] - [APP_NAME]"
+ * @param title - The title of the page
+ * @returns The generated title
+ */
+export const generateTitle = (title: string) => `${title} - ${APP_NAME}`;

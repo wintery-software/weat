@@ -1,15 +1,13 @@
 "use client";
 
+import { RestaurantData } from "@/app/api/restaurants/[id]/route";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MessageCircleMore } from "lucide-react";
 import { useState } from "react";
 
 interface RestaurantDishesProps {
-  dishes: Array<{
-    name: string;
-    mention_count: number;
-  }>;
+  dishes: RestaurantData["dishes"];
 }
 
 export const RestaurantDishes = ({ dishes }: RestaurantDishesProps) => {

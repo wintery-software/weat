@@ -1,6 +1,5 @@
 "use client";
 
-import { RestaurantGETResponse } from "@/app/api/restaurants/[id]/route";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -8,13 +7,14 @@ import {
   getGoogleMapsSearchUrl,
 } from "@/lib/navigation";
 import { formatAddress } from "@/lib/utils";
+import { RestaurantData } from "@/app/api/restaurants/[id]/route";
 import { SiApple, SiGooglemaps } from "@icons-pack/react-simple-icons";
 import { AdvancedMarker, Map } from "@vis.gl/react-google-maps";
 import { Clock, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 
 interface RestaurantContactProps {
-  restaurant: RestaurantGETResponse;
+  restaurant: RestaurantData;
 }
 
 export const RestaurantContact = ({ restaurant }: RestaurantContactProps) => {

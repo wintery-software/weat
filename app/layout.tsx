@@ -1,4 +1,5 @@
 import { Providers } from "@/components/providers";
+import { Toaster } from "@/components/ui/sonner";
 import { APP_NAME, COMPANY_NAME } from "@/lib/constants";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -31,6 +32,7 @@ const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
         <Providers>{children}</Providers>
         <Analytics />
         <SpeedInsights />
+        <Toaster />
       </body>
     </html>
   );

@@ -1,14 +1,20 @@
-import { RestaurantData } from "@/app/admin/database/restaurants/restaurant-data";
-import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
-import { getRestaurants } from "@/lib/api/restaurant";
+"use client";
 
-// Force dynamic rendering to avoid build-time API calls
-export const dynamic = "force-dynamic";
+import { api } from "@/lib/api";
+import { Restaurant } from "@/types/types";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
-const Page = async () => (
-  <SuspenseWrapper>
-    <RestaurantData data={getRestaurants()} />
-  </SuspenseWrapper>
-);
+const Page = () => {
+  const { data } = useSuspenseQuery({
+    queryKey: ["admin", "restaurants"],
+    queryFn: () => api.get<Restaurant[]>("/restaurants"),
+  });
+
+  return (
+    <pre className="text-xs whitespace-pre-wrap">
+      {JSON.stringify(data, null, 2)}
+    </pre>
+  );
+};
 
 export default Page;

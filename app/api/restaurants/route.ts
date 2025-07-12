@@ -47,6 +47,8 @@ export const GET = async (request: NextRequest) => {
     .range(from, to);
 
   if (error) {
+    console.error(error);
+
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
