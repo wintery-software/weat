@@ -1,8 +1,8 @@
-import { RestaurantsGETResponse } from "@/app/api/restaurants/route";
+import { RestaurantsData } from "@/app/api/restaurants/route";
 import { use } from "react";
 
 interface RestaurantDataProps {
-  data: Promise<RestaurantsGETResponse>;
+  data: Promise<RestaurantsData[]>;
 }
 
 export const RestaurantData = ({ data }: RestaurantDataProps) => {

@@ -327,6 +327,10 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: Json;
       };
+      get_unique_tagged_restaurants_count: {
+        Args: Record<PropertyKey, never>;
+        Returns: number;
+      };
     };
     Enums: {
       task_status: "PENDING" | "STARTED" | "FAILURE" | "SUCCESS";
