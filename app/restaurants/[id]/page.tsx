@@ -95,7 +95,7 @@ const Page = () => {
                 <CircleQuestionMarkIcon className="size-3" />
               </span>
             </PopoverTrigger>
-            <PopoverContent className="p-2 text-xs">
+            <PopoverContent className="mr-2 p-2 text-xs" side={"top"}>
               Weat 会周期性地更新餐厅信息，以确保信息的准确性和时效性。
             </PopoverContent>
           </Popover>
