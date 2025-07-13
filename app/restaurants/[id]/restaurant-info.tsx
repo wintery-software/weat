@@ -24,7 +24,7 @@ interface RestaurantInfoProps {
 
 export const RestaurantInfo = ({ restaurant }: RestaurantInfoProps) => {
   return (
-    <Card className="lg:col-span-2 xl:col-span-2">
+    <Card id="info" className="lg:col-span-2 xl:col-span-2">
       <CardHeader className="flex items-center gap-2 select-none">
         <StoreIcon className="size-5" />
         <h2>餐厅信息</h2>
