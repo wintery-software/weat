@@ -11,12 +11,15 @@ import { TopTag, ViewMode } from "@/types/types";
 import { Share2 } from "lucide-react";
 import Link from "next/link";
 
-export interface RestaurantCardProps {
+export interface RestaurantResultCardProps {
   restaurant: RestaurantsData;
   view: ViewMode;
 }
 
-export const RestaurantCard = ({ restaurant, view }: RestaurantCardProps) => {
+export const RestaurantResultCard = ({
+  restaurant,
+  view,
+}: RestaurantResultCardProps) => {
   const isList = view === "list";
 
   return (
