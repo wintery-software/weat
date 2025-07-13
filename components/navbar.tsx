@@ -1,5 +1,6 @@
 "use client";
 
+import { WeatLogo } from "@/app/logo";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { APP_NAME } from "@/lib/constants";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -37,11 +37,10 @@ export const Navbar = ({ routes }: NavbarProps) => {
 
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center">
-        <Link href="/" className="flex items-center space-x-2">
-          <span className="text-primary text-xl font-bold">{APP_NAME}</span>
-        </Link>
-      </div>
+      <Link href="/" className="flex items-center gap-1">
+        <WeatLogo className="size-6" />
+        <span className="text-xl font-semibold">Weat</span>
+      </Link>
 
       <div className="hidden items-center space-x-4 md:flex">
         {routesWithActiveState.map((route) => (
