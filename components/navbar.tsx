@@ -8,12 +8,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode, useState } from "react";
+import { cloneElement, isValidElement, ReactNode, useState } from "react";
 
-interface Route {
+interface RouteGroup {
+  label: string;
+  routes: RouteItem[];
+}
+interface RouteItem {
   href: string;
   label: string;
   icon: ReactNode;
@@ -21,40 +26,63 @@ interface Route {
 }
 
 interface NavbarProps {
-  routes: Route[];
+  groups: RouteGroup[];
+  glass?: boolean;
 }
 
-export const Navbar = ({ routes }: NavbarProps) => {
+export const Navbar = ({ groups, glass = true }: NavbarProps) => {
   const pathname = usePathname();
 
   // Update active state based on current pathname
-  const routesWithActiveState = routes.map((route) => ({
-    ...route,
-    active: route.active ?? pathname.split("/")[1] === route.href.split("/")[1],
+  const routesWithActiveState = groups.map((group) => ({
+    ...group,
+    routes: group.routes.map((route) => ({
+      ...route,
+      active:
+        route.active ?? pathname.split("/")[1] === route.href.split("/")[1],
+    })),
   }));
 
   const [isOpen, setIsOpen] = useState(false);
 
+  // Helper to append size-6 to icon
+  const renderIcon = (icon: ReactNode, ...classNames: string[]): ReactNode => {
+    if (isValidElement<{ className?: string }>(icon)) {
+      return cloneElement(icon, {
+        className: [icon.props.className, ...classNames]
+          .filter(Boolean)
+          .join(" "),
+      });
+    }
+
+    return icon;
+  };
+
   return (
-    <div className="flex items-center justify-between">
+    <header
+      id="navbar"
+      className="bg-background sticky top-0 z-50 container flex h-(--header-height) w-full items-center justify-between px-4 py-0"
+    >
       <Link href="/" className="flex items-center gap-1">
         <WeatLogo className="size-6" />
         <span className="text-xl font-semibold">Weat</span>
       </Link>
 
-      <div className="hidden items-center space-x-4 md:flex">
-        {routesWithActiveState.map((route) => (
-          <Button
-            key={route.href}
-            variant={route.active ? "default" : "ghost"}
-            asChild
-          >
-            <Link href={route.href} className="flex items-center gap-2">
-              {route.icon}
-              {route.label}
-            </Link>
-          </Button>
-        ))}
+      <div className="glass hidden items-center space-x-4 md:flex">
+        {routesWithActiveState.map((group) =>
+          group.routes.map((route) => (
+            <Button
+              key={route.href}
+              variant={route.active ? "default" : "ghost"}
+              asChild
+            >
+              <Link href={route.href} className="flex items-center gap-2">
+                {renderIcon(route.icon, "size-4")}
+                {route.label}
+              </Link>
+            </Button>
+          )),
+        )}
       </div>
 
       <div className="md:hidden">
@@ -74,20 +102,43 @@ export const Navbar = ({ routes }: NavbarProps) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="glass h-dvh w-dvw rounded-none border-none"
-            sideOffset={12}
+            className={cn(
+              "h-dvh w-dvw rounded-none border-none px-0 py-4",
+              glass && "glass",
+            )}
+            onClick={(e) => {
+              // Close if clicking on empty space
+              if (e.target === e.currentTarget) {
+                setIsOpen(false);
+              }
+            }}
           >
-            {routesWithActiveState.map((route) => (
-              <DropdownMenuItem key={route.href} asChild>
-                <Link href={route.href} className="flex items-center gap-2">
-                  {route.icon}
-                  {route.label}
-                </Link>
-              </DropdownMenuItem>
-            ))}
+            <div className="container flex flex-col gap-8 px-4">
+              {routesWithActiveState.map((group) => (
+                <div key={group.label} className="flex flex-col gap-2">
+                  <span className="text-muted-foreground text-sm font-medium">
+                    {group.label}
+                  </span>
+                  {group.routes.map((route, i) => (
+                    <DropdownMenuItem
+                      key={i}
+                      className="flex cursor-pointer items-center gap-2 px-0 py-2 focus:bg-transparent"
+                      asChild
+                    >
+                      <Link href={route.href}>
+                        {renderIcon(route.icon, "size-6")}
+                        <span className="text-2xl font-medium">
+                          {route.label}
+                        </span>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              ))}
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </div>
+    </header>
   );
 };

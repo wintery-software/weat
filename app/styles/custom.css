@@ -1,0 +1,36 @@
+@utility container {
+  margin-inline: auto;
+  padding-inline: 0.5rem;
+}
+
+/* Custom status colors */
+@theme {
+  /* green-500 */
+  --color-success: oklch(0.72 0.19 150);
+  /* red-500 */
+  --color-error: oklch(0.64 0.21 25);
+  /* blue-500 */
+  --color-info: oklch(0.62 0.19 260);
+  /* orange-500 */
+  --color-warning: oklch(0.7 0.19 48);
+
+  --header-height: calc(var(--spacing) * 12);
+}
+
+@layer base {
+  h1 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+
+  h2 {
+    @apply text-xl font-semibold tracking-tight;
+  }
+
+  h3 {
+    @apply text-lg font-medium;
+  }
+}
+
+.glass {
+  @apply bg-background/90 supports-[backdrop-filter]:bg-background/50 backdrop-blur-sm;
+}

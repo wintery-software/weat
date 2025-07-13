@@ -138,7 +138,7 @@ export const RestaurantResult = () => {
       {/* Search and Filters - Becomes sticky when reaching top */}
       <div
         id="search-filters"
-        className="bg-background sticky top-15 z-10 pb-4"
+        className="bg-background sticky top-(--header-height) z-10 py-2 md:py-4"
       >
         <div className="flex gap-2">
           <div className="relative flex-1">

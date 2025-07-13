@@ -29,7 +29,7 @@ import { format } from "date-fns";
 import { ChevronDownIcon, ListChecksIcon } from "lucide-react";
 import { use, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
+import { Cell, Label, Pie, PieChart } from "recharts";
 import { z } from "zod";
 
 interface TaskQueueStatusCardProps {
@@ -42,10 +42,10 @@ type TaskQueueChartConfig = ChartConfig & {
 };
 
 const chartConfig = {
-  PENDING: { label: "Pending", color: "var(--color-pending)" },
-  STARTED: { label: "Started", color: "var(--color-started)" },
+  PENDING: { label: "Pending", color: "var(--color-warning)" },
+  STARTED: { label: "Started", color: "var(--color-info)" },
   SUCCESS: { label: "Success", color: "var(--color-success)" },
-  FAILURE: { label: "Failure", color: "var(--color-failure)" },
+  FAILURE: { label: "Failure", color: "var(--color-error)" },
 } satisfies TaskQueueChartConfig;
 
 const formSchema = z.object({
@@ -55,10 +55,15 @@ const formSchema = z.object({
 
 export const TaskQueueStatusCard = ({ status }: TaskQueueStatusCardProps) => {
   const data = use(status);
-  const chartData = [
-    Object.fromEntries(ALL_TASK_STATUSES.map((s) => [s, data[s] ?? 0])),
-  ];
   const totalTasks = Object.values(data).reduce((acc, curr) => acc + curr, 0);
+
+  // Transform data for pie chart
+  const chartData = ALL_TASK_STATUSES.map((status) => ({
+    name: status,
+    value: data[status] ?? 0,
+    label: chartConfig[status].label,
+    color: chartConfig[status].color,
+  })).filter((item) => item.value > 0); // Only show segments with data
 
   const now = new Date();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -232,22 +237,29 @@ export const TaskQueueStatusCard = ({ status }: TaskQueueStatusCardProps) => {
         <div className="flex flex-1 items-center">
           <ChartContainer
             config={chartConfig}
-            className="mx-auto aspect-square w-full max-w-xs"
+            className="mx-auto aspect-square max-h-64 w-full"
           >
-            <RadialBarChart data={chartData} innerRadius={80} outerRadius={100}>
+            <PieChart>
               <ChartTooltip
                 cursor={false}
-                content={
-                  <ChartTooltipContent
-                    hideLabel
-                    active={false}
-                    payload={[]}
-                    coordinate={{ x: 0, y: 0 }}
-                    accessibilityLayer
-                  />
-                }
+                content={(props) => (
+                  <ChartTooltipContent hideLabel {...props} />
+                )}
               />
-              <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
+              <Pie
+                data={chartData}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={95}
+                outerRadius={110}
+                stroke="var(--color-background)"
+                strokeWidth={2}
+                minAngle={4}
+                cornerRadius={4}
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
                 <Label
                   content={({ viewBox }) => {
                     if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -273,21 +285,8 @@ export const TaskQueueStatusCard = ({ status }: TaskQueueStatusCardProps) => {
                     }
                   }}
                 />
-              </PolarRadiusAxis>
-              {Object.entries(chartConfig).map(([key, config]) => (
-                <RadialBar
-                  key={key}
-                  dataKey={key}
-                  stackId="stack-id"
-                  cornerRadius={4}
-                  fill={config.color}
-                  className="[&>path]:transition-colors"
-                  stroke="var(--color-background)"
-                  strokeWidth={4}
-                  minPointSize={8}
-                />
-              ))}
-            </RadialBarChart>
+              </Pie>
+            </PieChart>
           </ChartContainer>
           <div className="flex flex-col gap-2">
             {Object.entries(chartConfig).map(([key, config]) => (
@@ -302,7 +301,7 @@ export const TaskQueueStatusCard = ({ status }: TaskQueueStatusCardProps) => {
                   className="text-muted-foreground min-w-8 text-right text-sm"
                   style={{ color: config.color }}
                 >
-                  {chartData[0][key]?.toLocaleString() ?? 0}
+                  {data[key as TaskStatus]?.toLocaleString() ?? 0}
                 </span>
               </div>
             ))}

@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "./styles/tailwind.css";
+@import "./styles/custom.css";
 
 @plugin "@tailwindcss/typography";
 
@@ -124,20 +124,4 @@
   body {
     @apply bg-background text-foreground;
   }
-
-  h1 {
-    @apply text-2xl font-semibold tracking-tight;
-  }
-
-  h2 {
-    @apply text-xl font-semibold tracking-tight;
-  }
-
-  h3 {
-    @apply text-lg font-medium;
-  }
-}
-
-.glass {
-  @apply bg-background/90 supports-[backdrop-filter]:bg-background/50 backdrop-blur-sm;
 }
