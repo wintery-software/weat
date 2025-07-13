@@ -38,9 +38,9 @@ export const RestaurantDishes = ({ dishes }: RestaurantDishesProps) => {
           {dishes.length}
         </span>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">
+      <CardContent className="flex flex-col gap-4">
         {/* Top 3 Column */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           {filteredDishes.slice(0, 3).map((dish, index: number) => (
             <div
               key={index}
@@ -72,28 +72,28 @@ export const RestaurantDishes = ({ dishes }: RestaurantDishesProps) => {
               </Badge>
             </div>
           ))}
-        </div>
 
-        {/* Other dishes Grid */}
-        {filteredDishes.length > 3 && (
-          <div className="grid gap-0.5 md:grid-cols-2 md:gap-1">
-            {filteredDishes.slice(3).map((dish, index: number) => (
-              <div
-                key={index + 3}
-                className="hover:bg-muted flex items-center gap-2 rounded-lg px-2 py-1 transition-all md:py-2"
-              >
-                <span className="bg-primary/10 text-primary flex size-6 items-center justify-center rounded-full text-xs font-medium">
-                  {index + 4}
-                </span>
-                <span className="text-sm">{dish.name}</span>
-                <Badge variant={"secondary"} className="select-none">
-                  <MessageCircleMore className="size-3" />
-                  {dish.mention_count}
-                </Badge>
-              </div>
-            ))}
-          </div>
-        )}
+          {/* Other dishes Grid */}
+          {filteredDishes.length > 3 && (
+            <div className="grid gap-0.5 md:grid-cols-2 md:gap-1">
+              {filteredDishes.slice(3).map((dish, index: number) => (
+                <div
+                  key={index + 3}
+                  className="hover:bg-muted flex items-center gap-2 rounded-lg px-2 py-1 transition-all md:py-2"
+                >
+                  <span className="bg-primary/10 text-primary flex size-6 items-center justify-center rounded-full text-xs font-medium">
+                    {index + 4}
+                  </span>
+                  <span className="text-sm">{dish.name}</span>
+                  <Badge variant={"secondary"} className="select-none">
+                    <MessageCircleMore className="size-3" />
+                    {dish.mention_count}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </CardContent>
       {hasHiddenDishes && (
         <CardFooter className="justify-center">
