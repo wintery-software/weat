@@ -15,10 +15,10 @@ export const metadata: Metadata = {
 
 const Page = () => {
   return (
-    <div className="container flex flex-col gap-2 py-4 md:gap-4">
+    <div className="container flex flex-col py-2 md:py-4">
       <div>
         <h1>{title}</h1>
-        <p className="text-muted-foreground mt-2 text-sm md:text-base">
+        <p className="text-muted-foreground mt-1 text-sm md:text-base">
           {description}
         </p>
       </div>

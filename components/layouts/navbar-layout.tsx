@@ -1,6 +1,6 @@
+import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
-import { COMPANY_NAME } from "@/lib/constants";
-import { Home, Search } from "lucide-react";
+import { HelpCircleIcon, ShieldIcon, StoreIcon } from "lucide-react";
 import { ReactNode } from "react";
 
 interface NavbarLayoutProps {
@@ -8,37 +8,50 @@ interface NavbarLayoutProps {
 }
 
 export const NavbarLayout = ({ children }: NavbarLayoutProps) => {
-  const routes = [
+  // TODO: use supabase auth
+  const isAdmin = process.env.NODE_ENV === "development";
+
+  const groups = [
     {
-      href: "/",
-      label: "主页",
-      icon: <Home className="h-5 w-5" />,
+      label: "导航",
+      routes: [
+        {
+          href: "/restaurants",
+          label: "餐厅",
+          icon: <StoreIcon />,
+        },
+      ],
     },
     {
-      href: "/restaurants",
-      label: "餐厅",
-      icon: <Search className="h-5 w-5" />,
+      label: "其他",
+      routes: [
+        {
+          href: "/help",
+          label: "帮助",
+          icon: <HelpCircleIcon />,
+        },
+      ],
     },
   ];
 
+  if (isAdmin) {
+    groups.push({
+      label: "Admin",
+      routes: [
+        {
+          href: "/admin",
+          label: "Dashboard",
+          icon: <ShieldIcon className="text-error" />,
+        },
+      ],
+    });
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="bg-background sticky top-0 z-50 w-full">
-        <div className="container py-3">
-          <Navbar routes={routes} />
-        </div>
-      </header>
-
+      <Navbar groups={groups} />
       <main className="flex-1">{children}</main>
-
-      <footer className="border-t py-6 md:py-0">
-        <div className="container flex flex-col items-center justify-between gap-4 md:h-16 md:flex-row">
-          <p className="text-muted-foreground text-center text-sm md:text-left">
-            &copy; {new Date().getFullYear()} {COMPANY_NAME}. All rights
-            reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
