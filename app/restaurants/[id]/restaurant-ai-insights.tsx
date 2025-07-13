@@ -39,7 +39,7 @@ export const RestaurantAiInsights = ({
           {AI_NAME}
         </h2>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">
+      <CardContent className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <h3>评测</h3>
           <div className="prose prose-sm dark:prose-invert max-w-none">

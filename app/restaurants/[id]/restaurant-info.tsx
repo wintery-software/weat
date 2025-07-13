@@ -29,7 +29,7 @@ export const RestaurantInfo = ({ restaurant }: RestaurantInfoProps) => {
         <StoreIcon className="size-5" />
         <h2>餐厅信息</h2>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">
+      <CardContent className="flex flex-col gap-4">
         <div className="aspect-square overflow-hidden rounded-md border">
           {restaurant.latitude && restaurant.longitude ? (
             <Map
