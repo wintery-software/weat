@@ -11,12 +11,12 @@ interface RestaurantActionsProps {
 
 export const RestaurantActions = ({ restaurant }: RestaurantActionsProps) => {
   const handleNavigationClick = () => {
-    const contactElement = document.getElementById("contact");
+    const infoElement = document.getElementById("info");
 
-    if (contactElement) {
-      contactElement.scrollIntoView({
+    if (infoElement) {
+      infoElement.scrollIntoView({
         behavior: "smooth",
-        block: "start",
+        block: "center",
       });
     }
   };

@@ -1,7 +1,7 @@
 "use client";
 
 import { RestaurantsData } from "@/app/api/restaurants/route";
-import { RestaurantCard } from "@/app/restaurants/restaurant-card";
+import { RestaurantResultCard } from "@/app/restaurants/restaurant-result-card";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import {
   Accordion,
@@ -34,7 +34,7 @@ import { Grid3x3, List, Search, SlidersHorizontal, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-export const RestaurantsContent = () => {
+export const RestaurantResult = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -354,26 +354,17 @@ export const RestaurantsContent = () => {
           <p className="text-destructive">加载餐厅时出错了</p>
         </div>
       ) : (
-        <div className="space-y-4">
-          {/* Results count */}
-          <div className="flex items-center justify-between">
-            <p className="text-muted-foreground text-sm">
-              {debouncedSearchQuery
-                ? `搜索 "${debouncedSearchQuery}" 找到 ${totalCount} 家餐厅`
-                : `找到 ${totalCount} 家餐厅`}
-            </p>
-          </div>
-
+        <div className="flex flex-col gap-4">
           {/* Results */}
           <div
             className={
               view === "grid"
-                ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-                : "space-y-4"
+                ? "grid gap-2 sm:grid-cols-2 lg:grid-cols-3"
+                : "flex flex-col gap-2"
             }
           >
             {restaurants.map((restaurant) => (
-              <RestaurantCard
+              <RestaurantResultCard
                 key={restaurant.id}
                 restaurant={restaurant}
                 view={view}

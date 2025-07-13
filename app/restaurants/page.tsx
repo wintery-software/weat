@@ -1,4 +1,4 @@
-import { RestaurantsContent } from "@/app/restaurants/restaurant-content";
+import { RestaurantResult } from "@/app/restaurants/restaurant-result";
 import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
 import { APP_NAME } from "@/lib/constants";
 import { Metadata } from "next";
@@ -17,13 +17,13 @@ const Page = () => {
   return (
     <div className="container flex flex-col gap-2 py-4 md:gap-4">
       <div>
-        <h1 className="text-2xl font-bold">{title}</h1>
+        <h1>{title}</h1>
         <p className="text-muted-foreground mt-2 text-sm md:text-base">
           {description}
         </p>
       </div>
       <SuspenseWrapper>
-        <RestaurantsContent />
+        <RestaurantResult />
       </SuspenseWrapper>
     </div>
   );

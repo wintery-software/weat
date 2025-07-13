@@ -2,7 +2,12 @@
 
 import { RestaurantData } from "@/app/api/restaurants/[id]/route";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import {
   getAppleMapsSearchUrl,
   getGoogleMapsSearchUrl,
@@ -10,18 +15,21 @@ import {
 import { formatAddress } from "@/lib/utils";
 import { SiApple, SiGooglemaps } from "@icons-pack/react-simple-icons";
 import { AdvancedMarker, Map } from "@vis.gl/react-google-maps";
-import { Clock, MapPin, Phone } from "lucide-react";
+import { Clock, MapPin, Phone, StoreIcon } from "lucide-react";
 import Link from "next/link";
 
-interface RestaurantContactProps {
+interface RestaurantInfoProps {
   restaurant: RestaurantData;
 }
 
-export const RestaurantContact = ({ restaurant }: RestaurantContactProps) => {
+export const RestaurantInfo = ({ restaurant }: RestaurantInfoProps) => {
   return (
-    <Card id="contact" className="lg:col-span-2 xl:col-span-2">
-      <CardContent className="flex flex-col gap-4">
-        <h3 className="text-lg font-semibold">联系方式</h3>
+    <Card className="lg:col-span-2 xl:col-span-2">
+      <CardHeader className="flex items-center gap-2 select-none">
+        <StoreIcon className="size-5" />
+        <h2>餐厅信息</h2>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-2">
         <div className="aspect-square overflow-hidden rounded-md border">
           {restaurant.latitude && restaurant.longitude ? (
             <Map
@@ -77,44 +85,44 @@ export const RestaurantContact = ({ restaurant }: RestaurantContactProps) => {
             <span>11:00 AM - 9:00 PM</span>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button
-            className="flex-1"
-            asChild
-            disabled={!restaurant.google_maps_place_id}
-          >
-            <a
-              href={getGoogleMapsSearchUrl({
-                placeId: restaurant.google_maps_place_id,
-                name: restaurant.name_en ?? restaurant.name_zh,
-                address: formatAddress(restaurant.address),
-              })}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <SiGooglemaps className="size-4" />
-              <span>Google&nbsp;Maps</span>
-            </a>
-          </Button>
-          <Button
-            className="flex-1"
-            asChild
-            disabled={!restaurant.latitude || !restaurant.longitude}
-          >
-            <a
-              href={getAppleMapsSearchUrl({
-                name: restaurant.name_en ?? restaurant.name_zh,
-                address: formatAddress(restaurant.address),
-              })}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <SiApple className="size-4" />
-              <span>Apple&nbsp;Maps</span>
-            </a>
-          </Button>
-        </div>
       </CardContent>
+      <CardFooter className="flex gap-2">
+        <Button
+          className="flex-1"
+          asChild
+          disabled={!restaurant.google_maps_place_id}
+        >
+          <a
+            href={getGoogleMapsSearchUrl({
+              placeId: restaurant.google_maps_place_id,
+              name: restaurant.name_en ?? restaurant.name_zh,
+              address: formatAddress(restaurant.address),
+            })}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <SiGooglemaps className="size-4" />
+            <span>Google&nbsp;Maps</span>
+          </a>
+        </Button>
+        <Button
+          className="flex-1"
+          asChild
+          disabled={!restaurant.latitude || !restaurant.longitude}
+        >
+          <a
+            href={getAppleMapsSearchUrl({
+              name: restaurant.name_en ?? restaurant.name_zh,
+              address: formatAddress(restaurant.address),
+            })}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <SiApple className="size-4" />
+            <span>Apple&nbsp;Maps</span>
+          </a>
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

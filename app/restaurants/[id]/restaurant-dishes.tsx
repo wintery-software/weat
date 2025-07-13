@@ -3,7 +3,13 @@
 import { RestaurantData } from "@/app/api/restaurants/[id]/route";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MessageCircleMore } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Eye, EyeOff, MessageCircleMore, TrophyIcon } from "lucide-react";
 import { useState } from "react";
 
 interface RestaurantDishesProps {
@@ -24,15 +30,17 @@ export const RestaurantDishes = ({ dishes }: RestaurantDishesProps) => {
   const hasHiddenDishes = hiddenDishes.length > 0;
 
   return (
-    <>
-      <div className="flex items-center gap-2">
-        <h3 className="text-lg font-semibold">热门菜品</h3>
-        <span className="text-muted-foreground text-sm">{dishes.length}</span>
-      </div>
-
-      <div className="flex flex-col gap-4">
+    <Card>
+      <CardHeader className="flex items-center gap-2 select-none">
+        <TrophyIcon className="size-5" />
+        <h2>热门菜品</h2>
+        <span className="text-muted-foreground text-sm font-normal">
+          {dishes.length}
+        </span>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-2">
         {/* Top 3 Column */}
-        <div className="flex flex-col gap-2" id="top-3-dishes">
+        <div className="flex flex-col gap-2">
           {filteredDishes.slice(0, 3).map((dish, index: number) => (
             <div
               key={index}
@@ -68,7 +76,7 @@ export const RestaurantDishes = ({ dishes }: RestaurantDishesProps) => {
 
         {/* Other dishes Grid */}
         {filteredDishes.length > 3 && (
-          <div className="grid gap-0.5 md:grid-cols-2 md:gap-1" id="all-dishes">
+          <div className="grid gap-0.5 md:grid-cols-2 md:gap-1">
             {filteredDishes.slice(3).map((dish, index: number) => (
               <div
                 key={index + 3}
@@ -86,22 +94,29 @@ export const RestaurantDishes = ({ dishes }: RestaurantDishesProps) => {
             ))}
           </div>
         )}
-      </div>
-
+      </CardContent>
       {hasHiddenDishes && (
-        <div className="flex justify-center">
+        <CardFooter className="justify-center">
           <Button
-            variant={"outline"}
-            className="hover:bg-background bg-transparent"
+            variant={"ghost"}
+            className="hover:bg-background bg-transparent text-xs"
             size={"sm"}
             onClick={() => setShowAllDishes(!showAllDishes)}
           >
-            {showAllDishes
-              ? "隐藏非热门菜品"
-              : `显示所有菜品 (${hiddenDishes.length}+)`}
+            {showAllDishes ? (
+              <>
+                <EyeOff className="mr-1 size-3" />
+                仅显示热门
+              </>
+            ) : (
+              <>
+                <Eye className="mr-1 size-3" />
+                显示所有 ({hiddenDishes.length}+)
+              </>
+            )}
           </Button>
-        </div>
+        </CardFooter>
       )}
-    </>
+    </Card>
   );
 };
