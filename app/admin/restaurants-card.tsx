@@ -1,10 +1,10 @@
 "use client";
-import { AxiosResponse } from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/api";
 import { APIError } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 import { UtensilsIcon } from "lucide-react";
 import Link from "next/link";
 import { RestaurantsCountGetResponse } from "../api/admin/restaurants/count/route";
