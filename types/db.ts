@@ -62,7 +62,7 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "restaurant_dishes_restaurant_id_restaurants_id_fk";
+            foreignKeyName: "restaurant_dishes_restaurant_id_fkey";
             columns: ["restaurant_id"];
             isOneToOne: false;
             referencedRelation: "restaurants";
@@ -100,7 +100,7 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "restaurant_summaries_restaurant_id_restaurants_id_fk";
+            foreignKeyName: "restaurant_summaries_restaurant_id_fkey";
             columns: ["restaurant_id"];
             isOneToOne: true;
             referencedRelation: "restaurants";
@@ -129,7 +129,7 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "restaurants_tags_restaurant_id_restaurants_id_fk";
+            foreignKeyName: "restaurant_tags_restaurant_id_fkey";
             columns: ["restaurant_id"];
             isOneToOne: false;
             referencedRelation: "restaurants";
@@ -227,7 +227,7 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "review_summaries_review_id_reviews_id_fk";
+            foreignKeyName: "review_summaries_review_id_fkey";
             columns: ["review_id"];
             isOneToOne: true;
             referencedRelation: "reviews";
@@ -239,7 +239,7 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
-          published_at: string;
+          published_at: string | null;
           restaurant_id: string;
           source: string;
           source_id: string;
@@ -247,7 +247,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           id?: string;
-          published_at: string;
+          published_at?: string | null;
           restaurant_id: string;
           source: string;
           source_id: string;
@@ -255,7 +255,7 @@ export type Database = {
         Update: {
           created_at?: string;
           id?: string;
-          published_at?: string;
+          published_at?: string | null;
           restaurant_id?: string;
           source?: string;
           source_id?: string;
@@ -323,13 +323,13 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      get_tagged_restaurants_count: {
+        Args: Record<PropertyKey, never>;
+        Returns: number;
+      };
       get_task_queue_status: {
         Args: Record<PropertyKey, never>;
         Returns: Json;
-      };
-      get_unique_tagged_restaurants_count: {
-        Args: Record<PropertyKey, never>;
-        Returns: number;
       };
     };
     Enums: {
