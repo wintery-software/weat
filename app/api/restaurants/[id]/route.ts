@@ -59,6 +59,14 @@ export const GET = async (
   if (error) {
     console.error(error);
 
+    // PostgREST error code for 'No rows found' is PGRST116
+    if (error.code === "PGRST116") {
+      return NextResponse.json(
+        { error: "Restaurant not found" },
+        { status: 404 },
+      );
+    }
+
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
