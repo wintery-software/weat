@@ -14,11 +14,13 @@ export const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const response = error.response.data as APIError;
     let message: string;
+    const responseData = error.response
+      ? (error.response.data as APIError)
+      : undefined;
 
-    if (isAxiosError(error) && response) {
-      message = response.error;
+    if (isAxiosError(error) && responseData) {
+      message = responseData.error;
     } else {
       message = (error as Error).message;
     }
