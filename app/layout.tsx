@@ -27,7 +27,7 @@ const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
   return (
     <html lang="zh" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable}antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>{children}</Providers>
         <Analytics />
