@@ -38,7 +38,7 @@ export const generateMetadata = async ({
     };
   } catch {
     return {
-      metadataTitle: "餐厅详情",
+      title: "餐厅详情",
       description: "餐厅详情",
     };
   }
