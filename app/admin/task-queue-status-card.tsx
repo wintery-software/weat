@@ -189,6 +189,11 @@ export const TaskQueueStatusCard = () => {
                   <Label
                     content={({ viewBox }) => {
                       if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                        // Calculate total task count
+                        const totalTasks = data
+                          ? Object.values(data).reduce((sum, v) => sum + v, 0)
+                          : 0;
+
                         return (
                           <text
                             x={viewBox.cx}
@@ -197,7 +202,7 @@ export const TaskQueueStatusCard = () => {
                             dominantBaseline="middle"
                           >
                             <tspan className="fill-foreground text-2xl font-semibold">
-                              {data?.toLocaleString() ?? 0}
+                              {totalTasks.toLocaleString()}
                             </tspan>
                             <tspan
                               x={viewBox.cx}
