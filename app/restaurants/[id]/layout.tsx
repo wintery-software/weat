@@ -44,10 +44,10 @@ export const generateMetadata = async ({
   }
 };
 
-const Page = async ({ children }: PropsWithChildren) => (
+const Layout = async ({ children }: PropsWithChildren) => (
   <SuspenseWrapper fallback={<RestaurantSkeleton />}>
     {children}
   </SuspenseWrapper>
 );
 
-export default Page;
+export default Layout;
