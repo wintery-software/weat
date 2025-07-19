@@ -5,15 +5,16 @@ import {
   type Paginated,
   type Restaurant,
   type RestaurantSummary,
-  type RestaurantTag,
 } from "@/types/types";
 import { type NextRequest, NextResponse } from "next/server";
 
 export interface RestaurantsData
   extends Omit<Restaurant, "address_id" | "created_at" | "external_links"> {
   address: Address;
-  summary: RestaurantSummary;
-  tags: RestaurantTag[];
+  summary: Pick<
+    RestaurantSummary,
+    "average_rating" | "review_count" | "top_tags"
+  >;
 }
 
 export const GET = async (request: NextRequest) => {
@@ -36,10 +37,10 @@ export const GET = async (request: NextRequest) => {
       google_maps_place_id,
       updated_at,
       address:addresses(*),
-      summary:restaurant_summaries(*), 
-      tags:restaurant_tags(
-        *, 
-        tag:tags(*)
+      summary:restaurant_summaries(
+        average_rating,
+        review_count,
+        top_tags
       )
     `,
     { count: "exact" },
