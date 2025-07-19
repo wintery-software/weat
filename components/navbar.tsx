@@ -67,7 +67,7 @@ const UserControl = ({
   if (!user || !profile) {
     return (
       <Button size="sm" variant="secondary" asChild>
-        <Link href="/login">Sign In</Link>
+        <Link href="/login">登录</Link>
       </Button>
     );
   }
