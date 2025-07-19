@@ -3,12 +3,10 @@
 import { type RestaurantsData } from "@/app/api/restaurants/route";
 import { Rating } from "@/components/rating";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { getGoogleMapsSearchUrl } from "@/lib/navigation";
 import { formatAddress } from "@/lib/utils";
 import { type TopTag, type ViewMode } from "@/types/types";
-import { Share2 } from "lucide-react";
 import Link from "next/link";
 
 export interface RestaurantResultCardProps {
@@ -82,27 +80,6 @@ export const RestaurantResultCard = ({
               )}
             </div>
           </CardContent>
-
-          <CardFooter className="p-4 pt-0">
-            <div className="flex w-full gap-2">
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="flex-1 bg-transparent"
-              >
-                <Link href={`/restaurants/${restaurant.id}`}>查看详情</Link>
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1 cursor-pointer bg-transparent"
-              >
-                <Share2 className="mr-1 size-4" />
-                分享
-              </Button>
-            </div>
-          </CardFooter>
         </div>
       </div>
     </Card>
