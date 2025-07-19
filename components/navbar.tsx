@@ -1,6 +1,7 @@
 "use client";
 
 import { WeatLogo } from "@/components/logo";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -60,37 +61,13 @@ export const Navbar = ({ groups, glass = true }: NavbarProps) => {
   return (
     <header
       id="navbar"
-      className="bg-background sticky top-0 z-50 container flex h-(--header-height) w-full items-center justify-between px-4 py-0"
+      className="bg-background sticky top-0 z-50 container flex h-(--header-height) w-full items-center justify-between py-0"
     >
-      <Link href="/" className="flex items-center">
-        <WeatLogo className="size-8" />
-        <span className="font-[winkyRough] text-xl font-semibold tracking-tight">
-          weat
-        </span>
-      </Link>
-
-      <div className="glass hidden items-center space-x-4 md:flex">
-        {routesWithActiveState.map((group) =>
-          group.routes.map((route) => (
-            <Button
-              key={route.href}
-              variant={route.active ? "default" : "ghost"}
-              asChild
-            >
-              <Link href={route.href} className="flex items-center gap-2">
-                {renderIcon(route.icon, "size-4")}
-                {route.label}
-              </Link>
-            </Button>
-          )),
-        )}
-      </div>
-
-      <div className="md:hidden">
+      <div className="flex items-center gap-2 md:hidden">
         <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
           <DropdownMenuTrigger asChild>
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
               className="hover:bg-transparent focus-visible:ring-0"
             >
@@ -139,6 +116,41 @@ export const Navbar = ({ groups, glass = true }: NavbarProps) => {
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
+
+      <Link href="/" className="flex items-center">
+        <WeatLogo className="size-8" />
+        <span className="font-[winkyRough] text-xl font-semibold tracking-tight">
+          weat
+        </span>
+      </Link>
+
+      <div className="glass hidden items-center md:flex md:gap-2">
+        {routesWithActiveState.map((group) =>
+          group.routes.map((route) => (
+            <Button
+              key={route.href}
+              variant={route.active ? "default" : "ghost"}
+              asChild
+            >
+              <Link href={route.href} className="flex items-center gap-2">
+                {renderIcon(route.icon, "size-4")}
+                {route.label}
+              </Link>
+            </Button>
+          )),
+        )}
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+      </div>
+
+      <div className="md:hidden">
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
       </div>
     </header>
   );
