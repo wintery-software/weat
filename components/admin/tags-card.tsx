@@ -1,14 +1,14 @@
 "use client";
 
+import type { TagsCountGetResponse } from "@/app/api/admin/tags/count/route";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/api";
-import { APIError } from "@/types/types";
+import type { APIError } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
-import { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
 import { TagsIcon } from "lucide-react";
 import Link from "next/link";
-import { TagsCountGetResponse } from "../api/admin/tags/count/route";
 
 export const TagsCard = () => {
   const { data: count } = useQuery<

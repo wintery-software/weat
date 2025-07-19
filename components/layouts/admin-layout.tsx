@@ -1,6 +1,6 @@
 "use client";
 
-import { AppSidebar, AppSidebarGroup } from "@/components/app-sidebar";
+import { AppSidebar, type AppSidebarGroup } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ListChecksIcon, TagIcon, UsersIcon, UtensilsIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { PropsWithChildren, useMemo } from "react";
+import { type PropsWithChildren, useMemo } from "react";
 
 const groups: AppSidebarGroup[] = [
   {

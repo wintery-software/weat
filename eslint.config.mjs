@@ -37,6 +37,14 @@ const eslintConfig = [
       "no-func-assign": "error",
       // Forbid all TypeScript namespaces
       "@typescript-eslint/no-namespace": "error",
+      // Enforce import type for type-only imports
+      // "@typescript-eslint/consistent-type-imports": [
+      //   "error",
+      //   {
+      //     prefer: "type-imports",
+      //     fixStyle: "inline-type-imports",
+      //   },
+      // ],
       // Forbid all namespace imports (import * as ...)
       "import/no-namespace": "error",
       // Enforce padding with blank lines

@@ -1,19 +1,39 @@
 "use client";
 
 import { WeatLogo } from "@/components/logo";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { UserAvatar } from "@/components/user-avatar";
+import { createCSRClient } from "@/lib/supabase/clients/csr";
 import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
+import { type Profile } from "@/types/types";
+import { type User } from "@supabase/supabase-js";
+import {
+  HelpCircleIcon,
+  LogOutIcon,
+  Menu,
+  SettingsIcon,
+  ShieldIcon,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cloneElement, isValidElement, ReactNode, useState } from "react";
+import {
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useState,
+} from "react";
 
 interface RouteGroup {
   label: string;
@@ -31,8 +51,103 @@ interface NavbarProps {
   glass?: boolean;
 }
 
+const UserControl = ({
+  user,
+  profile,
+  supabase,
+  setUser,
+  setProfile,
+}: {
+  user: User | null;
+  profile: Profile | null;
+  supabase: ReturnType<typeof createCSRClient>;
+  setUser: Dispatch<SetStateAction<User | null>>;
+  setProfile: Dispatch<SetStateAction<Profile | null>>;
+}) => {
+  if (!user || !profile) {
+    return (
+      <Button size="sm" variant="secondary" asChild>
+        <Link href="/login">Sign In</Link>
+      </Button>
+    );
+  }
+
+  const isAdmin = profile?.roles?.includes("admin");
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="cursor-pointer">
+        <UserAvatar profile={profile} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="cursor-pointer" asChild>
+          <Link href="/settings">
+            <SettingsIcon />
+            Settings
+          </Link>
+        </DropdownMenuItem>
+        {isAdmin && (
+          <DropdownMenuItem className="cursor-pointer" asChild>
+            <Link href="/admin" className="flex items-center gap-2 font-medium">
+              <ShieldIcon className="text-sky-500" />
+              <span className="bg-gradient-to-r from-sky-500 via-purple-500 to-rose-500 bg-clip-text text-transparent transition-all duration-200 focus:from-sky-600 focus:via-purple-600 focus:to-rose-600">
+                Admin Dashboard
+              </span>
+            </Link>
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="cursor-pointer" asChild>
+          <Link href="/help">
+            <HelpCircleIcon />
+            Help
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={async () => {
+            await supabase.auth.signOut();
+            setUser(null);
+            setProfile(null);
+          }}
+        >
+          <LogOutIcon />
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 export const Navbar = ({ groups, glass = true }: NavbarProps) => {
+  const supabase = createCSRClient();
   const pathname = usePathname();
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    const fetchUserAndProfile = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      setUser(userData.user);
+
+      if (userData.user) {
+        const { data: profileData, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("user_id", userData.user.id)
+          .single();
+
+        if (!error) {
+          setProfile(profileData);
+        }
+      }
+    };
+
+    fetchUserAndProfile();
+  }, [supabase]);
 
   // Update active state based on current pathname
   const routesWithActiveState = groups.map((group) => ({
@@ -118,7 +233,7 @@ export const Navbar = ({ groups, glass = true }: NavbarProps) => {
         </DropdownMenu>
       </div>
 
-      <Link href="/" className="flex items-center">
+      <Link href="/" className="flex items-center select-none">
         <WeatLogo className="size-8" />
         <span className="font-[winkyRough] text-xl font-semibold tracking-tight">
           weat
@@ -130,6 +245,7 @@ export const Navbar = ({ groups, glass = true }: NavbarProps) => {
           group.routes.map((route) => (
             <Button
               key={route.href}
+              size="sm"
               variant={route.active ? "default" : "ghost"}
               asChild
             >
@@ -140,17 +256,23 @@ export const Navbar = ({ groups, glass = true }: NavbarProps) => {
             </Button>
           )),
         )}
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        <UserControl
+          user={user}
+          profile={profile}
+          supabase={supabase}
+          setUser={setUser}
+          setProfile={setProfile}
+        />
       </div>
 
       <div className="md:hidden">
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        <UserControl
+          user={user}
+          profile={profile}
+          supabase={supabase}
+          setUser={setUser}
+          setProfile={setProfile}
+        />
       </div>
     </header>
   );

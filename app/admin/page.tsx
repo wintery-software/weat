@@ -1,6 +1,6 @@
-import { RestaurantsCard } from "@/app/admin/restaurants-card";
-import { TagsCard } from "@/app/admin/tags-card";
-import { TaskQueueStatusCard } from "@/app/admin/task-queue-status-card";
+import { RestaurantsCard } from "@/components/admin/restaurants-card";
+import { TagsCard } from "@/components/admin/tags-card";
+import { TaskQueueStatusCard } from "@/components/admin/task-queue-status-card";
 import { Label } from "@/components/ui/label";
 
 const Page = () => {

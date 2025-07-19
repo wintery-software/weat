@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -24,9 +24,13 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { api } from "@/lib/api";
 import { ALL_TASK_STATUSES } from "@/lib/constants";
-import { APIError, TaskQueueStatus, TaskStatus } from "@/types/types";
+import {
+  type APIError,
+  type TaskQueueStatus,
+  type TaskStatus,
+} from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
-import { AxiosResponse } from "axios";
+import { type AxiosResponse } from "axios";
 import { format } from "date-fns";
 import { ChevronDownIcon, ListChecksIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
