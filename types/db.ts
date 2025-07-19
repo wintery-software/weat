@@ -41,6 +41,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      profiles: {
+        Row: {
+          avatar: string | null;
+          created_at: string;
+          id: string;
+          name: string | null;
+          roles: Database["public"]["Enums"]["user_role"][] | null;
+          user_id: string;
+        };
+        Insert: {
+          avatar?: string | null;
+          created_at?: string;
+          id?: string;
+          name?: string | null;
+          roles?: Database["public"]["Enums"]["user_role"][] | null;
+          user_id?: string;
+        };
+        Update: {
+          avatar?: string | null;
+          created_at?: string;
+          id?: string;
+          name?: string | null;
+          roles?: Database["public"]["Enums"]["user_role"][] | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       restaurant_dishes: {
         Row: {
           id: string;
@@ -328,12 +355,13 @@ export type Database = {
         Returns: number;
       };
       get_task_queue_status: {
-        Args: Record<PropertyKey, never>;
+        Args: { start_date: string; end_date: string };
         Returns: Json;
       };
     };
     Enums: {
       task_status: "PENDING" | "STARTED" | "FAILURE" | "SUCCESS";
+      user_role: "admin";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -465,6 +493,7 @@ export const Constants = {
   public: {
     Enums: {
       task_status: ["PENDING", "STARTED", "FAILURE", "SUCCESS"],
+      user_role: ["admin"],
     },
   },
 } as const;

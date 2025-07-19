@@ -24,23 +24,20 @@ export interface APIError {
 }
 
 // Extract types from Supabase generated types (types/db.d.ts)
-export type Restaurant = Tables<"restaurants">;
-
 export type Address = Tables<"addresses">;
-
+export type Profile = Tables<"profiles">;
+export type RestaurantDish = Tables<"restaurant_dishes">;
 export type RestaurantSummary = Tables<"restaurant_summaries">;
+export type Restaurant = Tables<"restaurants">;
+export type ReviewSummary = Tables<"review_summaries">;
+export type Review = Tables<"reviews">;
+export type Tag = Tables<"tags">;
+export type TaskQueue = Tables<"task_queue">;
 
 export type RestaurantTag = Tables<"restaurant_tags">;
-
-export type Tag = Tables<"tags">;
-
-export type RestaurantDish = Tables<"restaurant_dishes">;
-
-export type Review = Tables<"reviews">;
-
 export type TaskStatus = Enums<"task_status">;
+export type UserRole = Enums<"user_role">;
 
 // [tag_name, mention_count]
 export type TopTag = [string, number];
-
 export type TaskQueueStatus = Record<TaskStatus, number>;

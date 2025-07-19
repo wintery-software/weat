@@ -7,7 +7,10 @@ export const COMPANY_NAME = "Wintery Software";
 
 export const AI_NAME = `${APP_NAME} AI`;
 
+// Database enum constants
 export const ALL_TASK_STATUSES = Constants.public.Enums.task_status;
+
+export const USER_ROLES = Constants.public.Enums.user_role;
 
 export const VIEW_MODES = ["grid", "list", "map"] as const;
 
