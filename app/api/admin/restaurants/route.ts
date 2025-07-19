@@ -1,9 +1,16 @@
 import { createSSRClient } from "@/lib/supabase/clients/ssr";
 import { NextResponse } from "next/server";
 
-export const GET = async () => {
+export const GET = async (request: Request) => {
+  const { searchParams } = new URL(request.url);
+  const page = parseInt(searchParams.get("page") || "1");
+  const pageSize = parseInt(searchParams.get("pageSize") || "10");
+  const offset = (page - 1) * pageSize;
+
   const supabase = await createSSRClient();
-  const { data, error } = await supabase
+
+  // Get paginated data with count in one query
+  const { data, error, count } = await supabase
     .from("restaurants")
     .select(
       `
@@ -20,8 +27,10 @@ export const GET = async () => {
       ),
       dishes:restaurant_dishes(*)
     `,
+      { count: "exact" },
     )
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .range(offset, offset + pageSize - 1);
 
   if (error) {
     console.error(error);
@@ -29,5 +38,13 @@ export const GET = async () => {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data);
+  const totalPages = Math.ceil((count || 0) / pageSize);
+
+  return NextResponse.json({
+    data,
+    count: count || 0,
+    page,
+    pageSize,
+    totalPages,
+  });
 };
