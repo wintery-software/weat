@@ -1,5 +1,5 @@
-import { RestaurantResult } from "@/app/restaurants/restaurant-result";
 import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
+import { RestaurantResult } from "@/components/restaurants/restaurant-result";
 import { APP_NAME } from "@/lib/constants";
 import { type Metadata } from "next";
 

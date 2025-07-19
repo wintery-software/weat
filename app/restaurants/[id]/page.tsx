@@ -1,12 +1,12 @@
 "use client";
 
 import { type RestaurantData } from "@/app/api/restaurants/[id]/route";
-import { RestaurantActions } from "@/app/restaurants/[id]/restaurant-actions";
-import { RestaurantAiInsights } from "@/app/restaurants/[id]/restaurant-ai-insights";
-import { RestaurantDishes } from "@/app/restaurants/[id]/restaurant-dishes";
-import { RestaurantInfo } from "@/app/restaurants/[id]/restaurant-info";
-import { RestaurantPhotos } from "@/app/restaurants/[id]/restaurant-photos";
 import { Rating } from "@/components/rating";
+import { RestaurantActions } from "@/components/restaurants/[id]/restaurant-actions";
+import { RestaurantAiInsights } from "@/components/restaurants/[id]/restaurant-ai-insights";
+import { RestaurantDishes } from "@/components/restaurants/[id]/restaurant-dishes";
+import { RestaurantInfo } from "@/components/restaurants/[id]/restaurant-info";
+import { RestaurantPhotos } from "@/components/restaurants/[id]/restaurant-photos";
 import {
   Popover,
   PopoverContent,

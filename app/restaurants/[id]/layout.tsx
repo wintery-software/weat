@@ -1,5 +1,5 @@
-import { RestaurantSkeleton } from "@/app/restaurants/[id]/restaurant-skeleton";
 import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
+import { RestaurantSkeleton } from "@/components/restaurants/[id]/restaurant-skeleton";
 import { api } from "@/lib/api";
 import { type PropsWithChildren } from "react";
 

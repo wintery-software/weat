@@ -1,8 +1,8 @@
 "use client";
 
 import { type RestaurantsData } from "@/app/api/restaurants/route";
-import { RestaurantResultCard } from "@/app/restaurants/restaurant-result-card";
 import { LoadingSpinner } from "@/components/loading-spinner";
+import { RestaurantResultCard } from "@/components/restaurants/restaurant-result-card";
 import {
   Accordion,
   AccordionContent,
