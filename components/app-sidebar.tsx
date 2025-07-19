@@ -25,8 +25,8 @@ import {
 import { UserAvatar } from "@/components/user-avatar";
 import { APP_NAME } from "@/lib/constants";
 import { createCSRClient } from "@/lib/supabase/clients/csr";
-import { Profile } from "@/types/types";
-import { User } from "@supabase/supabase-js";
+import { type Profile } from "@/types/types";
+import { type User } from "@supabase/supabase-js";
 import {
   BellIcon,
   CreditCardIcon,
@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 interface AppSidebarMenuItem {
   label: string;

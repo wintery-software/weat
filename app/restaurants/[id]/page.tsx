@@ -1,6 +1,6 @@
 "use client";
 
-import { RestaurantData } from "@/app/api/restaurants/[id]/route";
+import { type RestaurantData } from "@/app/api/restaurants/[id]/route";
 import { RestaurantActions } from "@/app/restaurants/[id]/restaurant-actions";
 import { RestaurantAiInsights } from "@/app/restaurants/[id]/restaurant-ai-insights";
 import { RestaurantDishes } from "@/app/restaurants/[id]/restaurant-dishes";

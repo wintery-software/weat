@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { AlertTriangle, HelpCircle, RefreshCw } from "lucide-react";
 import Link from "next/link";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { ErrorBoundary as ReactErrorBoundary } from "react-error-boundary";
 
 export const ErrorFallback = ({

@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/lib/api";
-import { Tag } from "@/types/types";
+import { type Tag } from "@/types/types";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 const Page = () => {

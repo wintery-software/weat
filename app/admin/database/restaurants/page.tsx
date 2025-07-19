@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/lib/api";
-import { Paginated, Restaurant } from "@/types/types";
+import { type Paginated, type Restaurant } from "@/types/types";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 const Page = () => {

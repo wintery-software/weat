@@ -1,6 +1,6 @@
 "use client";
 
-import { RestaurantData } from "@/app/api/restaurants/[id]/route";
+import { type RestaurantData } from "@/app/api/restaurants/[id]/route";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

@@ -1,5 +1,5 @@
 import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
-import { PropsWithChildren } from "react";
+import { type PropsWithChildren } from "react";
 
 export const dynamic = "force-dynamic";
 

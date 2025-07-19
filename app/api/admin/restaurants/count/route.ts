@@ -1,6 +1,6 @@
 import { createSSRClient } from "@/lib/supabase/clients/ssr";
-import { SuccessWithoutErrorFromRoute } from "@/types/api";
-import { NextRequest, NextResponse } from "next/server";
+import { type SuccessWithoutErrorFromRoute } from "@/types/api";
+import { type NextRequest, NextResponse } from "next/server";
 
 const RestaurantsCountTypes = ["all", "summarized", "tagged"] as const;
 

@@ -1,13 +1,13 @@
 import { createSSRClient } from "@/lib/supabase/clients/ssr";
 import {
-  Address,
-  Restaurant,
-  RestaurantDish,
-  RestaurantSummary,
-  RestaurantTag,
-  Tag,
+  type Address,
+  type Restaurant,
+  type RestaurantDish,
+  type RestaurantSummary,
+  type RestaurantTag,
+  type Tag,
 } from "@/types/types";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export interface RestaurantData
   extends Omit<Restaurant, "address_id" | "created_at"> {

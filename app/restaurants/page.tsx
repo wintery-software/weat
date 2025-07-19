@@ -1,7 +1,7 @@
 import { RestaurantResult } from "@/app/restaurants/restaurant-result";
 import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
 import { APP_NAME } from "@/lib/constants";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 
 const title = "发现餐厅";
 const description = "发现你附近的餐厅，并查看它们的评价和评分。";

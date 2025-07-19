@@ -1,6 +1,6 @@
 "use client";
 
-import { RestaurantData } from "@/app/api/restaurants/[id]/route";
+import { type RestaurantData } from "@/app/api/restaurants/[id]/route";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,

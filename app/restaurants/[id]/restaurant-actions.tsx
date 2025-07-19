@@ -1,6 +1,6 @@
 "use client";
 
-import { RestaurantData } from "@/app/api/restaurants/[id]/route";
+import { type RestaurantData } from "@/app/api/restaurants/[id]/route";
 import { Button } from "@/components/ui/button";
 import { APP_NAME } from "@/lib/constants";
 import { Navigation, Share } from "lucide-react";

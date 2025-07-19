@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Star } from "lucide-react";
-import { ComponentProps } from "react";
+import { type ComponentProps } from "react";
 
 interface RatingProps {
   value: number;

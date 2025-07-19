@@ -5,12 +5,12 @@ import * as React from "react";
 import * as RechartsPrimitive from "recharts";
 import type { LegendPayload } from "recharts/types/component/DefaultLegendContent";
 import {
-  NameType,
-  Payload,
-  ValueType,
+  type NameType,
+  type Payload,
+  type ValueType,
 } from "recharts/types/component/DefaultTooltipContent";
 import type { Props as LegendProps } from "recharts/types/component/Legend";
-import { TooltipContentProps } from "recharts/types/component/Tooltip";
+import { type TooltipContentProps } from "recharts/types/component/Tooltip";
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const;

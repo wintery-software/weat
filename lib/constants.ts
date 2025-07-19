@@ -1,5 +1,5 @@
 import { Constants } from "@/types/db";
-import { ViewMode } from "@/types/types";
+import { type ViewMode } from "@/types/types";
 
 export const APP_NAME = "Weat";
 

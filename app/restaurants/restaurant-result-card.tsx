@@ -1,13 +1,13 @@
 "use client";
 
-import { RestaurantsData } from "@/app/api/restaurants/route";
+import { type RestaurantsData } from "@/app/api/restaurants/route";
 import { Rating } from "@/components/rating";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { getGoogleMapsSearchUrl } from "@/lib/navigation";
 import { formatAddress } from "@/lib/utils";
-import { TopTag, ViewMode } from "@/types/types";
+import { type TopTag, type ViewMode } from "@/types/types";
 import { Share2 } from "lucide-react";
 import Link from "next/link";
 

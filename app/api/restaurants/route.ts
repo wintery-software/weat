@@ -1,13 +1,13 @@
 import { DEFAULT_FETCH_LIMIT } from "@/lib/api";
 import { createSSRClient } from "@/lib/supabase/clients/ssr";
 import {
-  Address,
-  Paginated,
-  Restaurant,
-  RestaurantSummary,
-  RestaurantTag,
+  type Address,
+  type Paginated,
+  type Restaurant,
+  type RestaurantSummary,
+  type RestaurantTag,
 } from "@/types/types";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export interface RestaurantsData
   extends Omit<Restaurant, "address_id" | "created_at" | "external_links"> {

@@ -1,7 +1,7 @@
 import { RestaurantSkeleton } from "@/app/restaurants/[id]/restaurant-skeleton";
 import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
 import { api } from "@/lib/api";
-import { PropsWithChildren } from "react";
+import { type PropsWithChildren } from "react";
 
 const title = "餐厅详情";
 

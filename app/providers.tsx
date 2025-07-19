@@ -6,7 +6,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { APIProvider } from "@vis.gl/react-google-maps";
-import { ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { toast } from "sonner";
 
 interface ProvidersProps {

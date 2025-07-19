@@ -1,6 +1,6 @@
 import { ErrorBoundary } from "@/components/error-boundary";
 import { LoadingSpinner } from "@/components/loading-spinner";
-import { PropsWithChildren, ReactNode, Suspense } from "react";
+import { type PropsWithChildren, type ReactNode, Suspense } from "react";
 
 export interface SuspenseWrapperProps extends PropsWithChildren {
   fallback?: ReactNode;

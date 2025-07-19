@@ -1,8 +1,8 @@
 import { createSSRClient } from "@/lib/supabase/clients/ssr";
-import { SuccessWithoutErrorFromRoute } from "@/types/api";
-import { TaskQueueStatus } from "@/types/types";
+import { type SuccessWithoutErrorFromRoute } from "@/types/api";
+import { type TaskQueueStatus } from "@/types/types";
 import { isValid, parseISO } from "date-fns";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url);

@@ -1,5 +1,5 @@
 import { APP_NAME } from "@/lib/constants";
-import { APIError } from "@/types/types";
+import { type APIError } from "@/types/types";
 import axios, { isAxiosError } from "axios";
 
 // Create axios instance with default config
