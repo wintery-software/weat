@@ -1,6 +1,6 @@
 "use client";
 
-import { WeatLogo } from "@/app/logo";
+import { WeatLogo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -45,7 +45,6 @@ export const Navbar = ({ groups, glass = true }: NavbarProps) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  // Helper to append size-6 to icon
   const renderIcon = (icon: ReactNode, ...classNames: string[]): ReactNode => {
     if (isValidElement<{ className?: string }>(icon)) {
       return cloneElement(icon, {
@@ -63,9 +62,11 @@ export const Navbar = ({ groups, glass = true }: NavbarProps) => {
       id="navbar"
       className="bg-background sticky top-0 z-50 container flex h-(--header-height) w-full items-center justify-between px-4 py-0"
     >
-      <Link href="/" className="flex items-center gap-1">
-        <WeatLogo className="size-6" />
-        <span className="text-xl font-semibold">Weat</span>
+      <Link href="/" className="flex items-center">
+        <WeatLogo className="size-8" />
+        <span className="font-[winkyRough] text-xl font-semibold tracking-tight">
+          weat
+        </span>
       </Link>
 
       <div className="glass hidden items-center space-x-4 md:flex">

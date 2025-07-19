@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import "./globals.css";
 
@@ -18,6 +19,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const winkyRough = localFont({
+  src: "../public/fonts/WinkyRough-VariableFont_wght.ttf",
+  variable: "--font-winky-rough",
+});
+
 export const metadata: Metadata = {
   title: `${APP_NAME} - ${COMPANY_NAME}`,
   description: "What to eat today?",
@@ -27,7 +33,7 @@ const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
   return (
     <html lang="zh" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${winkyRough.variable} antialiased`}
       >
         <Providers>{children}</Providers>
         <Analytics />
