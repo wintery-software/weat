@@ -1,6 +1,12 @@
+import { updateSession } from "@/lib/supabase/middleware";
 import { NextRequest, NextResponse } from "next/server";
 
-export const middleware = (request: NextRequest) => {
+export const middleware = async (request: NextRequest) => {
+  // Redirect root to restaurants
+  if (request.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/restaurants", request.url));
+  }
+
   // Only apply CORS headers to API routes
   if (request.nextUrl.pathname.startsWith("/api/")) {
     const response = NextResponse.next();
@@ -31,9 +37,19 @@ export const middleware = (request: NextRequest) => {
     return response;
   }
 
-  return NextResponse.next();
+  return await updateSession(request);
 };
 
 export const config = {
-  matcher: "/api/:path*",
+  matcher: [
+    "/api/:path*",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * Feel free to modify this pattern to include more paths.
+     */
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };
