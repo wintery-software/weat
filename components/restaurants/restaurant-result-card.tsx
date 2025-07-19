@@ -23,7 +23,8 @@ export const RestaurantResultCard = ({
   return (
     <Card className="flex h-full flex-col overflow-hidden py-0">
       <div className={`flex flex-1 ${isList ? "flex-row" : "flex-col"}`}>
-        <div
+        <Link
+          href={`/restaurants/${restaurant.id}`}
           className={`bg-cover bg-center ${
             isList ? "min-h-full w-32 flex-shrink-0 sm:w-48" : "h-48 w-full"
           }`}
