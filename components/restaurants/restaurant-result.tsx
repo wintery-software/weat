@@ -359,7 +359,7 @@ export const RestaurantResult = () => {
           <div
             className={
               view === "grid"
-                ? "grid gap-2 sm:grid-cols-2 lg:grid-cols-3"
+                ? "grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                 : "flex flex-col gap-2"
             }
           >
