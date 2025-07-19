@@ -1,8 +1,9 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-const Page = () => {
+const ErrorContent = () => {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
 
@@ -24,6 +25,23 @@ const Page = () => {
         </a>
       </div>
     </div>
+  );
+};
+
+const Page = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="max-w-md text-center">
+            <h1 className="text-2xl font-bold text-red-600">Error</h1>
+            <p className="mt-4">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <ErrorContent />
+    </Suspense>
   );
 };
 
