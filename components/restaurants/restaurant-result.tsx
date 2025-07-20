@@ -1,18 +1,20 @@
 "use client";
 
 import { type RestaurantsData } from "@/app/api/restaurants/route";
+import { InfiniteScroll } from "@/components/infinite-scroll";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { RestaurantResultCard } from "@/components/restaurants/restaurant-result-card";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -24,46 +26,233 @@ import {
 } from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
 import { api, DEFAULT_FETCH_LIMIT } from "@/lib/api";
-import { DEFAULT_DEBOUNCE_DELAY, DEFAULT_VIEW } from "@/lib/constants";
-import type { Paginated, ViewMode } from "@/types/types";
+import {
+  DEFAULT_DEBOUNCE_DELAY,
+  DEFAULT_RESTAURANT_QUERY,
+  DEFAULT_RESTAURANT_SORT_BY,
+  DEFAULT_VIEW,
+} from "@/lib/constants";
+import { kilometersToMiles } from "@/lib/navigation";
+import type { Paginated, SortOption, ViewMode } from "@/types/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useDebounce } from "@uidotdev/usehooks";
-import { Grid3x3, List, Search, SlidersHorizontal, X } from "lucide-react";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Grid3x3,
+  List,
+  Loader2,
+  MapPin,
+  MapPinOff,
+  MessageSquareIcon,
+  RouteIcon,
+  Search,
+  SlidersHorizontal,
+  StarIcon,
+  X,
+} from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+
+interface UserLocation {
+  latitude: number;
+  longitude: number;
+}
+
+const SORT_OPTIONS: { label: string; icon?: ReactNode; value: string }[] = [
+  { label: "默认排序", value: "default" },
+  {
+    label: "距离最近",
+    icon: (
+      <>
+        <RouteIcon />
+        <ChevronDownIcon />
+      </>
+    ),
+    value: "distance:asc",
+  },
+  {
+    label: "距离最远",
+    icon: (
+      <>
+        <RouteIcon />
+        <ChevronUpIcon />
+      </>
+    ),
+    value: "distance:desc",
+  },
+
+  {
+    label: "评分最低",
+    icon: (
+      <>
+        <StarIcon />
+        <ChevronDownIcon />
+      </>
+    ),
+    value: "rating:asc",
+  },
+  {
+    label: "评分最高",
+    icon: (
+      <>
+        <StarIcon />
+        <ChevronUpIcon />
+      </>
+    ),
+    value: "rating:desc",
+  },
+
+  {
+    label: "评价最少",
+    icon: (
+      <>
+        <MessageSquareIcon />
+        <ChevronDownIcon />
+      </>
+    ),
+    value: "review_count:asc",
+  },
+  {
+    label: "评价最多",
+    icon: (
+      <>
+        <MessageSquareIcon />
+        <ChevronUpIcon />
+      </>
+    ),
+    value: "review_count:desc",
+  },
+];
 
 export const RestaurantResult = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // Search and filter state
-  const [searchQuery, setSearchQuery] = useState<string>(
-    searchParams.get("q") || "",
-  );
+  // Replace separate searchQuery state with filters object including query
+  const [filters, setFilters] = useState<{
+    sortBy: SortOption;
+    distance: number;
+    query: string;
+  }>({
+    sortBy:
+      (searchParams.get("sort") as SortOption) || DEFAULT_RESTAURANT_SORT_BY,
+    distance: 0,
+    query: searchParams.get("q") || DEFAULT_RESTAURANT_QUERY,
+  });
+
+  // Use state for slider value to enable dragging
+  const [sliderValue, setSliderValue] = useState(filters.distance);
+
+  // Update slider value when filters change
+  useEffect(() => {
+    setSliderValue(filters.distance);
+  }, [filters.distance]);
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [distance, setDistance] = useState([5]);
   const [view, setView] = useState<ViewMode>(DEFAULT_VIEW);
 
-  // Debounce search query to prevent excessive API calls
-  const debouncedSearchQuery = useDebounce(searchQuery, DEFAULT_DEBOUNCE_DELAY);
+  // Location state
+  const [locationState, setLocationState] = useState<{
+    userLocation: UserLocation | null;
+    isLoading: boolean;
+    hasRequested: boolean;
+    hasError: boolean;
+  }>({
+    userLocation: null,
+    isLoading: false,
+    hasRequested: false,
+    hasError: false,
+  });
 
-  // Update URL when search query changes
+  // Debounce only the query property
+  const debouncedQuery = useDebounce(filters.query, DEFAULT_DEBOUNCE_DELAY);
+  const debouncedFilters = { ...filters, query: debouncedQuery };
+
+  // Request user location
+  const getLocation = () => {
+    setLocationState((prev) => ({ ...prev, isLoading: true, hasError: false }));
+
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by this browser");
+      setLocationState((prev) => ({
+        ...prev,
+        isLoading: false,
+        hasError: true,
+      }));
+
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocationState((prev) => ({
+          ...prev,
+          userLocation: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          },
+          isLoading: false,
+          hasError: false,
+        }));
+      },
+      (error) => {
+        toast.error("Location error", {
+          description: "Unable to retrieve your location",
+        });
+        setLocationState((prev) => ({
+          ...prev,
+          isLoading: false,
+          hasError: true,
+        }));
+        console.error(error);
+      },
+      {
+        enableHighAccuracy: false, // Not really needed
+        timeout: 10000,
+        maximumAge: 300000, // 5 minutes
+      },
+    );
+  };
+
+  // Request location on component mount
+  useEffect(() => {
+    if (!locationState.hasRequested) {
+      setLocationState((prev) => ({ ...prev, hasRequested: true }));
+      getLocation();
+    }
+  }, [locationState.hasRequested]);
+
+  // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
 
-    if (debouncedSearchQuery.trim()) {
-      params.set("q", debouncedSearchQuery.trim());
+    // Update query parameter
+    if (debouncedQuery && debouncedQuery.trim()) {
+      params.set("q", debouncedQuery.trim());
     } else {
       // eslint-disable-next-line drizzle/enforce-delete-with-where
       params.delete("q");
     }
 
-    const newUrl = params.toString() ? `?${params.toString()}` : "";
-    router.replace(newUrl, { scroll: false });
-  }, [debouncedSearchQuery, router, searchParams]);
+    // Update sort parameter
+    if (
+      debouncedFilters.sortBy &&
+      debouncedFilters.sortBy !== DEFAULT_RESTAURANT_SORT_BY
+    ) {
+      params.set("sort", debouncedFilters.sortBy);
+    } else {
+      // eslint-disable-next-line drizzle/enforce-delete-with-where
+      params.delete("sort");
+    }
+
+    const url = new URL(window.location.href);
+    url.search = params.toString();
+    router.replace(url.pathname + url.search, { scroll: false });
+  }, [debouncedQuery, debouncedFilters.sortBy, router, searchParams]);
 
   // Data fetching
   const {
@@ -74,15 +263,36 @@ export const RestaurantResult = () => {
     isLoading,
     error,
   } = useInfiniteQuery({
-    queryKey: ["restaurants", debouncedSearchQuery.trim()],
+    queryKey: [
+      "restaurants",
+      debouncedFilters.query.trim(),
+      debouncedFilters.sortBy,
+      debouncedFilters.distance,
+      locationState.userLocation,
+    ],
     queryFn: async ({ pageParam = 1 }) => {
       const params = new URLSearchParams({
         page: pageParam.toString(),
         limit: DEFAULT_FETCH_LIMIT.toString(),
       });
 
-      if (debouncedSearchQuery) {
-        params.append("q", debouncedSearchQuery);
+      if (debouncedFilters.query.trim()) {
+        params.append("q", debouncedFilters.query.trim());
+      }
+
+      // Add location parameters if available
+      if (locationState.userLocation) {
+        params.append("lat", locationState.userLocation.latitude.toString());
+        params.append("lng", locationState.userLocation.longitude.toString());
+      }
+
+      // Add sort and distance as query params
+      if (debouncedFilters.sortBy) {
+        params.append("sort_by", debouncedFilters.sortBy);
+      }
+
+      if (debouncedFilters.distance > 0) {
+        params.append("distance", debouncedFilters.distance.toString());
       }
 
       const response = await api.get<Paginated<RestaurantsData[]>>(
@@ -101,13 +311,6 @@ export const RestaurantResult = () => {
     initialPageParam: 1,
   });
 
-  // Infinite scroll hook
-  const { loadingRef } = useInfiniteScroll(
-    () => fetchNextPage(),
-    hasNextPage ?? false,
-    isFetchingNextPage,
-  );
-
   // Flatten all pages into a single array
   const restaurants = useMemo(() => {
     return data?.pages.flatMap((page) => page.data) ?? [];
@@ -115,23 +318,6 @@ export const RestaurantResult = () => {
 
   // Get total count from first page
   const totalCount = data?.pages[0]?.count ?? 0;
-
-  // Filter handlers
-  const handleAddFilter = (filter: string) => {
-    if (!activeFilters.includes(filter)) {
-      setActiveFilters([...activeFilters, filter]);
-    }
-  };
-
-  const handleRemoveFilter = (filter: string) => {
-    setActiveFilters(activeFilters.filter((f) => f !== filter));
-  };
-
-  const handleClearFilters = () => {
-    setActiveFilters([]);
-    setDistance([5]);
-    setSearchQuery("");
-  };
 
   return (
     <>
@@ -146,16 +332,49 @@ export const RestaurantResult = () => {
             <Input
               placeholder="搜索餐厅名称..."
               className="pl-9 text-sm"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={filters.query}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, query: e.target.value }))
+              }
             />
           </div>
+
+          {/* Location Button */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={getLocation}
+            disabled={locationState.isLoading}
+            className="cursor-pointer disabled:cursor-not-allowed"
+            title={
+              locationState.hasError
+                ? "Error"
+                : locationState.userLocation
+                  ? "Located"
+                  : "Locate me"
+            }
+          >
+            {locationState.isLoading ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : locationState.hasError ? (
+              <MapPinOff className="size-4 text-red-600" />
+            ) : (
+              <MapPin
+                className={`size-4 ${
+                  locationState.userLocation ? "text-green-600" : ""
+                }`}
+              />
+            )}
+          </Button>
 
           {/* Filter */}
           <div className="flex items-center gap-2">
             <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  className="flex cursor-pointer items-center gap-2"
+                >
                   <SlidersHorizontal className="size-4" />
                   <span className="hidden sm:inline">筛选</span>
                   <span className="text-muted-foreground">{totalCount}</span>
@@ -170,116 +389,74 @@ export const RestaurantResult = () => {
                 </SheetHeader>
 
                 <div className="mt-6 space-y-6 px-4">
-                  <div className="space-y-2">
-                    <Label>距离</Label>
-                    <div className="flex items-center gap-4">
-                      <Slider
-                        value={distance}
-                        min={1}
-                        max={20}
-                        step={1}
-                        onValueChange={setDistance}
-                      />
-                      <span className="w-16 text-center text-sm font-medium">
-                        {distance[0]} mi
+                  {/* Sort Dropdown */}
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="sort-by">排序方式</Label>
+                    <Select
+                      value={filters.sortBy ?? ""}
+                      onValueChange={(value) => {
+                        setFilters((prev) => ({
+                          ...prev,
+                          sortBy: value as SortOption,
+                        }));
+                      }}
+                    >
+                      <SelectTrigger id="sort-by" className="w-full">
+                        <SelectValue placeholder="选择排序方式" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SORT_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.icon}
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {/* Distance Filter */}
+                  <div className="flex flex-col gap-3">
+                    <Label htmlFor="distance-slider">距离</Label>
+                    <Slider
+                      id="distance-slider"
+                      value={[sliderValue]}
+                      min={0}
+                      max={100}
+                      step={5}
+                      onValueChange={(value) => {
+                        setSliderValue(value[0]);
+                      }}
+                      onValueCommit={(value) => {
+                        setFilters((prev) => ({
+                          ...prev,
+                          distance: value[0],
+                        }));
+                      }}
+                    />
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">
+                        {sliderValue === 0
+                          ? "All"
+                          : `${kilometersToMiles(sliderValue).toFixed(1)} mi`}
+                      </span>
+                      <span className="text-muted-foreground text-xs">
+                        {sliderValue !== 0 && `${sliderValue} km`}
                       </span>
                     </div>
                   </div>
-
-                  <div className="space-y-2">
-                    <Label>Price Range</Label>
-                    <div className="flex gap-2">
-                      {["$", "$$", "$$$", "$$$$"].map((price) => (
-                        <Button
-                          key={price}
-                          variant={
-                            activeFilters.includes(price)
-                              ? "default"
-                              : "outline"
-                          }
-                          size="sm"
-                          onClick={() =>
-                            activeFilters.includes(price)
-                              ? handleRemoveFilter(price)
-                              : handleAddFilter(price)
-                          }
-                        >
-                          {price}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="cuisine">
-                      <AccordionTrigger>菜系</AccordionTrigger>
-                      <AccordionContent>
-                        <div className="grid grid-cols-2 gap-2">
-                          {[
-                            "Sichuan",
-                            "Cantonese",
-                            "Taiwanese",
-                            "Shanghainese",
-                            "Hunan",
-                            "Dim Sum",
-                          ].map((cuisine) => (
-                            <Button
-                              key={cuisine}
-                              variant={
-                                activeFilters.includes(cuisine)
-                                  ? "default"
-                                  : "outline"
-                              }
-                              size="sm"
-                              onClick={() =>
-                                activeFilters.includes(cuisine)
-                                  ? handleRemoveFilter(cuisine)
-                                  : handleAddFilter(cuisine)
-                              }
-                            >
-                              {cuisine}
-                            </Button>
-                          ))}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="features">
-                      <AccordionTrigger>特色</AccordionTrigger>
-                      <AccordionContent>
-                        <div className="grid grid-cols-2 gap-2">
-                          {[
-                            "Spicy",
-                            "Vegetarian Options",
-                            "Authentic",
-                            "Family Style",
-                            "Hotpot",
-                          ].map((feature) => (
-                            <Button
-                              key={feature}
-                              variant={
-                                activeFilters.includes(feature)
-                                  ? "default"
-                                  : "outline"
-                              }
-                              size="sm"
-                              onClick={() =>
-                                activeFilters.includes(feature)
-                                  ? handleRemoveFilter(feature)
-                                  : handleAddFilter(feature)
-                              }
-                            >
-                              {feature}
-                            </Button>
-                          ))}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
                 </div>
 
                 <SheetFooter className="mt-6 flex-row justify-between sm:space-x-0">
-                  <Button variant="outline" onClick={handleClearFilters}>
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      setFilters({
+                        sortBy: DEFAULT_RESTAURANT_SORT_BY,
+                        distance: 0,
+                        query: DEFAULT_RESTAURANT_QUERY,
+                      })
+                    }
+                  >
                     清除
                   </Button>
                   <Button onClick={() => setIsFilterOpen(false)}>应用</Button>
@@ -308,38 +485,72 @@ export const RestaurantResult = () => {
         </div>
 
         {/* Active Filters */}
-        {(activeFilters.length > 0 || debouncedSearchQuery) && (
+        {(filters.sortBy !== DEFAULT_RESTAURANT_SORT_BY ||
+          filters.query ||
+          filters.distance > 0) && (
           <div className="mt-4 flex flex-wrap gap-2">
-            {debouncedSearchQuery && (
-              <Badge variant="secondary" className="flex items-center gap-1">
-                搜索: {debouncedSearchQuery}
-                <X
-                  className="h-3 w-3 cursor-pointer"
-                  onClick={() => setSearchQuery("")}
-                />
+            {filters.query && (
+              <Badge
+                variant="secondary"
+                className="flex cursor-pointer items-center gap-1 select-none"
+                onClick={() => setFilters((prev) => ({ ...prev, query: "" }))}
+              >
+                搜索:&nbsp;{filters.query}
+                <X className="h-3 w-3" />
               </Badge>
             )}
-            {activeFilters.map((filter) => (
+            {filters.sortBy &&
+              filters.sortBy !== DEFAULT_RESTAURANT_SORT_BY && (
+                <Badge
+                  variant="secondary"
+                  className="flex cursor-pointer items-center gap-1 select-none"
+                  onClick={() => {
+                    setFilters((prev) => ({ ...prev, sortBy: "default" }));
+                  }}
+                >
+                  排序:&nbsp;
+                  {
+                    SORT_OPTIONS.find(
+                      (option) => option.value === filters.sortBy,
+                    )?.label
+                  }
+                  <X className="h-3 w-3" />
+                </Badge>
+              )}
+            {filters.distance > 0 && (
               <Badge
-                key={filter}
                 variant="secondary"
-                className="flex items-center gap-1"
+                className="flex cursor-pointer items-center gap-1 select-none"
+                onClick={() => {
+                  setFilters((prev) => ({
+                    ...prev,
+                    distance: 0,
+                  }));
+                  setSliderValue(0);
+                }}
               >
-                {filter}
-                <X
-                  className="h-3 w-3 cursor-pointer"
-                  onClick={() => handleRemoveFilter(filter)}
-                />
+                距离:&nbsp;&le;&nbsp;
+                {kilometersToMiles(filters.distance).toFixed(1)} mi
+                <X className="h-3 w-3" />
               </Badge>
-            ))}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 px-2 text-xs"
-              onClick={handleClearFilters}
-            >
-              清除所有
-            </Button>
+            )}
+            {filters.sortBy !== DEFAULT_RESTAURANT_SORT_BY ||
+            filters.query ||
+            filters.distance > 0 ? (
+              <Badge
+                variant={"outline"}
+                className="flex cursor-pointer items-center gap-1 select-none"
+                onClick={() =>
+                  setFilters({
+                    sortBy: DEFAULT_RESTAURANT_SORT_BY,
+                    distance: 0,
+                    query: DEFAULT_RESTAURANT_QUERY,
+                  })
+                }
+              >
+                清除所有
+              </Badge>
+            ) : null}
           </div>
         )}
       </div>
@@ -354,7 +565,23 @@ export const RestaurantResult = () => {
           <p className="text-destructive">加载餐厅时出错了</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <InfiniteScroll
+          hasNextPage={hasNextPage ?? false}
+          isFetchingNextPage={isFetchingNextPage}
+          onLoadMore={fetchNextPage}
+          endMessage={
+            restaurants.length > 0 ? (
+              <div className="text-sm">
+                <span className="text-muted-foreground">已显示所有</span>
+                &nbsp;
+                <span className="font-medium">{totalCount}</span>
+                &nbsp;
+                <span className="text-muted-foreground">家餐厅</span>
+              </div>
+            ) : undefined
+          }
+          className="flex flex-col gap-4"
+        >
           {/* Results */}
           <div
             className={
@@ -371,30 +598,7 @@ export const RestaurantResult = () => {
               />
             ))}
           </div>
-
-          {/* Loading indicator and infinite scroll trigger */}
-          {hasNextPage && (
-            <div
-              ref={loadingRef}
-              className="flex items-center justify-center py-8"
-            >
-              {isFetchingNextPage && <LoadingSpinner />}
-            </div>
-          )}
-
-          {/* End of results indicator */}
-          {!hasNextPage && restaurants.length > 0 && (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-sm">
-                <span className="text-muted-foreground">已显示所有</span>
-                &nbsp;
-                <span className="font-medium">{totalCount}</span>
-                &nbsp;
-                <span className="text-muted-foreground">家餐厅</span>
-              </div>
-            </div>
-          )}
-        </div>
+        </InfiniteScroll>
       )}
     </>
   );

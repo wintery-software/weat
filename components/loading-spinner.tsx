@@ -10,9 +10,9 @@ export const LoadingSpinner = ({
   size = "md",
 }: LoadingSpinnerProps) => {
   const sizeConfig = {
-    sm: { spinner: "size-4", font: "text-xs" },
-    md: { spinner: "size-6", font: "text-sm" },
-    lg: { spinner: "size-8", font: "text-base" },
+    sm: { spinner: "size-6", font: "text-xs" },
+    md: { spinner: "size-8", font: "text-sm" },
+    lg: { spinner: "size-10", font: "text-base" },
   };
 
   return (

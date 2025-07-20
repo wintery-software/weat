@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { api } from "@/lib/api";
-import { ALL_TASK_STATUSES } from "@/lib/constants";
+import { DATABASE_ALL_TASK_STATUSES } from "@/lib/constants";
 import {
   type APIError,
   type TaskQueueStatus,
@@ -73,7 +73,7 @@ export const TaskQueueStatusCard = () => {
 
   // Transform data for pie chart
   const chartData = data
-    ? ALL_TASK_STATUSES.map((s) => ({
+    ? DATABASE_ALL_TASK_STATUSES.map((s) => ({
         name: s,
         value: data[s],
         label: chartConfig[s].label,

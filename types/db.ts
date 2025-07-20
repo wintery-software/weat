@@ -179,6 +179,7 @@ export type Database = {
           google_maps_place_id: string;
           id: string;
           latitude: number;
+          location: unknown;
           longitude: number;
           name_en: string | null;
           name_zh: string | null;
@@ -192,6 +193,7 @@ export type Database = {
           google_maps_place_id: string;
           id?: string;
           latitude: number;
+          location: unknown;
           longitude: number;
           name_en?: string | null;
           name_zh?: string | null;
@@ -205,6 +207,7 @@ export type Database = {
           google_maps_place_id?: string;
           id?: string;
           latitude?: number;
+          location?: unknown;
           longitude?: number;
           name_en?: string | null;
           name_zh?: string | null;
@@ -356,6 +359,10 @@ export type Database = {
       };
       get_task_queue_status: {
         Args: { start_date: string; end_date: string };
+        Returns: Json;
+      };
+      restaurant_location_geojson: {
+        Args: { r: Database["public"]["Tables"]["restaurants"]["Row"] };
         Returns: Json;
       };
     };

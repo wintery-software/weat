@@ -4,13 +4,20 @@ import { type RestaurantsData } from "@/app/api/restaurants/route";
 import { Rating } from "@/components/rating";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { getGoogleMapsSearchUrl } from "@/lib/navigation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { getGoogleMapsSearchUrl, kilometersToMiles } from "@/lib/navigation";
 import { formatAddress } from "@/lib/utils";
 import { type TopTag, type ViewMode } from "@/types/types";
+import { MapPin } from "lucide-react";
 import Link from "next/link";
 
 export interface RestaurantResultCardProps {
-  restaurant: RestaurantsData;
+  restaurant: RestaurantsData & { distance?: number };
   view: ViewMode;
 }
 
@@ -44,15 +51,33 @@ export const RestaurantResultCard = ({
                   {restaurant.name_zh || restaurant.name_en || "-"}
                 </Link>
               </h3>
-              <div className="text-muted-foreground flex items-center gap-1 text-xs">
-                <span className="font-medium">
-                  {restaurant.summary?.average_rating ?? "-"}
-                </span>
-                <Rating
-                  value={restaurant.summary?.average_rating ?? 0}
-                  size={12}
-                />
-                <span>({restaurant.summary?.review_count ?? 0})</span>
+              <div className="text-muted-foreground flex items-center gap-2 text-xs">
+                <div className="flex items-center gap-1">
+                  <span className="font-medium">
+                    {restaurant.summary?.average_rating ?? "-"}
+                  </span>
+                  <Rating
+                    value={restaurant.summary?.average_rating ?? 0}
+                    size={12}
+                  />
+                  <span>({restaurant.summary?.review_count ?? 0})</span>
+                </div>
+                {restaurant.distance !== undefined && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger className="text-muted-foreground flex items-center gap-1 underline decoration-dotted underline-offset-2">
+                        <MapPin className="size-3" />
+                        <span>
+                          {kilometersToMiles(restaurant.distance).toFixed(1)} mi
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent className="text-xs">
+                        Calculated straight-line distance, does not reflect the
+                        actual travel distance.
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
               <Link
                 href={getGoogleMapsSearchUrl({
@@ -62,7 +87,7 @@ export const RestaurantResultCard = ({
                 })}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary text-xs underline decoration-dotted underline-offset-2 transition-colors"
+                className="text-muted-foreground hover:text-primary text-xs underline-offset-2 transition-colors hover:underline"
               >
                 {formatAddress(restaurant.address)}
               </Link>

@@ -23,6 +23,8 @@ export interface APIError {
   error: string;
 }
 
+export type SortOption = (typeof RESTAURANT_SORT_OPTIONS)[number];
+
 // Extract types from Supabase generated types (types/db.d.ts)
 export type Address = Tables<"addresses">;
 export type Profile = Tables<"profiles">;
