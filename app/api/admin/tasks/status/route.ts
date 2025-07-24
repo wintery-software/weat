@@ -16,19 +16,19 @@ export const GET = async (request: NextRequest) => {
   }
 
   const startDate = parseISO(start);
+  const endDate = new Date();
 
   if (!isValid(startDate)) {
-    const message =
-      "start_date must be a valid ISO 8601 string (e.g., YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ)";
+    const message = `start_date must be a valid ISO 8601 string, got: ${start}`;
     console.error(message);
 
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
   const supabase = await createSSRClient();
-  const { data, error } = await supabase.rpc("get_task_queue_status", {
+  const { data, error } = await supabase.rpc("get_tasks_status", {
     start_date: startDate.toISOString(),
-    end_date: new Date().toISOString(), // Default to now
+    end_date: endDate.toISOString(),
   });
 
   if (error) {
@@ -36,6 +36,11 @@ export const GET = async (request: NextRequest) => {
 
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  console.log(
+    `Tasks status (${startDate.toISOString()} - ${endDate.toISOString()})`,
+    data,
+  );
 
   return NextResponse.json(data as TaskQueueStatus);
 };

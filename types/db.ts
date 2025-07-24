@@ -41,6 +41,45 @@ export type Database = {
         };
         Relationships: [];
       };
+      blacklisted_places: {
+        Row: {
+          google_maps_place_id: string;
+          id: string;
+          reason: string | null;
+        };
+        Insert: {
+          google_maps_place_id: string;
+          id?: string;
+          reason?: string | null;
+        };
+        Update: {
+          google_maps_place_id?: string;
+          id?: string;
+          reason?: string | null;
+        };
+        Relationships: [];
+      };
+      blacklisted_reviews: {
+        Row: {
+          id: string;
+          reason: string | null;
+          source: string;
+          source_id: string;
+        };
+        Insert: {
+          id?: string;
+          reason?: string | null;
+          source: string;
+          source_id: string;
+        };
+        Update: {
+          id?: string;
+          reason?: string | null;
+          source?: string;
+          source_id?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           avatar: string | null;
@@ -67,6 +106,35 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [];
+      };
+      restaurant_dish_names: {
+        Row: {
+          id: string;
+          name: string;
+          restaurant_id: string;
+          standard_name: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          restaurant_id?: string;
+          standard_name: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          restaurant_id?: string;
+          standard_name?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "restaurant_dish_names_restaurant_id_fkey";
+            columns: ["restaurant_id"];
+            isOneToOne: false;
+            referencedRelation: "restaurants";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       restaurant_dishes: {
         Row: {
@@ -178,6 +246,7 @@ export type Database = {
           external_links: Json | null;
           google_maps_place_id: string;
           id: string;
+          is_verified: boolean;
           latitude: number;
           location: unknown;
           longitude: number;
@@ -192,6 +261,7 @@ export type Database = {
           external_links?: Json | null;
           google_maps_place_id: string;
           id?: string;
+          is_verified?: boolean;
           latitude: number;
           location: unknown;
           longitude: number;
@@ -206,6 +276,7 @@ export type Database = {
           external_links?: Json | null;
           google_maps_place_id?: string;
           id?: string;
+          is_verified?: boolean;
           latitude?: number;
           location?: unknown;
           longitude?: number;
@@ -269,25 +340,28 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
+          is_verified: boolean;
           published_at: string | null;
           restaurant_id: string;
-          source: string;
+          source: Database["public"]["Enums"]["review_source"];
           source_id: string;
         };
         Insert: {
           created_at?: string;
           id?: string;
+          is_verified?: boolean;
           published_at?: string | null;
           restaurant_id: string;
-          source: string;
+          source?: Database["public"]["Enums"]["review_source"];
           source_id: string;
         };
         Update: {
           created_at?: string;
           id?: string;
+          is_verified?: boolean;
           published_at?: string | null;
           restaurant_id?: string;
-          source?: string;
+          source?: Database["public"]["Enums"]["review_source"];
           source_id?: string;
         };
         Relationships: [
@@ -300,22 +374,48 @@ export type Database = {
           },
         ];
       };
+      tag_clusters: {
+        Row: {
+          display_name: string;
+          id: string;
+        };
+        Insert: {
+          display_name: string;
+          id?: string;
+        };
+        Update: {
+          display_name?: string;
+          id?: string;
+        };
+        Relationships: [];
+      };
       tags: {
         Row: {
+          cluster_id: string;
           id: string;
           name: string;
         };
         Insert: {
+          cluster_id: string;
           id?: string;
           name: string;
         };
         Update: {
+          cluster_id?: string;
           id?: string;
           name?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "tags_cluster_id_fkey";
+            columns: ["cluster_id"];
+            isOneToOne: false;
+            referencedRelation: "tag_clusters";
+            referencedColumns: ["id"];
+          },
+        ];
       };
-      task_queue: {
+      tasks: {
         Row: {
           attempts: number;
           created_at: string;
@@ -348,6 +448,45 @@ export type Database = {
         };
         Relationships: [];
       };
+      verifications: {
+        Row: {
+          comment: string | null;
+          created_at: string;
+          entity_id: string;
+          entity_type: Database["public"]["Enums"]["verification_entity_type"];
+          id: string;
+          metadata: Json | null;
+          reason: string;
+          status: Database["public"]["Enums"]["verification_status"] | null;
+          updated_at: string;
+          verification_type: string;
+        };
+        Insert: {
+          comment?: string | null;
+          created_at?: string;
+          entity_id: string;
+          entity_type: Database["public"]["Enums"]["verification_entity_type"];
+          id?: string;
+          metadata?: Json | null;
+          reason: string;
+          status?: Database["public"]["Enums"]["verification_status"] | null;
+          updated_at?: string;
+          verification_type: string;
+        };
+        Update: {
+          comment?: string | null;
+          created_at?: string;
+          entity_id?: string;
+          entity_type?: Database["public"]["Enums"]["verification_entity_type"];
+          id?: string;
+          metadata?: Json | null;
+          reason?: string;
+          status?: Database["public"]["Enums"]["verification_status"] | null;
+          updated_at?: string;
+          verification_type?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -357,7 +496,7 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: number;
       };
-      get_task_queue_status: {
+      get_tasks_status: {
         Args: { start_date: string; end_date: string };
         Returns: Json;
       };
@@ -367,8 +506,11 @@ export type Database = {
       };
     };
     Enums: {
+      review_source: "XIAOHONGSHU";
       task_status: "PENDING" | "STARTED" | "FAILURE" | "SUCCESS";
       user_role: "admin";
+      verification_entity_type: "RESTAURANT" | "REVIEW";
+      verification_status: "PENDING" | "RESOLVED";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -499,8 +641,11 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      review_source: ["XIAOHONGSHU"],
       task_status: ["PENDING", "STARTED", "FAILURE", "SUCCESS"],
       user_role: ["admin"],
+      verification_entity_type: ["RESTAURANT", "REVIEW"],
+      verification_status: ["PENDING", "RESOLVED"],
     },
   },
 } as const;

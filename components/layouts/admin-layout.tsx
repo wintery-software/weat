@@ -31,9 +31,9 @@ const groups: AppSidebarGroup[] = [
         href: "/admin/database/users",
       },
       {
-        label: "Task Queue",
+        label: "Tasks",
         icon: <ListChecksIcon />,
-        href: "/admin/database/task-queue",
+        href: "/admin/database/tasks",
       },
     ],
   },

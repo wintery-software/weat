@@ -48,7 +48,7 @@ const chartConfig = {
   FAILURE: { label: "Failure", color: "var(--color-error)" },
 } satisfies TaskQueueChartConfig;
 
-export const TaskQueueStatusCard = () => {
+export const TasksStatusCard = () => {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [startDate, setStartDate] = useState<Date>(
     new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
@@ -61,9 +61,9 @@ export const TaskQueueStatusCard = () => {
     APIError,
     TaskQueueStatus
   >({
-    queryKey: ["admin", "task-queue", "status", startDate?.toISOString()],
+    queryKey: ["admin", "tasks", "status", startDate?.toISOString()],
     queryFn: () =>
-      api.get(`/admin/task-queue/status?start_date=${startDate.toISOString()}`),
+      api.get(`/admin/tasks/status?start_date=${startDate.toISOString()}`),
     select: (res) => res.data,
     refetchOnWindowFocus: false,
     enabled: !!startDate,
@@ -86,7 +86,7 @@ export const TaskQueueStatusCard = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-medium">
           <ListChecksIcon className="size-4" />
-          Task Queue Status
+          Tasks Status
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">

@@ -1,6 +1,6 @@
 import { RestaurantsCard } from "@/components/admin/restaurants-card";
 import { TagsCard } from "@/components/admin/tags-card";
-import { TaskQueueStatusCard } from "@/components/admin/task-queue-status-card";
+import { TasksStatusCard } from "@/components/admin/tasks-status-card";
 import { Label } from "@/components/ui/label";
 
 const Page = () => {
@@ -24,7 +24,7 @@ const Page = () => {
           id="aggregated-data"
           className="grid grid-cols-1 gap-4 lg:grid-cols-2"
         >
-          <TaskQueueStatusCard />
+          <TasksStatusCard />
         </div>
       </div>
     </div>
