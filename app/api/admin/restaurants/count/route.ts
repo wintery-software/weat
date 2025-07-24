@@ -45,7 +45,6 @@ export const GET = async (request: NextRequest) => {
   };
 
   const { count, error } = await getCountFunctions[type]();
-  console.log(`${type}=${count}`);
 
   if (error) {
     console.error(error);
