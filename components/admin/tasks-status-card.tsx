@@ -33,7 +33,7 @@ import { useQuery } from "@tanstack/react-query";
 import { type AxiosResponse } from "axios";
 import { format } from "date-fns";
 import { ChevronDownIcon, ListChecksIcon, Loader2Icon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Cell, Label, Pie, PieChart } from "recharts";
 
 // Override ChartConfig to use TaskStatus keys
@@ -50,10 +50,18 @@ const chartConfig = {
 
 export const TasksStatusCard = () => {
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [startDate, setStartDate] = useState<Date>(
-    new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-  );
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [startDate, setStartDate] = useState<Date | null>(null);
   const [quickDateRange, setQuickDateRange] = useState<number>(1);
+
+  // Set both dates on client after mount, and when quickDateRange changes
+  useEffect(() => {
+    const now = new Date();
+    setEndDate(now);
+    setStartDate(
+      new Date(now.getTime() - quickDateRange * 24 * 60 * 60 * 1000),
+    );
+  }, [quickDateRange]);
 
   // Remove startDate from queryKey, and set enabled: false
   const { data, isFetching } = useQuery<
@@ -63,10 +71,12 @@ export const TasksStatusCard = () => {
   >({
     queryKey: ["admin", "tasks", "status", startDate?.toISOString()],
     queryFn: () =>
-      api.get(`/admin/tasks/status?start_date=${startDate.toISOString()}`),
+      api.get(
+        `/admin/tasks/status?start_date=${startDate?.toISOString()}&end_date=${endDate?.toISOString()}`,
+      ),
     select: (res) => res.data,
     refetchOnWindowFocus: false,
-    enabled: !!startDate,
+    enabled: !!startDate && !!endDate,
   });
 
   const hasNoStatus = data && Object.values(data).every((value) => value === 0);
@@ -124,7 +134,7 @@ export const TasksStatusCard = () => {
                 <Calendar
                   mode="single"
                   captionLayout="dropdown"
-                  selected={startDate}
+                  selected={startDate ?? undefined}
                   onSelect={(date) => {
                     if (!date) {
                       return;
@@ -228,10 +238,13 @@ export const TasksStatusCard = () => {
       </CardContent>
       <CardFooter>
         <div className="flex w-full flex-col gap-2">
-          <p className="text-muted-foreground self-center text-xs">
-            {format(startDate, "yyyy-MM-dd HH:mm:ss")} -{" "}
-            {format(new Date(), "yyyy-MM-dd HH:mm:ss")}
-          </p>
+          {startDate && endDate && (
+            <p className="text-muted-foreground self-center text-xs">
+              {startDate.toISOString()}
+              &nbsp;-&nbsp;
+              {endDate.toISOString()}
+            </p>
+          )}
           <div className="flex flex-col">
             {Object.entries(chartConfig).map(([key, config]) => (
               <div

@@ -6,20 +6,35 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url);
-  const start = searchParams.get("start_date");
+  const startDateValue = searchParams.get("start_date");
+  const endDateValue = searchParams.get("end_date");
 
-  if (!start) {
+  if (!startDateValue) {
     const message = "start_date is required";
     console.error(message);
 
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  const startDate = parseISO(start);
-  const endDate = new Date();
+  if (!endDateValue) {
+    const message = "end_date is required";
+    console.error(message);
+
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+
+  const startDate = parseISO(startDateValue);
+  const endDate = parseISO(endDateValue);
 
   if (!isValid(startDate)) {
-    const message = `start_date must be a valid ISO 8601 string, got: ${start}`;
+    const message = `start_date ${startDateValue} is not a valid ISO 8601 string`;
+    console.error(message);
+
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+
+  if (!isValid(endDate)) {
+    const message = `end_date ${endDateValue} is not a valid ISO 8601 string`;
     console.error(message);
 
     return NextResponse.json({ error: message }, { status: 400 });
