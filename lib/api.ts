@@ -1,5 +1,4 @@
 import { APP_NAME } from "@/lib/constants";
-import { type APIError } from "@/types/types";
 import axios, { isAxiosError } from "axios";
 
 // Create axios instance with default config
@@ -15,20 +14,37 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     let message: string;
-    const responseData = error.response
-      ? (error.response.data as APIError)
-      : undefined;
 
-    if (isAxiosError(error) && responseData) {
-      message = responseData.error;
+    if (isAxiosError(error) && error.response?.data) {
+      // Try to extract error message from API response
+      const responseData = error.response.data as unknown;
+
+      if (
+        typeof responseData === "object" &&
+        responseData !== null &&
+        "error" in responseData
+      ) {
+        // API returned {error: string} format
+        message = String(responseData.error);
+      } else if (typeof responseData === "string") {
+        // API returned plain string error
+        message = responseData;
+      } else {
+        // Fallback to error message or status text
+        message = error.message || error.response.statusText || "Unknown error";
+      }
     } else {
-      message = (error as Error).message;
+      // Network error or other non-HTTP error
+      message = (error as Error).message || "Network error";
     }
 
     console.error(`${APP_NAME} API Error:`, message);
 
-    return Promise.reject({ message });
+    // Preserve the original AxiosError but add the extracted message
+    if (isAxiosError(error)) {
+      error.message = message;
+    }
+
+    return Promise.reject(error);
   },
 );
-
-export const DEFAULT_FETCH_LIMIT = 20;
