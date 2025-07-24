@@ -7,6 +7,8 @@ export const COMPANY_NAME = "Wintery Software";
 
 export const AI_NAME = `${APP_NAME} AI`;
 
+export const DEFAULT_FETCH_LIMIT = 20;
+
 export const VIEW_MODES = ["grid", "list", "map"] as const;
 
 export const RESTAURANT_SORT_OPTIONS: Exclude<SortOption, "default">[] = [

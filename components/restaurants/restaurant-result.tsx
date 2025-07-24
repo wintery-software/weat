@@ -26,9 +26,10 @@ import {
 } from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { api, DEFAULT_FETCH_LIMIT } from "@/lib/api";
+import { api } from "@/lib/api";
 import {
   DEFAULT_DEBOUNCE_DELAY,
+  DEFAULT_FETCH_LIMIT,
   DEFAULT_RESTAURANT_QUERY,
   DEFAULT_RESTAURANT_SORT_BY,
   DEFAULT_VIEW,

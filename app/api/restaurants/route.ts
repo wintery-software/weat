@@ -1,5 +1,4 @@
-import { DEFAULT_FETCH_LIMIT } from "@/lib/api";
-import { RESTAURANT_SORT_OPTIONS } from "@/lib/constants";
+import { DEFAULT_FETCH_LIMIT, RESTAURANT_SORT_OPTIONS } from "@/lib/constants";
 import { getHaversineDistance } from "@/lib/navigation";
 import { createSSRClient } from "@/lib/supabase/clients/ssr";
 import {
