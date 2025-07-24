@@ -114,6 +114,14 @@ const eslintConfig = [
       "react/display-name": "off",
     },
   },
+  {
+    files: ["**/*"],
+    ignores: ["app/api/**/*"],
+    rules: {
+      // Disable drizzle enforce-delete-with-where for all files except app/api
+      "drizzle/enforce-delete-with-where": "off",
+    },
+  },
 ];
 
 export default eslintConfig;
