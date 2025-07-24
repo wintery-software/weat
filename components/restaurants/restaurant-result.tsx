@@ -235,7 +235,6 @@ export const RestaurantResult = () => {
     if (debouncedQuery && debouncedQuery.trim()) {
       params.set("q", debouncedQuery.trim());
     } else {
-      // eslint-disable-next-line drizzle/enforce-delete-with-where
       params.delete("q");
     }
 
@@ -246,7 +245,6 @@ export const RestaurantResult = () => {
     ) {
       params.set("sort", debouncedFilters.sortBy);
     } else {
-      // eslint-disable-next-line drizzle/enforce-delete-with-where
       params.delete("sort");
     }
 
