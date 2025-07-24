@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { APP_NAME, COMPANY_NAME } from "@/lib/constants";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import type { ReactNode } from "react";
@@ -27,6 +27,13 @@ const winkyRough = localFont({
 export const metadata: Metadata = {
   title: `${APP_NAME} - ${COMPANY_NAME}`,
   description: "What to eat today?",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
