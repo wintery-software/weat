@@ -27,6 +27,12 @@ const winkyRough = localFont({
 export const metadata: Metadata = {
   title: `${APP_NAME} - ${COMPANY_NAME}`,
   description: "What to eat today?",
+  icons: [
+    {
+      rel: "icon",
+      url: "/weat-64x64.png",
+    },
+  ],
 };
 
 export const viewport: Viewport = {
