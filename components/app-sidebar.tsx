@@ -36,7 +36,7 @@ import {
   UserCircleIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { type ReactNode, useEffect, useState } from "react";
 
 interface AppSidebarMenuItem {
@@ -59,6 +59,7 @@ export interface AppSidebarProps {
 
 export const AppSidebar = ({ homePage, groups, footer }: AppSidebarProps) => {
   const supabase = createCSRClient();
+  const router = useRouter();
 
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -195,7 +196,7 @@ export const AppSidebar = ({ homePage, groups, footer }: AppSidebarProps) => {
                   className="cursor-pointer"
                   onClick={async () => {
                     await supabase.auth.signOut();
-                    redirect("/");
+                    router.push("/");
                   }}
                 >
                   <LogOutIcon />
