@@ -59,7 +59,7 @@ describe("GET /api/admin/tasks/status", () => {
 
     it("should accept date with space separator '2023-12-01 10:00:00Z'", async () => {
       const request = new NextRequest(
-        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01%2010:00:00Z",
+        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01%2010:00:00Z&end_date=2023-12-02T10:00:00Z",
       );
 
       const response = await GET(request);
@@ -72,7 +72,7 @@ describe("GET /api/admin/tasks/status", () => {
 
     it("should accept date without timezone '2023-12-01T10:00:00'", async () => {
       const request = new NextRequest(
-        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01T10:00:00",
+        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01T10:00:00&end_date=2023-12-02T10:00:00",
       );
 
       const response = await GET(request);
@@ -85,7 +85,7 @@ describe("GET /api/admin/tasks/status", () => {
 
     it("should accept date only '2023-12-01'", async () => {
       const request = new NextRequest(
-        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01",
+        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01&end_date=2023-12-02",
       );
 
       const response = await GET(request);
@@ -292,7 +292,7 @@ describe("GET /api/admin/tasks/status", () => {
 
     it("should accept valid ISO 8601 date string '2023-12-01T10:00:00Z'", async () => {
       const request = new NextRequest(
-        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01T10:00:00Z",
+        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01T10:00:00Z&end_date=2023-12-02T10:00:00Z",
       );
 
       const response = await GET(request);
@@ -305,7 +305,7 @@ describe("GET /api/admin/tasks/status", () => {
 
     it("should accept valid ISO 8601 date with milliseconds '2023-12-01T10:00:00.000Z'", async () => {
       const request = new NextRequest(
-        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01T10:00:00.000Z",
+        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01T10:00:00.000Z&end_date=2023-12-02T10:00:00.000Z",
       );
 
       const response = await GET(request);
@@ -318,7 +318,7 @@ describe("GET /api/admin/tasks/status", () => {
 
     it("should accept valid ISO 8601 date with timezone offset '+00:00'", async () => {
       const request = new NextRequest(
-        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01T10:00:00%2B00:00",
+        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01T10:00:00%2B00:00&end_date=2023-12-02T10:00:00%2B00:00",
       );
 
       const response = await GET(request);
@@ -331,7 +331,7 @@ describe("GET /api/admin/tasks/status", () => {
 
     it("should accept valid ISO 8601 date with negative timezone offset '-05:00'", async () => {
       const request = new NextRequest(
-        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01T10:00:00-05:00",
+        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01T10:00:00-05:00&end_date=2023-12-02T10:00:00-05:00",
       );
 
       const response = await GET(request);
@@ -344,7 +344,7 @@ describe("GET /api/admin/tasks/status", () => {
 
     it("should accept valid leap year date '2024-02-29T10:00:00Z'", async () => {
       const request = new NextRequest(
-        "http://localhost:3000/api/admin/tasks/status?start_date=2024-02-29T10:00:00Z",
+        "http://localhost:3000/api/admin/tasks/status?start_date=2024-02-29T10:00:00Z&end_date=2024-03-01T10:00:00Z",
       );
 
       const response = await GET(request);
@@ -357,7 +357,7 @@ describe("GET /api/admin/tasks/status", () => {
 
     it("should handle multiple query parameters", async () => {
       const request = new NextRequest(
-        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01T10:00:00Z&other_param=value",
+        "http://localhost:3000/api/admin/tasks/status?start_date=2023-12-01T10:00:00Z&end_date=2023-12-02T10:00:00Z&other_param=value",
       );
 
       const response = await GET(request);

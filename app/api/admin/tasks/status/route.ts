@@ -16,6 +16,15 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
+  const startDate = parseISO(startDateValue);
+
+  if (!isValid(startDate)) {
+    const message = `start_date must be a valid ISO 8601 string, got: ${startDateValue}`;
+    console.error(message);
+
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+
   if (!endDateValue) {
     const message = "end_date is required";
     console.error(message);
@@ -23,18 +32,10 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  const startDate = parseISO(startDateValue);
   const endDate = parseISO(endDateValue);
 
-  if (!isValid(startDate)) {
-    const message = `start_date ${startDateValue} is not a valid ISO 8601 string`;
-    console.error(message);
-
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
-
   if (!isValid(endDate)) {
-    const message = `end_date ${endDateValue} is not a valid ISO 8601 string`;
+    const message = `end_date must be a valid ISO 8601 string, got: ${endDateValue}`;
     console.error(message);
 
     return NextResponse.json({ error: message }, { status: 400 });
