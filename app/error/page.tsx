@@ -2,12 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import router from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 const ErrorContent = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const error = searchParams.get("error");
 
   return (
