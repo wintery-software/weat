@@ -74,7 +74,14 @@ export const formatAddress = (place?: Place) => {
 export const generateTitle = (title: string) => `${title} - ${APP_NAME}`;
 
 export const formatDistance = (meters: number, unit: DistanceUnit) => {
-  const result = unit === "imperial" ? kilometersToMiles(meters) : meters;
+  if (unit === "imperial") {
+    // Convert meters to kilometers, then to miles
+    const kilometers = meters / 1000;
+    const miles = kilometersToMiles(kilometers);
 
-  return Number((result / 1000).toFixed(2));
+    return Number(miles.toFixed(2));
+  } else {
+    // Metric: return kilometers
+    return Number((meters / 1000).toFixed(2));
+  }
 };
