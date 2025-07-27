@@ -1,17 +1,9 @@
-"use client";
-
 import { type RestaurantsData } from "@/app/api/restaurants/route";
 import { Rating } from "@/components/rating";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { getGoogleMapsSearchUrl, kilometersToMiles } from "@/lib/navigation";
-import { formatAddress } from "@/lib/utils";
+import { getGoogleMapsSearchUrl } from "@/lib/navigation";
+import { formatAddress, formatDistance } from "@/lib/utils";
 import { type TopTag, type ViewMode } from "@/types/types";
 import { MapPin } from "lucide-react";
 import Link from "next/link";
@@ -43,14 +35,21 @@ export const RestaurantResultCard = ({
         <div className={`flex flex-1 flex-col ${isList ? "" : ""}`}>
           <CardContent className="flex-1 p-4">
             <div className="flex flex-col gap-1">
-              <h3 className="font-bold">
-                <Link
-                  href={`/restaurants/${restaurant.id}`}
-                  className="hover:underline"
-                >
-                  {restaurant.name_zh || restaurant.name_en || "-"}
-                </Link>
-              </h3>
+              <div>
+                <h3 className="font-bold">
+                  <Link
+                    href={`/restaurants/${restaurant.id}`}
+                    className="hover:underline"
+                  >
+                    {restaurant.name_zh || restaurant.name_en || "-"}
+                  </Link>
+                </h3>
+                {restaurant.name_zh && (
+                  <p className="text-muted-foreground text-xs font-medium">
+                    {restaurant.name_en}
+                  </p>
+                )}
+              </div>
               <div className="text-muted-foreground flex items-center gap-2 text-xs">
                 <div className="flex items-center gap-1">
                   <span className="font-medium">
@@ -62,48 +61,46 @@ export const RestaurantResultCard = ({
                   />
                   <span>({restaurant.summary?.review_count ?? 0})</span>
                 </div>
-                {restaurant.distance !== undefined && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger className="text-muted-foreground flex items-center gap-1 underline decoration-dotted underline-offset-2">
-                        <MapPin className="size-3" />
-                        <span>
-                          {kilometersToMiles(restaurant.distance).toFixed(1)} mi
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent className="text-xs">
-                        Calculated straight-line distance, does not reflect the
-                        actual travel distance.
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                {restaurant.distance && (
+                  <span className="text-muted-foreground flex items-center gap-1">
+                    <MapPin className="size-3" />
+                    <span>
+                      {formatDistance(restaurant.distance, "imperial")} mi
+                    </span>
+                  </span>
                 )}
               </div>
               <Link
                 href={getGoogleMapsSearchUrl({
-                  placeId: restaurant.google_maps_place_id,
+                  placeId: restaurant.place.google_maps_place_id,
                   name: restaurant.name_en ?? restaurant.name_zh,
-                  address: formatAddress(restaurant.address),
+                  address: formatAddress(restaurant.place),
                 })}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary text-xs underline-offset-2 transition-colors hover:underline"
               >
-                {formatAddress(restaurant.address)}
+                {formatAddress(restaurant.place)}
               </Link>
             </div>
 
-            <div className="mt-3 flex flex-wrap gap-1">
-              {(restaurant.summary?.top_tags as TopTag[])?.map(
-                ([name, mention_count], i) => (
-                  <Badge key={i} variant="secondary" className="text-xs">
-                    {name}
-                    <span className="text-muted-foreground text-xs font-medium">
-                      {mention_count}
-                    </span>
-                  </Badge>
-                ),
-              )}
+            <div className="relative mt-3 overflow-hidden">
+              <div className="flex gap-1 overflow-x-auto pr-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {(restaurant.summary?.top_tags as TopTag[])?.map(
+                  ([name, mention_count], i) => (
+                    <Badge
+                      key={i}
+                      variant="secondary"
+                      className="flex-shrink-0 text-xs"
+                    >
+                      {name}
+                      <span className="text-muted-foreground text-xs font-medium">
+                        {mention_count}
+                      </span>
+                    </Badge>
+                  ),
+                )}
+              </div>
             </div>
           </CardContent>
         </div>

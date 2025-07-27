@@ -1,5 +1,3 @@
-"use client";
-
 import { type RestaurantData } from "@/app/api/restaurants/[id]/route";
 import { Rating } from "@/components/rating";
 import { RestaurantActions } from "@/components/restaurants/[id]/restaurant-actions";
@@ -14,18 +12,17 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/lib/api";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { CircleQuestionMarkIcon } from "lucide-react";
-import { useParams } from "next/navigation";
 
-const Page = () => {
-  const { id } = useParams();
-  const { data: restaurant } = useSuspenseQuery({
-    queryKey: ["restaurant", id],
-    queryFn: async () =>
-      (await api.get<RestaurantData>(`/restaurants/${id}`)).data,
-    staleTime: 5 * 60 * 1000,
-  });
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+const Page = async ({ params }: PageProps) => {
+  const { id } = await params;
+  const { data: restaurant } = await api.get<RestaurantData>(
+    `/restaurants/${id}`,
+  );
 
   return (
     <>

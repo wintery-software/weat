@@ -1,4 +1,4 @@
-import { Constants } from "@/types/db";
+import { Constants } from "@/types/supabase";
 import { type SortOption, type ViewMode } from "@/types/types";
 
 export const APP_NAME = "Weat";
@@ -11,7 +11,8 @@ export const DEFAULT_FETCH_LIMIT = 20;
 
 export const VIEW_MODES = ["grid", "list", "map"] as const;
 
-export const RESTAURANT_SORT_OPTIONS: Exclude<SortOption, "default">[] = [
+export const RESTAURANT_SORT_OPTIONS: SortOption[] = [
+  "default",
   "distance:asc",
   "distance:desc",
   "rating:asc",
@@ -32,3 +33,9 @@ export const DEFAULT_RESTAURANT_SORT_BY: SortOption = "default";
 export const DATABASE_ALL_TASK_STATUSES = Constants.public.Enums.task_status;
 
 export const DATABASE_USER_ROLES = Constants.public.Enums.user_role;
+
+export const SELECTED_TAG_BADGE_COLOR =
+  "bg-blue-100 hover:bg-blue-50 text-blue-900";
+
+export const SELECTED_SUGGESTED_TAG_BADGE_COLOR =
+  "bg-yellow-100 hover:bg-yellow-50 text-yellow-900";

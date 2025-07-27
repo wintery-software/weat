@@ -1,5 +1,6 @@
 import { APP_NAME } from "@/lib/constants";
-import { type Address } from "@/types/types";
+import { kilometersToMiles } from "@/lib/navigation";
+import { type DistanceUnit, type Place } from "@/types/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -43,37 +44,24 @@ export const env = (key: string, defaultValue?: string) => {
 /**
  * Format an address object into a string.
  *
- * For example, if the address is:
+ * Accepts a Place object (which has all address fields).
  *
- * ```json
- * {
- *   address_1: "123 Main St",
- *   address_2: "Apt 4B",
- *   city: "Santa Clara",
- *   state: "CA",
- *   zip_code: "95050"
- * }
- * ```
- *
- * The formatted address will be:
- * "123 Main St Apt 4B, Santa Clara, CA 95050"
- *
- * @param address - The address object to format
+ * @param place - The place object to format
  * @returns The formatted address string
  */
-export const formatAddress = (address: Address | null | undefined) => {
-  if (!address) {
+export const formatAddress = (place?: Place) => {
+  if (!place) {
     return "";
   }
 
-  let result = address.address_1;
+  let result = place.address_1;
 
-  if (address.address_2) {
+  if (place.address_2) {
     // No comma before address_2
-    result += ` ${address.address_2}`;
+    result += ` ${place.address_2}`;
   }
 
-  result += `, ${address.city}, ${address.state} ${address.zip_code}`;
+  result += `, ${place.city}, ${place.state} ${place.zip_code}`;
 
   return result;
 };
@@ -84,3 +72,9 @@ export const formatAddress = (address: Address | null | undefined) => {
  * @returns The generated title
  */
 export const generateTitle = (title: string) => `${title} - ${APP_NAME}`;
+
+export const formatDistance = (meters: number, unit: DistanceUnit) => {
+  const result = unit === "imperial" ? kilometersToMiles(meters) : meters;
+
+  return Number((result / 1000).toFixed(2));
+};

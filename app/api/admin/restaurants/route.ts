@@ -15,7 +15,7 @@ export const GET = async (request: Request) => {
     .select(
       `
       *,
-      address:addresses(*),
+      place:places(*),
       summary:restaurant_summaries(*),
       reviews:reviews(
         *,

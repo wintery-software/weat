@@ -31,12 +31,12 @@ export const RestaurantInfo = ({ restaurant }: RestaurantInfoProps) => {
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="aspect-square overflow-hidden rounded-md border">
-          {restaurant.latitude && restaurant.longitude ? (
+          {restaurant.place.lat && restaurant.place.lng ? (
             <Map
               defaultZoom={15}
               defaultCenter={{
-                lat: restaurant.latitude,
-                lng: restaurant.longitude,
+                lat: restaurant.place.lat,
+                lng: restaurant.place.lng,
               }}
               mapId="#"
               className="h-full w-full"
@@ -47,8 +47,8 @@ export const RestaurantInfo = ({ restaurant }: RestaurantInfoProps) => {
             >
               <AdvancedMarker
                 position={{
-                  lat: restaurant.latitude,
-                  lng: restaurant.longitude,
+                  lat: restaurant.place.lat,
+                  lng: restaurant.place.lng,
                 }}
                 title={restaurant.name_zh || restaurant.name_en}
               />
@@ -62,7 +62,7 @@ export const RestaurantInfo = ({ restaurant }: RestaurantInfoProps) => {
         <div className="flex flex-col gap-2 text-sm">
           <div className="flex items-center gap-2">
             <MapPin className="text-primary size-4" />
-            {formatAddress(restaurant.address)}
+            {formatAddress(restaurant.place)}
           </div>
           <div className="flex items-center gap-2">
             <Phone className="text-primary size-4" />
@@ -90,13 +90,13 @@ export const RestaurantInfo = ({ restaurant }: RestaurantInfoProps) => {
         <Button
           className="flex-1"
           asChild
-          disabled={!restaurant.google_maps_place_id}
+          disabled={!restaurant.place.google_maps_place_id}
         >
           <a
             href={getGoogleMapsSearchUrl({
-              placeId: restaurant.google_maps_place_id,
+              placeId: restaurant.place.google_maps_place_id,
               name: restaurant.name_en ?? restaurant.name_zh,
-              address: formatAddress(restaurant.address),
+              address: formatAddress(restaurant.place),
             })}
             target="_blank"
             rel="noopener noreferrer"
@@ -108,12 +108,12 @@ export const RestaurantInfo = ({ restaurant }: RestaurantInfoProps) => {
         <Button
           className="flex-1"
           asChild
-          disabled={!restaurant.latitude || !restaurant.longitude}
+          disabled={!restaurant.place.lat || !restaurant.place.lng}
         >
           <a
             href={getAppleMapsSearchUrl({
               name: restaurant.name_en ?? restaurant.name_zh,
-              address: formatAddress(restaurant.address),
+              address: formatAddress(restaurant.place),
             })}
             target="_blank"
             rel="noopener noreferrer"

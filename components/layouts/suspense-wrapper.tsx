@@ -11,6 +11,14 @@ export const SuspenseWrapper = ({
   fallback = <LoadingSpinner />,
 }: SuspenseWrapperProps) => (
   <ErrorBoundary>
-    <Suspense fallback={fallback}>{children}</Suspense>
+    <Suspense
+      fallback={
+        <div className="flex min-h-full items-center justify-center">
+          {fallback}
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
   </ErrorBoundary>
 );

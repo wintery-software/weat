@@ -24,12 +24,10 @@ export const RestaurantAiInsights = ({
 }: RestaurantAiInsightsProps) => {
   const [showAllTags, setShowAllTags] = useState(false);
 
-  const popularTags = restaurant.tags.filter((tag) => tag.mention_count > 1);
-  const nonPopularTags = restaurant.tags.filter(
-    (tag) => tag.mention_count === 1,
-  );
+  const popularTags = restaurant.tag_clusters.slice(0, 10);
+  const nonPopularTags = restaurant.tag_clusters.slice(10);
   const hasNonPopularTags = nonPopularTags.length > 0;
-  const filteredTags = showAllTags ? restaurant.tags : popularTags;
+  const filteredTags = showAllTags ? restaurant.tag_clusters : popularTags;
 
   return (
     <Card className="bg-gradient-to-br from-rose-50 via-white via-25% to-violet-50">
@@ -53,7 +51,7 @@ export const RestaurantAiInsights = ({
           <div className="flex items-center gap-2">
             <h3>标签</h3>
             <span className="text-muted-foreground text-sm">
-              {restaurant.tags.length}
+              {restaurant.tag_clusters.length}
             </span>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -63,7 +61,7 @@ export const RestaurantAiInsights = ({
                 variant={"outline"}
                 className="hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors duration-300 select-none"
               >
-                {tagData.tag.name}
+                {tagData.display_name}
                 <span className="text-muted-foreground ml-1">
                   {tagData.mention_count}
                 </span>

@@ -1,10 +1,14 @@
 import { createSSRClient } from "@/lib/supabase/clients/ssr";
-import { type Tag } from "@/types/types";
 import { NextResponse } from "next/server";
 
 export const GET = async () => {
   const supabase = await createSSRClient();
-  const { data, error } = await supabase.from("tags").select("*");
+  const { data, error } = await supabase.from("tag_clusters").select(`
+    *,
+    tags (
+      *
+    )
+    `);
 
   if (error) {
     console.error(error);
@@ -12,5 +16,5 @@ export const GET = async () => {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data as Tag[]);
+  return NextResponse.json(data);
 };

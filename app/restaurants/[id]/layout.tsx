@@ -1,5 +1,3 @@
-import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
-import { RestaurantSkeleton } from "@/components/restaurants/[id]/restaurant-skeleton";
 import { api } from "@/lib/api";
 import { type PropsWithChildren } from "react";
 
@@ -44,10 +42,6 @@ export const generateMetadata = async ({
   }
 };
 
-const Layout = async ({ children }: PropsWithChildren) => (
-  <SuspenseWrapper fallback={<RestaurantSkeleton />}>
-    {children}
-  </SuspenseWrapper>
-);
+const Layout = async ({ children }: PropsWithChildren) => <>{children}</>;
 
 export default Layout;

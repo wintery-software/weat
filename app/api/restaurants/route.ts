@@ -1,9 +1,8 @@
 import { DEFAULT_FETCH_LIMIT, RESTAURANT_SORT_OPTIONS } from "@/lib/constants";
-import { getHaversineDistance } from "@/lib/navigation";
 import { createSSRClient } from "@/lib/supabase/clients/ssr";
 import {
-  type Address,
   type Paginated,
+  type Place,
   type Restaurant,
   type RestaurantSummary,
   type SortOption,
@@ -11,26 +10,23 @@ import {
 import { NextResponse, type NextRequest } from "next/server";
 
 export interface RestaurantsData
-  extends Omit<Restaurant, "address_id" | "created_at" | "external_links"> {
-  address: Address;
+  extends Omit<Restaurant, "place_id" | "created_at" | "external_links"> {
+  place: Place;
   summary: Pick<
     RestaurantSummary,
     "average_rating" | "review_count" | "top_tags"
   >;
-  location: {
-    lng: number;
-    lat: number;
-  };
-  distance?: number;
+
+  distance_meters?: number;
 }
 
 interface Filters {
   page: number;
   limit: number;
-  query: string | null;
+  query?: string;
   lng: number;
   lat: number;
-  distance: number;
+  distance?: number;
   sortBy: SortOption;
 }
 
@@ -40,37 +36,32 @@ export const GET = async (request: NextRequest) => {
   const filters: Filters = {
     page: Number(searchParams.get("page")) || 1,
     limit: Number(searchParams.get("limit")) || DEFAULT_FETCH_LIMIT,
-    query: searchParams.get("q"),
+    query: searchParams.get("q") || undefined,
     lng: Number(searchParams.get("lng")),
     lat: Number(searchParams.get("lat")),
-    distance: Number(searchParams.get("distance")) || 0,
+    distance: Number(searchParams.get("distance")),
     sortBy: searchParams.get("sort_by") as SortOption,
   };
 
-  const hasFilters = Boolean(
-    filters.query ||
-      filters.distance ||
-      (!isNaN(filters.lng) && !isNaN(filters.lat)),
-  );
+  // Validate sortBy
+  if (filters.sortBy && !RESTAURANT_SORT_OPTIONS.includes(filters.sortBy)) {
+    return NextResponse.json(
+      { error: `Invalid sort_by value: ${filters.sortBy}` },
+      { status: 400 },
+    );
+  }
 
   const supabase = await createSSRClient();
-  let queryBuilder = supabase.from("restaurants").select(
-    `
-      id,
-      name_zh,
-      name_en,
-      location:restaurant_location_geojson,
-      phone_number,
-      google_maps_place_id,
-      updated_at,
-      address:addresses(*),
-      summary:restaurant_summaries(
-        average_rating,
-        review_count,
-        top_tags
-      )
-    `,
-    { count: "exact" },
+
+  let queryBuilder = supabase.rpc(
+    "get_restaurants_user_view",
+    {
+      lng: filters.lng,
+      lat: filters.lat,
+    },
+    {
+      count: "exact",
+    },
   );
 
   // Search if query is provided
@@ -80,16 +71,54 @@ export const GET = async (request: NextRequest) => {
     );
   }
 
-  // TODO: This is a workaround because supabase doesn't support order by joined tables
-  if (!hasFilters) {
-    queryBuilder = queryBuilder.range(
-      (filters.page - 1) * filters.limit,
-      filters.page * filters.limit - 1,
-    );
+  // If distance filter is greater than 0, filter by distance
+  if (filters.distance && filters.distance > 0) {
+    // distance is in km, so convert to meters
+    queryBuilder = queryBuilder.lte("distance", filters.distance * 1000);
   }
 
+  // Sort
+  if (filters.sortBy) {
+    const [field, direction] = filters.sortBy.split(":") as [
+      string,
+      "asc" | "desc",
+    ];
+
+    const ascending = direction === "asc";
+
+    if (field === "distance") {
+      queryBuilder = queryBuilder.order("distance", { ascending });
+    } else if (field === "rating") {
+      queryBuilder = queryBuilder
+        .order("summary->>average_rating", {
+          ascending,
+          nullsFirst: false,
+        })
+        .order("summary->>review_count", {
+          ascending,
+          nullsFirst: false,
+        });
+    } else if (field === "review_count") {
+      queryBuilder = queryBuilder
+        .order("summary->>review_count", {
+          ascending,
+          nullsFirst: false,
+        })
+        .order("summary->>average_rating", {
+          ascending,
+          nullsFirst: false,
+        });
+    }
+  }
+
+  // Apply pagination
+  queryBuilder = queryBuilder.range(
+    (filters.page - 1) * filters.limit,
+    filters.page * filters.limit - 1,
+  );
+
+  // Execute query
   const { data, error, count } = await queryBuilder;
-  let restaurants = (data ?? []) as unknown as RestaurantsData[];
 
   if (error) {
     console.error(error);
@@ -97,148 +126,11 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Always unwrap address and summary
-  restaurants = restaurants.map((restaurant) => ({
-    ...restaurant,
-    address: Array.isArray(restaurant.address)
-      ? restaurant.address[0]
-      : restaurant.address,
-    summary: Array.isArray(restaurant.summary)
-      ? restaurant.summary[0]
-      : restaurant.summary,
-  }));
-
-  const hasUserLocation = !isNaN(filters.lng) && !isNaN(filters.lat);
-
-  // If user location, add distance property
-  if (hasUserLocation) {
-    restaurants = restaurants.map((restaurant) => ({
-      ...restaurant,
-      distance: Number(
-        getHaversineDistance(
-          filters.lat,
-          filters.lng,
-          restaurant.location.lat,
-          restaurant.location.lng,
-        ).toFixed(1),
-      ),
-    }));
-
-    // If distance filter is greater than 0, filter by distance
-    if (filters.distance > 0) {
-      restaurants = restaurants.filter(
-        (restaurant) =>
-          restaurant.distance !== undefined &&
-          restaurant.distance <= filters.distance,
-      );
-    }
-  }
-
-  // Always sort if a valid sort option is provided
-  if (RESTAURANT_SORT_OPTIONS.includes(filters.sortBy)) {
-    restaurants = restaurants.sort((a, b) => {
-      switch (filters.sortBy) {
-        case "distance:asc":
-          if (!hasUserLocation) {
-            return 0;
-          }
-
-          return a.distance! - b.distance!;
-        case "distance:desc":
-          if (a.distance === undefined && b.distance === undefined) {
-            return 0;
-          }
-
-          if (a.distance === undefined) {
-            return 1;
-          }
-
-          if (b.distance === undefined) {
-            return -1;
-          }
-
-          return b.distance - a.distance;
-
-        case "rating:asc": {
-          const ratingDiff =
-            Number(a.summary?.average_rating ?? 0) -
-            Number(b.summary?.average_rating ?? 0);
-
-          if (ratingDiff !== 0) {
-            return ratingDiff;
-          }
-
-          return (
-            Number(a.summary?.review_count ?? 0) -
-            Number(b.summary?.review_count ?? 0)
-          );
-        }
-
-        case "rating:desc": {
-          const ratingDiff =
-            Number(b.summary?.average_rating ?? 0) -
-            Number(a.summary?.average_rating ?? 0);
-
-          if (ratingDiff !== 0) {
-            return ratingDiff;
-          }
-
-          return (
-            Number(b.summary?.review_count ?? 0) -
-            Number(a.summary?.review_count ?? 0)
-          );
-        }
-
-        case "review_count:asc": {
-          const countDiff =
-            Number(a.summary?.review_count ?? 0) -
-            Number(b.summary?.review_count ?? 0);
-
-          if (countDiff !== 0) {
-            return countDiff;
-          }
-
-          return (
-            Number(a.summary?.average_rating ?? 0) -
-            Number(b.summary?.average_rating ?? 0)
-          );
-        }
-
-        case "review_count:desc": {
-          const countDiff =
-            Number(b.summary?.review_count ?? 0) -
-            Number(a.summary?.review_count ?? 0);
-
-          if (countDiff !== 0) {
-            return countDiff;
-          }
-
-          return (
-            Number(b.summary?.average_rating ?? 0) -
-            Number(a.summary?.average_rating ?? 0)
-          );
-        }
-
-        default:
-          return 0;
-      }
-    });
-  }
-
-  // After filtering and sorting, apply pagination
-  const totalCount = hasFilters ? restaurants.length : (count ?? 0);
-  const totalPages = Math.ceil(totalCount / filters.limit) || 1;
-
-  // If filters are applied, paginate in memory
-  if (hasFilters) {
-    const from = (filters.page - 1) * filters.limit;
-    const to = filters.page * filters.limit;
-    restaurants = restaurants.slice(from, to);
-  }
+  const totalPages = Math.ceil((count || 0) / filters.limit) || 1;
 
   return NextResponse.json({
-    data: restaurants,
-    count: totalCount,
+    data: data as unknown as RestaurantsData[],
+    count: count ?? 0,
     page: filters.page,
     pageSize: filters.limit,
     totalPages,

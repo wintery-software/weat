@@ -1,19 +1,20 @@
 import { createSSRClient } from "@/lib/supabase/clients/ssr";
-import {
-  type Address,
-  type Restaurant,
-  type RestaurantDish,
-  type RestaurantSummary,
-  type RestaurantTag,
-  type Tag,
+import type {
+  Place,
+  Restaurant,
+  RestaurantDish,
+  RestaurantSummary,
+  TagCluster,
 } from "@/types/types";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-export interface RestaurantData
-  extends Omit<Restaurant, "address_id" | "created_at"> {
-  address: Address;
-  summary: Omit<RestaurantSummary, "id" | "restaurant_id">;
-  tags: (Omit<RestaurantTag, "id" | "tag_id"> & { tag: Tag })[];
+export interface RestaurantData extends Omit<Restaurant, "created_at"> {
+  place: Place & { lat: number; lng: number };
+  summary: Pick<
+    RestaurantSummary,
+    "average_rating" | "review_count" | "summary" | "updated_at"
+  >;
+  tag_clusters: (TagCluster & { mention_count: number })[];
   dishes: Omit<RestaurantDish, "restaurant_id">[];
 }
 
@@ -23,38 +24,9 @@ export const GET = async (
 ) => {
   const { id } = await params;
   const supabase = await createSSRClient();
-  const { data, error } = await supabase
-    .from("restaurants")
-    .select(
-      `
-      id,
-      name_zh,
-      name_en,
-      latitude,
-      longitude,
-      phone_number,
-      google_maps_place_id,
-      updated_at,
-      address:addresses(*),
-      summary:restaurant_summaries(
-        summary,
-        top_tags,
-        review_count,
-        average_rating,
-        updated_at
-      ), 
-      tags:restaurant_tags(
-        mention_count,
-        tag:tags(*)
-      ),
-      dishes:restaurant_dishes(
-        id,
-        name,
-        mention_count
-      )`,
-    )
-    .eq("id", id)
-    .single();
+  const { data, error } = await supabase.rpc("get_restaurant_by_id_user_view", {
+    id,
+  });
 
   if (error) {
     console.error(error);

@@ -176,103 +176,105 @@ export const Navbar = ({ groups, glass = true }: NavbarProps) => {
   return (
     <header
       id="navbar"
-      className="bg-background sticky top-0 z-50 container flex h-(--header-height) w-full items-center justify-between py-0"
+      className="bg-background sticky top-0 z-50 flex h-(--header-height) w-full items-center justify-between py-0"
     >
-      <div className="flex items-center gap-2 md:hidden">
-        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="hover:bg-transparent focus-visible:ring-0"
-            >
-              <div
-                className={`ease-bounce transition-all duration-200 ${isOpen ? "scale-110 rotate-180" : "scale-100 rotate-0"}`}
+      <div className="container flex items-center justify-between">
+        <div className="flex items-center gap-2 md:hidden">
+          <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="hover:bg-transparent focus-visible:ring-0"
               >
-                {isOpen ? <X /> : <Menu />}
-              </div>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className={cn(
-              "h-dvh w-dvw rounded-none border-none px-0 py-4",
-              glass && "glass",
-            )}
-            onClick={(e) => {
-              // Close if clicking on empty space
-              if (e.target === e.currentTarget) {
-                setIsOpen(false);
-              }
-            }}
-          >
-            <div className="container flex flex-col gap-8 px-4">
-              {routesWithActiveState.map((group) => (
-                <div key={group.label} className="flex flex-col gap-2">
-                  <span className="text-muted-foreground text-sm font-medium">
-                    {group.label}
-                  </span>
-                  {group.routes.map((route, i) => (
-                    <DropdownMenuItem
-                      key={i}
-                      className="flex cursor-pointer items-center gap-2 px-0 py-2 focus:bg-transparent"
-                      asChild
-                    >
-                      <Link href={route.href}>
-                        {renderIcon(route.icon, "size-6")}
-                        <span className="text-2xl font-medium">
-                          {route.label}
-                        </span>
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
+                <div
+                  className={`ease-bounce transition-all duration-200 ${isOpen ? "scale-110 rotate-180" : "scale-100 rotate-0"}`}
+                >
+                  {isOpen ? <X /> : <Menu />}
                 </div>
-              ))}
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
-      <Link href="/" className="flex items-center select-none">
-        <WeatLogo className="size-8" />
-        <span className="font-[winkyRough] text-xl font-semibold tracking-tight">
-          weat
-        </span>
-      </Link>
-
-      <div className="glass hidden items-center md:flex md:gap-2">
-        {routesWithActiveState.map((group) =>
-          group.routes.map((route) => (
-            <Button
-              key={route.href}
-              size="sm"
-              variant={route.active ? "default" : "ghost"}
-              asChild
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className={cn(
+                "h-dvh w-dvw rounded-none border-none px-0 py-4",
+                glass && "glass",
+              )}
+              onClick={(e) => {
+                // Close if clicking on empty space
+                if (e.target === e.currentTarget) {
+                  setIsOpen(false);
+                }
+              }}
             >
-              <Link href={route.href} className="flex items-center gap-2">
-                {renderIcon(route.icon, "size-4")}
-                {route.label}
-              </Link>
-            </Button>
-          )),
-        )}
-        <UserControl
-          user={user}
-          profile={profile}
-          supabase={supabase}
-          setUser={setUser}
-          setProfile={setProfile}
-        />
-      </div>
+              <div className="container flex flex-col gap-8 px-4">
+                {routesWithActiveState.map((group) => (
+                  <div key={group.label} className="flex flex-col gap-2">
+                    <span className="text-muted-foreground text-sm font-medium">
+                      {group.label}
+                    </span>
+                    {group.routes.map((route, i) => (
+                      <DropdownMenuItem
+                        key={i}
+                        className="flex cursor-pointer items-center gap-2 px-0 py-2 focus:bg-transparent"
+                        asChild
+                      >
+                        <Link href={route.href}>
+                          {renderIcon(route.icon, "size-6")}
+                          <span className="text-2xl font-medium">
+                            {route.label}
+                          </span>
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
-      <div className="md:hidden">
-        <UserControl
-          user={user}
-          profile={profile}
-          supabase={supabase}
-          setUser={setUser}
-          setProfile={setProfile}
-        />
+        <Link href="/" className="flex items-center select-none">
+          <WeatLogo className="size-8" />
+          <span className="font-[winkyRough] text-xl font-semibold tracking-tight">
+            weat
+          </span>
+        </Link>
+
+        <div className="glass hidden items-center md:flex md:gap-2">
+          {routesWithActiveState.map((group) =>
+            group.routes.map((route) => (
+              <Button
+                key={route.href}
+                size="sm"
+                variant={route.active ? "default" : "ghost"}
+                asChild
+              >
+                <Link href={route.href} className="flex items-center gap-2">
+                  {renderIcon(route.icon, "size-4")}
+                  {route.label}
+                </Link>
+              </Button>
+            )),
+          )}
+          <UserControl
+            user={user}
+            profile={profile}
+            supabase={supabase}
+            setUser={setUser}
+            setProfile={setProfile}
+          />
+        </div>
+
+        <div className="md:hidden">
+          <UserControl
+            user={user}
+            profile={profile}
+            supabase={supabase}
+            setUser={setUser}
+            setProfile={setProfile}
+          />
+        </div>
       </div>
     </header>
   );

@@ -14,12 +14,14 @@ export type Database = {
   };
   public: {
     Tables: {
-      addresses: {
+      places: {
         Row: {
           address_1: string;
           address_2: string | null;
           city: string;
+          google_maps_place_id: string;
           id: string;
+          location: unknown | null;
           state: string;
           zip_code: string;
         };
@@ -27,7 +29,9 @@ export type Database = {
           address_1: string;
           address_2?: string | null;
           city: string;
+          google_maps_place_id: string;
           id?: string;
+          location?: unknown | null;
           state: string;
           zip_code: string;
         };
@@ -35,48 +39,11 @@ export type Database = {
           address_1?: string;
           address_2?: string | null;
           city?: string;
-          id?: string;
-          state?: string;
-          zip_code?: string;
-        };
-        Relationships: [];
-      };
-      blacklisted_places: {
-        Row: {
-          google_maps_place_id: string;
-          id: string;
-          reason: string | null;
-        };
-        Insert: {
-          google_maps_place_id: string;
-          id?: string;
-          reason?: string | null;
-        };
-        Update: {
           google_maps_place_id?: string;
           id?: string;
-          reason?: string | null;
-        };
-        Relationships: [];
-      };
-      blacklisted_reviews: {
-        Row: {
-          id: string;
-          reason: string | null;
-          source: string;
-          source_id: string;
-        };
-        Insert: {
-          id?: string;
-          reason?: string | null;
-          source: string;
-          source_id: string;
-        };
-        Update: {
-          id?: string;
-          reason?: string | null;
-          source?: string;
-          source_id?: string;
+          location?: unknown | null;
+          state?: string;
+          zip_code?: string;
         };
         Relationships: [];
       };
@@ -241,56 +208,44 @@ export type Database = {
       };
       restaurants: {
         Row: {
-          address_id: string;
           created_at: string;
           external_links: Json | null;
-          google_maps_place_id: string;
           id: string;
-          is_verified: boolean;
-          latitude: number;
-          location: unknown;
-          longitude: number;
+          is_blocked: boolean;
           name_en: string | null;
           name_zh: string | null;
           phone_number: string | null;
+          place_id: string;
           updated_at: string;
         };
         Insert: {
-          address_id: string;
           created_at?: string;
           external_links?: Json | null;
-          google_maps_place_id: string;
           id?: string;
-          is_verified?: boolean;
-          latitude: number;
-          location: unknown;
-          longitude: number;
+          is_blocked?: boolean;
           name_en?: string | null;
           name_zh?: string | null;
           phone_number?: string | null;
+          place_id: string;
           updated_at?: string;
         };
         Update: {
-          address_id?: string;
           created_at?: string;
           external_links?: Json | null;
-          google_maps_place_id?: string;
           id?: string;
-          is_verified?: boolean;
-          latitude?: number;
-          location?: unknown;
-          longitude?: number;
+          is_blocked?: boolean;
           name_en?: string | null;
           name_zh?: string | null;
           phone_number?: string | null;
+          place_id?: string;
           updated_at?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "restaurants_address_id_addresses_id_fk";
-            columns: ["address_id"];
+            foreignKeyName: "restaurants_place_id_fkey";
+            columns: ["place_id"];
             isOneToOne: false;
-            referencedRelation: "addresses";
+            referencedRelation: "places";
             referencedColumns: ["id"];
           },
         ];
@@ -340,7 +295,7 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
-          is_verified: boolean;
+          is_blocked: boolean;
           published_at: string | null;
           restaurant_id: string;
           source: Database["public"]["Enums"]["review_source"];
@@ -349,7 +304,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           id?: string;
-          is_verified?: boolean;
+          is_blocked?: boolean;
           published_at?: string | null;
           restaurant_id: string;
           source?: Database["public"]["Enums"]["review_source"];
@@ -358,7 +313,7 @@ export type Database = {
         Update: {
           created_at?: string;
           id?: string;
-          is_verified?: boolean;
+          is_blocked?: boolean;
           published_at?: string | null;
           restaurant_id?: string;
           source?: Database["public"]["Enums"]["review_source"];
@@ -393,16 +348,19 @@ export type Database = {
         Row: {
           cluster_id: string;
           id: string;
+          is_blocked: boolean;
           name: string;
         };
         Insert: {
           cluster_id: string;
           id?: string;
+          is_blocked?: boolean;
           name: string;
         };
         Update: {
           cluster_id?: string;
           id?: string;
+          is_blocked?: boolean;
           name?: string;
         };
         Relationships: [
@@ -423,7 +381,7 @@ export type Database = {
           id: string;
           status: Database["public"]["Enums"]["task_status"];
           status_message: string | null;
-          task: string;
+          type: Database["public"]["Enums"]["task_type"];
           updated_at: string;
         };
         Insert: {
@@ -433,7 +391,7 @@ export type Database = {
           id?: string;
           status: Database["public"]["Enums"]["task_status"];
           status_message?: string | null;
-          task: string;
+          type: Database["public"]["Enums"]["task_type"];
           updated_at?: string;
         };
         Update: {
@@ -443,7 +401,7 @@ export type Database = {
           id?: string;
           status?: Database["public"]["Enums"]["task_status"];
           status_message?: string | null;
-          task?: string;
+          type?: Database["public"]["Enums"]["task_type"];
           updated_at?: string;
         };
         Relationships: [];
@@ -457,7 +415,7 @@ export type Database = {
           id: string;
           metadata: Json | null;
           reason: string;
-          status: Database["public"]["Enums"]["verification_status"] | null;
+          status: Database["public"]["Enums"]["verification_status"];
           updated_at: string;
           verification_type: string;
         };
@@ -469,7 +427,7 @@ export type Database = {
           id?: string;
           metadata?: Json | null;
           reason: string;
-          status?: Database["public"]["Enums"]["verification_status"] | null;
+          status?: Database["public"]["Enums"]["verification_status"];
           updated_at?: string;
           verification_type: string;
         };
@@ -481,7 +439,7 @@ export type Database = {
           id?: string;
           metadata?: Json | null;
           reason?: string;
-          status?: Database["public"]["Enums"]["verification_status"] | null;
+          status?: Database["public"]["Enums"]["verification_status"];
           updated_at?: string;
           verification_type?: string;
         };
@@ -506,8 +464,12 @@ export type Database = {
       };
     };
     Enums: {
-      review_source: "XIAOHONGSHU";
+      review_source: "xiaohongshu";
       task_status: "PENDING" | "STARTED" | "FAILURE" | "SUCCESS";
+      task_type:
+        | "process_xhs_post"
+        | "aggregate_restaurant_reviews"
+        | "crawl_xhs_posts";
       user_role: "admin";
       verification_entity_type: "RESTAURANT" | "REVIEW";
       verification_status: "PENDING" | "RESOLVED";
@@ -641,8 +603,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      review_source: ["XIAOHONGSHU"],
+      review_source: ["xiaohongshu"],
       task_status: ["PENDING", "STARTED", "FAILURE", "SUCCESS"],
+      task_type: [
+        "process_xhs_post",
+        "aggregate_restaurant_reviews",
+        "crawl_xhs_posts",
+      ],
       user_role: ["admin"],
       verification_entity_type: ["RESTAURANT", "REVIEW"],
       verification_status: ["PENDING", "RESOLVED"],

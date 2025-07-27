@@ -21,9 +21,9 @@ interface NavbarLayoutProps {
 }
 
 export const NavbarLayout = ({ children }: NavbarLayoutProps) => (
-  <div className="flex min-h-screen flex-col">
+  <div className="flex min-h-dvh flex-col">
     <Navbar groups={groups} />
-    <main className="flex-1">{children}</main>
+    <main className="flex flex-1 flex-col">{children}</main>
     <Footer />
   </div>
 );

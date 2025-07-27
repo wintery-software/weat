@@ -9,6 +9,15 @@ export const api = axios.create({
   },
 });
 
+export const dataInfraApi = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_DATA_INFRA_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+    // DO NOT MAKE THIS PUBLIC
+    "x-api-key": process.env.DATA_INFRA_API_KEY as string,
+  },
+});
+
 // Response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
