@@ -16,7 +16,6 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SiGoogle } from "@icons-pack/react-simple-icons";
 import { Loader2 } from "lucide-react";
-import Link from "next/link";
 import { useTransition, type ComponentPropsWithoutRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -89,9 +88,9 @@ export const LoginForm = ({
               <FormItem>
                 <div className="flex items-center justify-between">
                   <FormLabel>密码</FormLabel>
-                  <Link href="#" className="link text-sm">
+                  {/* <Link href="#" className="link text-sm">
                     忘记密码?
-                  </Link>
+                  </Link> */}
                 </div>
                 <FormControl>
                   <Input
@@ -118,12 +117,12 @@ export const LoginForm = ({
             使用 Google 登录
           </Button>
         </div>
-        <div className="text-center text-sm">
+        {/* <div className="text-center text-sm">
           没有账号?&nbsp;
           <a href="#" className="link">
             创建新账号
           </a>
-        </div>
+        </div> */}
       </form>
     </Form>
   );
