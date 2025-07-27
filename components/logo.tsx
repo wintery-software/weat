@@ -1,13 +1,14 @@
-import { type LucideProps } from "lucide-react";
-import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { type ComponentProps } from "react";
 
-// export const WeatLogo = (props: LucideProps) => <SaladIcon {...props} />;
-export const WeatLogo = (props: LucideProps) => (
-  <Image
-    src="/weat.jpg"
-    alt="Weat Logo"
-    width={512}
-    height={512}
-    className={props.className}
+export const WeatLogo = ({ className, ...props }: ComponentProps<"div">) => (
+  <div
+    className={cn(
+      "inline-block bg-[url('/weat-64x64.png')] bg-cover bg-center bg-no-repeat",
+      className,
+    )}
+    aria-label="Weat Logo"
+    role="img"
+    {...props}
   />
 );
