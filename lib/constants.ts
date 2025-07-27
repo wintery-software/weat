@@ -39,3 +39,5 @@ export const SELECTED_TAG_BADGE_COLOR =
 
 export const SELECTED_SUGGESTED_TAG_BADGE_COLOR =
   "bg-yellow-100 hover:bg-yellow-50 text-yellow-900";
+
+export const MIN_PASSWORD_LENGTH = 8;

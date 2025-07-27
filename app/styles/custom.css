@@ -13,7 +13,7 @@
   --color-info: oklch(0.62 0.19 260);
   /* orange-500 */
   --color-warning: oklch(0.7 0.19 48);
-
+  --color-link: var(--color-info);
   --header-height: calc(var(--spacing) * 12);
 }
 
@@ -33,4 +33,8 @@
 
 .glass {
   @apply bg-background/90 supports-[backdrop-filter]:bg-background/50 backdrop-blur-sm;
+}
+
+.link {
+  @apply text-link underline-offset-2 hover:underline;
 }
