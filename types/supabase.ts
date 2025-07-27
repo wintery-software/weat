@@ -54,6 +54,7 @@ export type Database = {
           id: string;
           name: string | null;
           roles: Database["public"]["Enums"]["user_role"][] | null;
+          settings: Json;
           user_id: string;
         };
         Insert: {
@@ -62,6 +63,7 @@ export type Database = {
           id?: string;
           name?: string | null;
           roles?: Database["public"]["Enums"]["user_role"][] | null;
+          settings?: Json;
           user_id?: string;
         };
         Update: {
@@ -70,6 +72,7 @@ export type Database = {
           id?: string;
           name?: string | null;
           roles?: Database["public"]["Enums"]["user_role"][] | null;
+          settings?: Json;
           user_id?: string;
         };
         Relationships: [];
@@ -450,6 +453,24 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      get_restaurant_by_id_user_view: {
+        Args: { id: string };
+        Returns: Json;
+      };
+      get_restaurants_user_view: {
+        Args: { lat: number; lng: number };
+        Returns: {
+          id: string;
+          name_zh: string;
+          name_en: string;
+          phone_number: string;
+          updated_at: string;
+          is_blocked: boolean;
+          place: Json;
+          summary: Json;
+          distance: number;
+        }[];
+      };
       get_tagged_restaurants_count: {
         Args: Record<PropertyKey, never>;
         Returns: number;
