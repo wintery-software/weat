@@ -3,7 +3,11 @@ import { Rating } from "@/components/rating";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { getGoogleMapsSearchUrl } from "@/lib/navigation";
-import { formatAddress, formatDistance } from "@/lib/utils";
+import {
+  formatAddress,
+  formatDistance,
+  getRestaurantImageUrl,
+} from "@/lib/utils";
 import { type TopTag, type ViewMode } from "@/types/types";
 import { MapPin } from "lucide-react";
 import Link from "next/link";
@@ -28,7 +32,14 @@ export const RestaurantResultCard = ({
             isList ? "min-h-full w-32 flex-shrink-0 sm:w-48" : "h-48 w-full"
           }`}
           style={{
-            backgroundImage: `url(/placeholder.svg)`,
+            backgroundImage: `url(${
+              restaurant.images.length > 0
+                ? getRestaurantImageUrl(
+                    restaurant.id,
+                    restaurant.display_image ?? restaurant.images[0],
+                  )
+                : "/placeholder.svg"
+            })`,
             backgroundColor: "#f3f4f6",
           }}
         />

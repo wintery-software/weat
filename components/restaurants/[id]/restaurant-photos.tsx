@@ -9,6 +9,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { getRestaurantImageUrl } from "@/lib/utils";
 import Image from "next/image";
 
 interface RestaurantPhotosProps {
@@ -19,14 +20,14 @@ export const RestaurantPhotos = ({ restaurant }: RestaurantPhotosProps) => (
   <Card className="border-none p-0">
     <CardContent className="relative p-0">
       {/* Carousel for mobile */}
-      <div className="md:hidden">
+      <div className="flex flex-col gap-2 sm:hidden">
         <Carousel className="w-full">
           <CarouselContent>
-            {Array.from({ length: 8 }).map((_, index) => (
+            {restaurant.images.map((image, index) => (
               <CarouselItem key={index}>
                 <div className="group relative aspect-square overflow-hidden rounded-lg">
                   <Image
-                    src="/placeholder.svg"
+                    src={getRestaurantImageUrl(restaurant.id, image)}
                     alt={`${restaurant.name_zh || restaurant.name_en || "-"} photo ${index + 1}`}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -48,14 +49,14 @@ export const RestaurantPhotos = ({ restaurant }: RestaurantPhotosProps) => (
       </div>
 
       {/* Grid for larger screens */}
-      <div className="hidden gap-2 md:grid md:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 8 }).map((_, index) => (
+      <div className="hidden gap-2 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        {restaurant.images.map((image, index) => (
           <div
             key={index}
             className="group relative aspect-square overflow-hidden rounded-lg"
           >
             <Image
-              src="/placeholder.svg"
+              src={getRestaurantImageUrl(restaurant.id, image)}
               alt={`${restaurant.name_zh || restaurant.name_en || "-"} photo ${index + 1}`}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"

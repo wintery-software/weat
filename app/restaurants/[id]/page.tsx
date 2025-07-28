@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/lib/api";
+import { getRestaurantImageUrl } from "@/lib/utils";
 import { CircleQuestionMarkIcon } from "lucide-react";
 
 interface PageProps {
@@ -29,18 +30,29 @@ const Page = async ({ params }: PageProps) => {
       {/* Background image */}
       <div
         className="h-64 w-full bg-cover bg-center md:h-80"
-        style={{ backgroundImage: `url(/placeholder.svg)` }}
+        style={{
+          backgroundImage: `url(${
+            restaurant.images.length > 0
+              ? getRestaurantImageUrl(
+                  restaurant.id,
+                  restaurant.display_image ?? restaurant.images[0],
+                )
+              : "/placeholder.svg"
+          })`,
+        }}
       />
 
       {/* Main content */}
-      <div className="container flex flex-col gap-2 py-4">
+      <div className="container flex flex-col gap-4 py-4">
         <div className="flex justify-between">
           <div className="flex flex-col gap-1">
             <div>
               <h1>{restaurant.name_zh || restaurant.name_en}</h1>
-              <p className="text-muted-foreground text-sm">
-                {restaurant.name_en || restaurant.name_zh}
-              </p>
+              {restaurant.name_zh && (
+                <p className="text-muted-foreground text-sm font-medium">
+                  {restaurant.name_en}
+                </p>
+              )}
             </div>
             <div className="flex items-center gap-2 text-sm">
               <span>

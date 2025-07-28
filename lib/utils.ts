@@ -85,3 +85,6 @@ export const formatDistance = (meters: number, unit: DistanceUnit) => {
     return Number((meters / 1000).toFixed(2));
   }
 };
+
+export const getRestaurantImageUrl = (restaurantId: string, imageId: string) =>
+  `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/restaurant-images/${restaurantId}/${imageId}`;
