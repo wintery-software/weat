@@ -163,12 +163,23 @@ export const RestaurantFilters = ({
           <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
             placeholder="搜索餐厅名称..."
-            className="pl-9 text-sm"
+            className="px-9 text-sm"
             value={filters.query}
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, query: e.target.value }))
             }
           />
+          {filters.query && (
+            <button
+              type="button"
+              aria-label="清除搜索"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-0.5 focus:outline-none"
+              onClick={() => setFilters((prev) => ({ ...prev, query: "" }))}
+              tabIndex={0}
+            >
+              <XIcon className="size-3.5" />
+            </button>
+          )}
         </div>
         {/* Filter Button and View Tabs */}
         <div className="flex items-center gap-2">
