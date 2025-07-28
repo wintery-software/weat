@@ -22,29 +22,34 @@ async function sha256(buffer: Buffer): Promise<string> {
   return crypto.createHash("sha256").update(buffer).digest("hex");
 }
 
+async function listAllRestaurantIds(bucket: string): Promise<string[]> {
+  let allFolders: any[] = [];
+  let page = 0;
+  const perPage = 100;
+  while (true) {
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .list("", { limit: perPage, offset: page * perPage });
+    if (error) {
+      console.error(chalk.red("Failed to list root folders:"), error);
+      break;
+    }
+    if (!data || data.length === 0) break;
+    allFolders = allFolders.concat(data);
+    if (data.length < perPage) break;
+    page++;
+  }
+  return allFolders
+    .filter((item) => !item.metadata?.mimetype)
+    .map((item) => item.name);
+}
+
 async function main() {
   const bucket = "restaurant-images";
   console.log(chalk.blue(`Deduplicating objects in bucket: ${bucket}`));
 
-  // Step 1: List all restaurant IDs (folders at root)
-  const { data: rootFolders, error: rootError } = await supabase.storage
-    .from(bucket)
-    .list("");
-
-  if (rootError) {
-    console.error(chalk.red("Failed to list root folders:"), rootError);
-    process.exit(1);
-  }
-
-  if (!rootFolders || rootFolders.length === 0) {
-    console.log(chalk.yellow("No restaurant folders found."));
-    return;
-  }
-
-  // Filter to only folders (restaurant IDs)
-  const restaurantIds = rootFolders
-    .filter((item) => !item.metadata?.mimetype) // Folders don't have mimetype
-    .map((item) => item.name);
+  // Step 1: List all restaurant IDs (folders at root, paginated)
+  const restaurantIds = await listAllRestaurantIds(bucket);
 
   if (restaurantIds.length === 0) {
     console.log(chalk.yellow("No restaurant folders found."));
@@ -147,6 +152,42 @@ async function main() {
           totalDeleted++;
         }
       }
+    }
+
+    // After deduplication, update the images array in the DB
+    const { data: updatedImages, error: listError } = await supabase.storage
+      .from(bucket)
+      .list(restaurantId);
+
+    if (listError) {
+      console.error(
+        chalk.red(`[${restaurantId}] Failed to list images for DB update:`),
+        listError,
+      );
+      continue;
+    }
+
+    const imagePaths = (updatedImages || [])
+      .filter((img) => img.metadata?.mimetype)
+      .map((img) => `${restaurantId}/${img.name}`);
+
+    // Update the restaurant record in the DB
+    const { error: updateError } = await supabase
+      .from("restaurants")
+      .update({ images: imagePaths })
+      .eq("id", restaurantId);
+
+    if (updateError) {
+      console.error(
+        chalk.red(`[${restaurantId}] Failed to update images in DB:`),
+        updateError,
+      );
+    } else {
+      console.log(
+        chalk.green(
+          `[${restaurantId}] Updated images in DB (${imagePaths.length} images)`,
+        ),
+      );
     }
   }
 
