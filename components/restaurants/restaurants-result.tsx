@@ -1,13 +1,13 @@
 import { type RestaurantsData } from "@/app/api/restaurants/route";
 import { InfiniteScroll } from "@/components/infinite-scroll";
-import { RestaurantResultCard } from "@/components/restaurants/restaurant-result-card";
+import { RestaurantsResultCard } from "@/components/restaurants/restaurants-result-card";
 import type { ViewMode } from "@/types/types";
 import type {
   FetchNextPageOptions,
   InfiniteQueryObserverResult,
 } from "@tanstack/react-query";
 
-interface RestaurantResultProps {
+interface RestaurantsResultProps {
   restaurants: RestaurantsData[];
   view: ViewMode;
   hasNextPage: boolean;
@@ -17,13 +17,19 @@ interface RestaurantResultProps {
   ) => Promise<InfiniteQueryObserverResult>;
 }
 
-export const RestaurantResult = ({
+const viewClassNames: Record<ViewMode, string> = {
+  grid: "grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
+  list: "flex flex-col gap-2",
+  map: "",
+};
+
+export const RestaurantsResult = ({
   restaurants,
   view,
   hasNextPage,
   isFetchingNextPage,
   onLoadMore,
-}: RestaurantResultProps) => (
+}: RestaurantsResultProps) => (
   <InfiniteScroll
     hasNextPage={hasNextPage}
     isFetchingNextPage={isFetchingNextPage}
@@ -42,15 +48,9 @@ export const RestaurantResult = ({
     className="flex flex-col gap-4"
   >
     {/* Results */}
-    <div
-      className={
-        view === "grid"
-          ? "grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-          : "flex flex-col gap-2"
-      }
-    >
+    <div className={viewClassNames[view]}>
       {restaurants.map((restaurant) => (
-        <RestaurantResultCard
+        <RestaurantsResultCard
           key={restaurant.id}
           restaurant={restaurant}
           view={view}

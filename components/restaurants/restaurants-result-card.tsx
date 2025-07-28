@@ -12,15 +12,15 @@ import { type TopTag, type ViewMode } from "@/types/types";
 import { MapPin } from "lucide-react";
 import Link from "next/link";
 
-export interface RestaurantResultCardProps {
+export interface RestaurantsResultCardProps {
   restaurant: RestaurantsData & { distance?: number };
   view: ViewMode;
 }
 
-export const RestaurantResultCard = ({
+export const RestaurantsResultCard = ({
   restaurant,
   view,
-}: RestaurantResultCardProps) => {
+}: RestaurantsResultCardProps) => {
   const isList = view === "list";
 
   return (

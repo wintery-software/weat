@@ -2,8 +2,8 @@
 
 import { type RestaurantsData } from "@/app/api/restaurants/route";
 import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
-import { RestaurantFilters } from "@/components/restaurants/restaurant-filters";
-import { RestaurantResult } from "@/components/restaurants/restaurant-result";
+import { RestaurantsFilters } from "@/components/restaurants/restaurants-filters";
+import { RestaurantsResult } from "@/components/restaurants/restaurants-result";
 import { api } from "@/lib/api";
 import {
   DEFAULT_DEBOUNCE_DELAY,
@@ -23,7 +23,7 @@ const title = "发现餐厅";
 const description = "发现你附近的餐厅，并查看它们的评价和评分。";
 
 // Component that only handles data fetching and results rendering
-const RestaurantResults = ({
+const RestaurantsResults = ({
   debouncedFilters,
   userLocation,
   view,
@@ -93,7 +93,7 @@ const RestaurantResults = ({
   }, [data]);
 
   return (
-    <RestaurantResult
+    <RestaurantsResult
       restaurants={restaurants}
       view={view}
       hasNextPage={hasNextPage ?? false}
@@ -230,7 +230,7 @@ const Page = () => {
         </p>
       </div>
 
-      <RestaurantFilters
+      <RestaurantsFilters
         filters={filters}
         setFilters={setFilters}
         sliderValue={sliderValue}
@@ -245,7 +245,7 @@ const Page = () => {
       />
 
       <SuspenseWrapper>
-        <RestaurantResults
+        <RestaurantsResults
           debouncedFilters={debouncedFilters}
           userLocation={userLocation}
           view={view}

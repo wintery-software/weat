@@ -49,7 +49,7 @@ interface UserLocation {
   longitude: number;
 }
 
-interface RestaurantFiltersProps {
+interface RestaurantsFiltersProps {
   filters: {
     sortBy: SortOption;
     distance: number;
@@ -138,7 +138,7 @@ const SORT_OPTIONS: { label: string; icon?: React.ReactNode; value: string }[] =
     },
   ];
 
-export const RestaurantFilters = ({
+export const RestaurantsFilters = ({
   filters,
   setFilters,
   sliderValue,
@@ -150,7 +150,7 @@ export const RestaurantFilters = ({
   userLocation,
   geoPermission,
   onRequestLocation,
-}: RestaurantFiltersProps) => {
+}: RestaurantsFiltersProps) => {
   return (
     <div
       id="search-filters"
