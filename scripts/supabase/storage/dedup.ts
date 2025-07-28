@@ -167,14 +167,14 @@ async function main() {
       continue;
     }
 
-    const imagePaths = (updatedImages || [])
+    const imageNames = (updatedImages || [])
       .filter((img) => img.metadata?.mimetype)
-      .map((img) => `${restaurantId}/${img.name}`);
+      .map((img) => img.name); // just filename with extension
 
     // Update the restaurant record in the DB
     const { error: updateError } = await supabase
       .from("restaurants")
-      .update({ images: imagePaths })
+      .update({ images: imageNames })
       .eq("id", restaurantId);
 
     if (updateError) {
@@ -185,7 +185,7 @@ async function main() {
     } else {
       console.log(
         chalk.green(
-          `[${restaurantId}] Updated images in DB (${imagePaths.length} images)`,
+          `[${restaurantId}] Updated images in DB (${imageNames.length} images)`,
         ),
       );
     }
