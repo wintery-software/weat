@@ -15,7 +15,6 @@ interface RestaurantResultProps {
   onLoadMore: (
     options?: FetchNextPageOptions,
   ) => Promise<InfiniteQueryObserverResult>;
-  totalCount: number;
 }
 
 export const RestaurantResult = ({
@@ -24,7 +23,6 @@ export const RestaurantResult = ({
   hasNextPage,
   isFetchingNextPage,
   onLoadMore,
-  totalCount,
 }: RestaurantResultProps) => (
   <InfiniteScroll
     hasNextPage={hasNextPage}
@@ -35,7 +33,7 @@ export const RestaurantResult = ({
         <div className="text-sm">
           <span className="text-muted-foreground">已显示所有</span>
           &nbsp;
-          <span className="font-medium">{totalCount}</span>
+          <span className="font-medium">{restaurants.length}</span>
           &nbsp;
           <span className="text-muted-foreground">家餐厅</span>
         </div>

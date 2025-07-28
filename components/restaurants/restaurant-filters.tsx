@@ -70,7 +70,6 @@ interface RestaurantFiltersProps {
   setView: (v: ViewMode) => void;
   userLocation: UserLocation | null;
   geoPermission: PermissionState | null;
-  totalCount: number;
   onRequestLocation: () => void;
 }
 
@@ -150,7 +149,6 @@ export const RestaurantFilters = ({
   setView,
   userLocation,
   geoPermission,
-  totalCount,
   onRequestLocation,
 }: RestaurantFiltersProps) => {
   return (
@@ -189,9 +187,6 @@ export const RestaurantFilters = ({
                 <SlidersHorizontalIcon className="size-4" />
                 <div className="flex items-center gap-1">
                   <span className="hidden sm:inline">筛选</span>
-                  <span className="text-muted-foreground text-xs">
-                    {totalCount}
-                  </span>
                 </div>
               </Button>
             </SheetTrigger>

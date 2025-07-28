@@ -22,7 +22,88 @@ import { toast } from "sonner";
 const title = "发现餐厅";
 const description = "发现你附近的餐厅，并查看它们的评价和评分。";
 
-const RestaurantContainer = () => {
+// Component that only handles data fetching and results rendering
+const RestaurantResults = ({
+  debouncedFilters,
+  userLocation,
+  view,
+}: {
+  debouncedFilters: {
+    sortBy: SortOption;
+    distance: number;
+    query: string;
+  };
+  userLocation: GeolocationCoordinates | null;
+  view: ViewMode;
+}) => {
+  // Data fetching
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useSuspenseInfiniteQuery({
+      queryKey: [
+        "restaurants",
+        debouncedFilters.query.trim(),
+        debouncedFilters.sortBy,
+        debouncedFilters.distance,
+        userLocation,
+      ],
+      queryFn: async ({ pageParam = 1 }) => {
+        const params = new URLSearchParams({
+          page: pageParam.toString(),
+          limit: DEFAULT_FETCH_LIMIT.toString(),
+        });
+
+        if (debouncedFilters.query.trim()) {
+          params.append("q", debouncedFilters.query.trim());
+        }
+
+        // Add location parameters if available
+        if (userLocation) {
+          params.append("lat", userLocation.latitude.toString());
+          params.append("lng", userLocation.longitude.toString());
+        }
+
+        // Add sort and distance as query params
+        if (debouncedFilters.sortBy) {
+          params.append("sort_by", debouncedFilters.sortBy);
+        }
+
+        if (debouncedFilters.distance > 0) {
+          params.append("distance", debouncedFilters.distance.toString());
+        }
+
+        const response = await api.get<Paginated<RestaurantsData[]>>(
+          `/restaurants?${params.toString()}`,
+        );
+
+        return response.data;
+      },
+      getNextPageParam: (lastPage) => {
+        if (lastPage.page >= lastPage.totalPages) {
+          return undefined;
+        }
+
+        return lastPage.page + 1;
+      },
+      initialPageParam: 1,
+    });
+
+  // Flatten all pages into a single array
+  const restaurants = useMemo(() => {
+    return data?.pages.flatMap((page) => page.data) ?? [];
+  }, [data]);
+
+  return (
+    <RestaurantResult
+      restaurants={restaurants}
+      view={view}
+      hasNextPage={hasNextPage ?? false}
+      isFetchingNextPage={isFetchingNextPage}
+      onLoadMore={fetchNextPage}
+    />
+  );
+};
+
+const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -103,9 +184,9 @@ const RestaurantContainer = () => {
   }, [geoPermission]);
 
   // Manual relocation trigger
-  const handleRequestLocation = () => {
+  const handleRequestLocation = useCallback(() => {
     getLocation();
-  };
+  }, [getLocation]);
 
   // Request location on component mount
   useEffect(() => {
@@ -140,67 +221,15 @@ const RestaurantContainer = () => {
     router.replace(url.pathname + url.search, { scroll: false });
   }, [debouncedQuery, debouncedFilters.sortBy, router, searchParams]);
 
-  // Data fetching
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useSuspenseInfiniteQuery({
-      queryKey: [
-        "restaurants",
-        debouncedFilters.query.trim(),
-        debouncedFilters.sortBy,
-        debouncedFilters.distance,
-        userLocation,
-      ],
-      queryFn: async ({ pageParam = 1 }) => {
-        const params = new URLSearchParams({
-          page: pageParam.toString(),
-          limit: DEFAULT_FETCH_LIMIT.toString(),
-        });
-
-        if (debouncedFilters.query.trim()) {
-          params.append("q", debouncedFilters.query.trim());
-        }
-
-        // Add location parameters if available
-        if (userLocation) {
-          params.append("lat", userLocation.latitude.toString());
-          params.append("lng", userLocation.longitude.toString());
-        }
-
-        // Add sort and distance as query params
-        if (debouncedFilters.sortBy) {
-          params.append("sort_by", debouncedFilters.sortBy);
-        }
-
-        if (debouncedFilters.distance > 0) {
-          params.append("distance", debouncedFilters.distance.toString());
-        }
-
-        const response = await api.get<Paginated<RestaurantsData[]>>(
-          `/restaurants?${params.toString()}`,
-        );
-
-        return response.data;
-      },
-      getNextPageParam: (lastPage) => {
-        if (lastPage.page >= lastPage.totalPages) {
-          return undefined;
-        }
-
-        return lastPage.page + 1;
-      },
-      initialPageParam: 1,
-    });
-
-  // Flatten all pages into a single array
-  const restaurants = useMemo(() => {
-    return data?.pages.flatMap((page) => page.data) ?? [];
-  }, [data]);
-
-  // Get total count from first page
-  const totalCount = data?.pages[0]?.count ?? 0;
-
   return (
-    <>
+    <div className="container flex flex-col py-2 md:py-4">
+      <div>
+        <h1>{title}</h1>
+        <p className="text-muted-foreground mt-1 text-sm md:text-base">
+          {description}
+        </p>
+      </div>
+
       <RestaurantFilters
         filters={filters}
         setFilters={setFilters}
@@ -212,32 +241,15 @@ const RestaurantContainer = () => {
         setView={setView}
         userLocation={userLocation}
         geoPermission={geoPermission}
-        totalCount={totalCount}
         onRequestLocation={handleRequestLocation}
       />
-      <RestaurantResult
-        restaurants={restaurants}
-        view={view}
-        hasNextPage={hasNextPage ?? false}
-        isFetchingNextPage={isFetchingNextPage}
-        onLoadMore={fetchNextPage}
-        totalCount={totalCount}
-      />
-    </>
-  );
-};
 
-const Page = () => {
-  return (
-    <div className="container flex flex-col py-2 md:py-4">
-      <div>
-        <h1>{title}</h1>
-        <p className="text-muted-foreground mt-1 text-sm md:text-base">
-          {description}
-        </p>
-      </div>
       <SuspenseWrapper>
-        <RestaurantContainer />
+        <RestaurantResults
+          debouncedFilters={debouncedFilters}
+          userLocation={userLocation}
+          view={view}
+        />
       </SuspenseWrapper>
     </div>
   );
