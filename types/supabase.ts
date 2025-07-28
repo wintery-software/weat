@@ -212,8 +212,10 @@ export type Database = {
       restaurants: {
         Row: {
           created_at: string;
+          display_image: string | null;
           external_links: Json | null;
           id: string;
+          images: string[];
           is_blocked: boolean;
           name_en: string | null;
           name_zh: string | null;
@@ -223,8 +225,10 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
+          display_image?: string | null;
           external_links?: Json | null;
           id?: string;
+          images?: string[];
           is_blocked?: boolean;
           name_en?: string | null;
           name_zh?: string | null;
@@ -234,8 +238,10 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          display_image?: string | null;
           external_links?: Json | null;
           id?: string;
+          images?: string[];
           is_blocked?: boolean;
           name_en?: string | null;
           name_zh?: string | null;
@@ -466,6 +472,7 @@ export type Database = {
           phone_number: string;
           updated_at: string;
           is_blocked: boolean;
+          images: Json;
           place: Json;
           summary: Json;
           distance: number;
