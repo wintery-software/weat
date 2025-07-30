@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getImageSrc } from "@/lib/image-utils";
 import { type Profile } from "@/types/types";
 import { UserIcon } from "lucide-react";
 
@@ -14,7 +13,7 @@ export const UserAvatar = ({ profile, className }: UserAvatarProps) => {
 
   return (
     <Avatar className={className}>
-      <AvatarImage src={getImageSrc(profile?.avatar, "/placeholder.svg")} />
+      <AvatarImage src={profile?.avatar || "#"} />
       <AvatarFallback>{name ?? <UserIcon className="size-4" />}</AvatarFallback>
     </Avatar>
   );
