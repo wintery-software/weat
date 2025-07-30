@@ -1,2 +1,2 @@
+pnpm lint --fix
 pnpx prettier --write .
-
