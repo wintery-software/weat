@@ -475,7 +475,6 @@ export type Database = {
           images: Json;
           place: Json;
           summary: Json;
-          distance: number;
         }[];
       };
       get_tagged_restaurants_count: {

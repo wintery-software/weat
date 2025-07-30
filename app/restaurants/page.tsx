@@ -4,6 +4,7 @@ import { type RestaurantsData } from "@/app/api/restaurants/route";
 import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
 import { RestaurantsFilters } from "@/components/restaurants/restaurants-filters";
 import { RestaurantsResult } from "@/components/restaurants/restaurants-result";
+import { RestaurantsMap } from "@/components/restaurants/restaurants-map";
 import { api } from "@/lib/api";
 import {
   DEFAULT_DEBOUNCE_DELAY,
@@ -16,7 +17,7 @@ import type { Paginated, SortOption, ViewMode } from "@/types/types";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, Suspense } from "react";
 import { toast } from "sonner";
 
 const title = "发现餐厅";
@@ -103,7 +104,7 @@ const RestaurantsResults = ({
   );
 };
 
-const Page = () => {
+const RestaurantsPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -244,14 +245,29 @@ const Page = () => {
         onRequestLocation={handleRequestLocation}
       />
 
-      <SuspenseWrapper>
-        <RestaurantsResults
+      {view === "map" ? (
+        <RestaurantsMap
           debouncedFilters={debouncedFilters}
           userLocation={userLocation}
-          view={view}
         />
-      </SuspenseWrapper>
+      ) : (
+        <SuspenseWrapper>
+          <RestaurantsResults
+            debouncedFilters={debouncedFilters}
+            userLocation={userLocation}
+            view={view}
+          />
+        </SuspenseWrapper>
+      )}
     </div>
+  );
+};
+
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RestaurantsPageContent />
+    </Suspense>
   );
 };
 

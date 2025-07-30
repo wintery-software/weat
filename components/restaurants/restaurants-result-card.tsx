@@ -13,7 +13,7 @@ import { MapPin } from "lucide-react";
 import Link from "next/link";
 
 export interface RestaurantsResultCardProps {
-  restaurant: RestaurantsData & { distance?: number };
+  restaurant: RestaurantsData;
   view: ViewMode;
 }
 
@@ -72,11 +72,12 @@ export const RestaurantsResultCard = ({
                   />
                   <span>({restaurant.summary?.review_count ?? 0})</span>
                 </div>
-                {restaurant.distance && (
+                {restaurant.place.distance && (
                   <span className="text-muted-foreground flex items-center gap-1">
                     <MapPin className="size-3" />
                     <span>
-                      {formatDistance(restaurant.distance, "imperial")} mi
+                      {formatDistance(restaurant.place.distance, "imperial")}
+                      &nbsp;mi
                     </span>
                   </span>
                 )}
