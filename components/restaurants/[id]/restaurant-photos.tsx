@@ -9,7 +9,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { getRestaurantImageUrl } from "@/lib/utils";
+import { getRestaurantImageUrl } from "@/lib/image-utils";
 import Image from "next/image";
 
 interface RestaurantPhotosProps {

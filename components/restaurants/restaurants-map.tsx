@@ -1,6 +1,6 @@
 "use client";
 
-import { type RestaurantsData } from "@/app/api/restaurants/route";
+import { type RestaurantsResponse } from "@/app/api/restaurants/route";
 import { api } from "@/lib/api";
 import type { Paginated, SortOption } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
@@ -53,7 +53,7 @@ export const RestaurantsMap = ({
         params.append("distance", debouncedFilters.distance.toString());
       }
 
-      const response = await api.get<Paginated<RestaurantsData[]>>(
+      const response = await api.get<Paginated<RestaurantsResponse[]>>(
         `/restaurants?${params.toString()}`,
       );
 
@@ -81,7 +81,7 @@ export const RestaurantsMap = ({
 
     // Calculate bounds from all restaurant locations
     const validRestaurants = restaurants.filter(
-      (restaurant: RestaurantsData) =>
+      (restaurant: RestaurantsResponse) =>
         restaurant.place?.lat != null && restaurant.place?.lng != null,
     );
 
@@ -113,7 +113,7 @@ export const RestaurantsMap = ({
           minLng: number;
           maxLng: number;
         },
-        restaurant: RestaurantsData,
+        restaurant: RestaurantsResponse,
       ) => {
         const lat = restaurant.place.lat;
         const lng = restaurant.place.lng;
@@ -195,10 +195,10 @@ export const RestaurantsMap = ({
           {/* Restaurant markers */}
           {restaurants
             .filter(
-              (restaurant: RestaurantsData) =>
+              (restaurant: RestaurantsResponse) =>
                 restaurant.place?.lat != null && restaurant.place?.lng != null,
             )
-            .map((restaurant: RestaurantsData) => (
+            .map((restaurant: RestaurantsResponse) => (
               <AdvancedMarker
                 key={restaurant.id}
                 position={{

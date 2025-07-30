@@ -1,4 +1,4 @@
-import { type RestaurantsData } from "@/app/api/restaurants/route";
+import { type RestaurantsResponse } from "@/app/api/restaurants/route";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { RestaurantsResultCard } from "@/components/restaurants/restaurants-result-card";
 import type { ViewMode } from "@/types/types";
@@ -8,7 +8,7 @@ import type {
 } from "@tanstack/react-query";
 
 interface RestaurantsResultProps {
-  restaurants: RestaurantsData[];
+  restaurants: RestaurantsResponse[];
   view: ViewMode;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;

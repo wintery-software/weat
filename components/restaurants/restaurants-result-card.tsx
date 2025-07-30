@@ -1,19 +1,16 @@
-import { type RestaurantsData } from "@/app/api/restaurants/route";
+import { type RestaurantsResponse } from "@/app/api/restaurants/route";
 import { Rating } from "@/components/rating";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { getRestaurantImageUrl } from "@/lib/image-utils";
 import { getGoogleMapsSearchUrl } from "@/lib/navigation";
-import {
-  formatAddress,
-  formatDistance,
-  getRestaurantImageUrl,
-} from "@/lib/utils";
+import { formatAddress, formatDistance } from "@/lib/utils";
 import { type TopTag, type ViewMode } from "@/types/types";
 import { MapPin } from "lucide-react";
 import Link from "next/link";
 
 export interface RestaurantsResultCardProps {
-  restaurant: RestaurantsData;
+  restaurant: RestaurantsResponse;
   view: ViewMode;
 }
 

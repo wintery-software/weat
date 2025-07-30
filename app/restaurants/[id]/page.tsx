@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/lib/api";
-import { getRestaurantImageUrl } from "@/lib/utils";
+import { getRestaurantImageUrl } from "@/lib/image-utils";
 import { CircleQuestionMarkIcon } from "lucide-react";
 
 interface PageProps {

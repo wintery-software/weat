@@ -1,10 +1,10 @@
 "use client";
 
-import { type RestaurantsData } from "@/app/api/restaurants/route";
+import { type RestaurantsResponse } from "@/app/api/restaurants/route";
 import { SuspenseWrapper } from "@/components/layouts/suspense-wrapper";
 import { RestaurantsFilters } from "@/components/restaurants/restaurants-filters";
-import { RestaurantsResult } from "@/components/restaurants/restaurants-result";
 import { RestaurantsMap } from "@/components/restaurants/restaurants-map";
+import { RestaurantsResult } from "@/components/restaurants/restaurants-result";
 import { api } from "@/lib/api";
 import {
   DEFAULT_DEBOUNCE_DELAY,
@@ -17,7 +17,7 @@ import type { Paginated, SortOption, ViewMode } from "@/types/types";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState, Suspense } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 const title = "发现餐厅";
@@ -72,7 +72,7 @@ const RestaurantsResults = ({
           params.append("distance", debouncedFilters.distance.toString());
         }
 
-        const response = await api.get<Paginated<RestaurantsData[]>>(
+        const response = await api.get<Paginated<RestaurantsResponse[]>>(
           `/restaurants?${params.toString()}`,
         );
 

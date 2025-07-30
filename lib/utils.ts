@@ -1,7 +1,7 @@
 import { APP_NAME } from "@/lib/constants";
 import { kilometersToMiles } from "@/lib/navigation";
 import { type DistanceUnit, type Place } from "@/types/types";
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 /**
@@ -85,6 +85,3 @@ export const formatDistance = (meters: number, unit: DistanceUnit) => {
     return Number((meters / 1000).toFixed(2));
   }
 };
-
-export const getRestaurantImageUrl = (restaurantId: string, filename: string) =>
-  `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/restaurant-images/${restaurantId}/${filename}`;

@@ -7,11 +7,11 @@ import {
   type RestaurantSummary,
   type SortOption,
 } from "@/types/types";
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
-export interface RestaurantsData
+export interface RestaurantsResponse
   extends Omit<Restaurant, "place_id" | "created_at" | "external_links"> {
-  place: Place;
+  place: Place & { lat: number; lng: number; distance: number };
   summary: Pick<
     RestaurantSummary,
     "average_rating" | "review_count" | "top_tags"
@@ -129,11 +129,11 @@ export const GET = async (request: NextRequest) => {
   const totalPages = Math.ceil((count || 0) / filters.limit) || 1;
 
   return NextResponse.json({
-    data: data as unknown as RestaurantsData[],
+    data: data as unknown as RestaurantsResponse[],
     count: count ?? 0,
     page: filters.page,
     pageSize: filters.limit,
     totalPages,
     query: filters.query ?? null,
-  } as Paginated<RestaurantsData[]>);
+  } as Paginated<RestaurantsResponse[]>);
 };
