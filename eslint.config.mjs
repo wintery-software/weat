@@ -1,5 +1,4 @@
 import { FlatCompat } from "@eslint/eslintrc";
-import drizzlePlugin from "eslint-plugin-drizzle";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -12,13 +11,10 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   {
-    plugins: {
-      drizzle: drizzlePlugin,
-    },
+    plugins: {},
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   ...compat.extends("plugin:@typescript-eslint/recommended"),
-  ...compat.extends("plugin:drizzle/recommended"),
   {
     rules: {
       // Enforce arrow function components for React
@@ -72,24 +68,10 @@ const eslintConfig = [
         { blankLine: "always", prev: "*", next: "multiline-block-like" },
         // Enforce blank line after multiline blocks
         { blankLine: "always", prev: "multiline-block-like", next: "*" },
-      ],
-      // Enforce blank lines around blocks
-      "lines-around-comment": [
-        "error",
-        {
-          beforeBlockComment: true,
-          afterBlockComment: false,
-          beforeLineComment: false,
-          afterLineComment: false,
-          allowBlockStart: true,
-          allowBlockEnd: true,
-          allowClassStart: true,
-          allowClassEnd: true,
-          allowObjectStart: true,
-          allowObjectEnd: true,
-          allowArrayStart: true,
-          allowArrayEnd: true,
-        },
+        // Enforce blank line before if statements
+        { blankLine: "always", prev: "*", next: "if" },
+        // Enforce blank line after if statements
+        { blankLine: "always", prev: "if", next: "*" },
       ],
       // Enforce blank lines between class members
       "lines-between-class-members": [
@@ -112,14 +94,6 @@ const eslintConfig = [
       "@typescript-eslint/no-explicit-any": "off",
       // Allow display name for React components
       "react/display-name": "off",
-    },
-  },
-  {
-    files: ["**/*"],
-    ignores: ["app/api/**/*"],
-    rules: {
-      // Disable drizzle enforce-delete-with-where for all files except app/api
-      "drizzle/enforce-delete-with-where": "off",
     },
   },
 ];
