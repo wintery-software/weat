@@ -10,7 +10,8 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "prepare": "husky",
-    "generate:types": "openapi-typescript https://api.weat.wintery.io/openapi.json -o types/openapi.d.ts --enum --enum-values --dedupe-enums --export-type --immutable --path-params-as-types --alphabetize --exclude-deprecated --array-length --default-non-nullable --properties-required-by-default --empty-objects-unknown && eslint types/openapi.d.ts --fix && prettier --write types/openapi.d.ts"
+    "generate:openapi": "openapi-typescript https://api.weat.wintery.io/openapi.json -o types/openapi.d.ts --enum --enum-values --dedupe-enums --export-type --immutable --path-params-as-types --alphabetize --exclude-deprecated --array-length --default-non-nullable --properties-required-by-default --empty-objects-unknown && eslint types/openapi.d.ts --fix && prettier --write types/openapi.d.ts",
+    "generate:supabase": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID --schema public > types/supabase.ts && eslint types/supabase.ts --fix && prettier --write types/supabase.ts"
   },
   "dependencies": {
     "@faker-js/faker": "^9.9.0",

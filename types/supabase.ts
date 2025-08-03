@@ -135,44 +135,6 @@ export type Database = {
           },
         ];
       };
-      restaurant_summaries: {
-        Row: {
-          average_rating: number;
-          id: string;
-          restaurant_id: string;
-          review_count: number;
-          summary: string;
-          top_tags: Json;
-          updated_at: string;
-        };
-        Insert: {
-          average_rating: number;
-          id?: string;
-          restaurant_id: string;
-          review_count?: number;
-          summary: string;
-          top_tags: Json;
-          updated_at?: string;
-        };
-        Update: {
-          average_rating?: number;
-          id?: string;
-          restaurant_id?: string;
-          review_count?: number;
-          summary?: string;
-          top_tags?: Json;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "restaurant_summaries_restaurant_id_fkey";
-            columns: ["restaurant_id"];
-            isOneToOne: true;
-            referencedRelation: "restaurants";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       restaurant_tags: {
         Row: {
           id: string;
@@ -259,53 +221,11 @@ export type Database = {
           },
         ];
       };
-      review_summaries: {
-        Row: {
-          authenticity_score: number;
-          created_at: string;
-          dishes: Json | null;
-          id: string;
-          rating: number;
-          review_id: string;
-          summary: string;
-          tags: Json | null;
-        };
-        Insert: {
-          authenticity_score: number;
-          created_at?: string;
-          dishes?: Json | null;
-          id?: string;
-          rating: number;
-          review_id: string;
-          summary: string;
-          tags?: Json | null;
-        };
-        Update: {
-          authenticity_score?: number;
-          created_at?: string;
-          dishes?: Json | null;
-          id?: string;
-          rating?: number;
-          review_id?: string;
-          summary?: string;
-          tags?: Json | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "review_summaries_review_id_fkey";
-            columns: ["review_id"];
-            isOneToOne: true;
-            referencedRelation: "reviews";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       reviews: {
         Row: {
           created_at: string;
           id: string;
           is_blocked: boolean;
-          published_at: string | null;
           restaurant_id: string;
           source: Database["public"]["Enums"]["review_source"];
           source_id: string;
@@ -314,7 +234,6 @@ export type Database = {
           created_at?: string;
           id?: string;
           is_blocked?: boolean;
-          published_at?: string | null;
           restaurant_id: string;
           source?: Database["public"]["Enums"]["review_source"];
           source_id: string;
@@ -323,7 +242,6 @@ export type Database = {
           created_at?: string;
           id?: string;
           is_blocked?: boolean;
-          published_at?: string | null;
           restaurant_id?: string;
           source?: Database["public"]["Enums"]["review_source"];
           source_id?: string;
@@ -456,7 +374,23 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      restaurant_tags_with_standard_name: {
+        Row: {
+          id: string | null;
+          mention_count: number | null;
+          name: string | null;
+          restaurant_id: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "restaurant_tags_restaurant_id_fkey";
+            columns: ["restaurant_id"];
+            isOneToOne: false;
+            referencedRelation: "restaurants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Functions: {
       get_restaurant_by_id_user_view: {
