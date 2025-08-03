@@ -13,7 +13,7 @@ import {
 import { UserAvatar } from "@/components/user-avatar";
 import { createCSRClient } from "@/lib/supabase/clients/csr";
 import { cn } from "@/lib/utils";
-import { type Profile } from "@/types/types";
+import { type Profile } from "@/types/data";
 import { type User } from "@supabase/supabase-js";
 import {
   HelpCircleIcon,
@@ -26,11 +26,11 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  cloneElement,
   type Dispatch,
+  isValidElement,
   type ReactNode,
   type SetStateAction,
-  cloneElement,
-  isValidElement,
   useEffect,
   useState,
 } from "react";
@@ -39,6 +39,7 @@ interface RouteGroup {
   label: string;
   routes: RouteItem[];
 }
+
 interface RouteItem {
   href: string;
   label: string;
@@ -47,23 +48,26 @@ interface RouteItem {
 }
 
 interface NavbarProps {
+  searchBar?: boolean;
   groups: RouteGroup[];
   glass?: boolean;
+}
+
+interface UserControlProps {
+  user: User | null;
+  profile: Profile | null;
+  setUser: Dispatch<SetStateAction<User | null>>;
+  setProfile: Dispatch<SetStateAction<Profile | null>>;
 }
 
 const UserControl = ({
   user,
   profile,
-  supabase,
   setUser,
   setProfile,
-}: {
-  user: User | null;
-  profile: Profile | null;
-  supabase: ReturnType<typeof createCSRClient>;
-  setUser: Dispatch<SetStateAction<User | null>>;
-  setProfile: Dispatch<SetStateAction<Profile | null>>;
-}) => {
+}: UserControlProps) => {
+  const supabase = createCSRClient();
+
   if (!user || !profile) {
     return (
       <Button size="sm" variant="secondary" asChild>
@@ -154,8 +158,7 @@ export const Navbar = ({ groups, glass = true }: NavbarProps) => {
     ...group,
     routes: group.routes.map((route) => ({
       ...route,
-      active:
-        route.active ?? pathname.split("/")[1] === route.href.split("/")[1],
+      active: route.active ?? pathname.startsWith(route.href),
     })),
   }));
 
@@ -178,7 +181,8 @@ export const Navbar = ({ groups, glass = true }: NavbarProps) => {
       id="navbar"
       className="bg-background sticky top-0 z-50 flex h-(--header-height) w-full items-center justify-between py-0"
     >
-      <div className="container flex items-center justify-between">
+      <div className="container flex items-center justify-between gap-4">
+        {/* Collapsible menu on mobile */}
         <div className="flex items-center gap-2 md:hidden">
           <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenuTrigger asChild>
@@ -234,13 +238,15 @@ export const Navbar = ({ groups, glass = true }: NavbarProps) => {
           </DropdownMenu>
         </div>
 
-        <Link href="/" className="flex items-center select-none">
+        {/* Logo */}
+        <Link href="/" className="flex items-center pr-4 select-none">
           <WeatLogo className="size-8" />
           <span className="font-[winkyRough] text-xl font-semibold tracking-tight">
             weat
           </span>
         </Link>
 
+        {/* Navigation links */}
         <div className="glass hidden items-center md:flex md:gap-2">
           {routesWithActiveState.map((group) =>
             group.routes.map((route) => (
@@ -257,24 +263,15 @@ export const Navbar = ({ groups, glass = true }: NavbarProps) => {
               </Button>
             )),
           )}
-          <UserControl
-            user={user}
-            profile={profile}
-            supabase={supabase}
-            setUser={setUser}
-            setProfile={setProfile}
-          />
         </div>
 
-        <div className="md:hidden">
-          <UserControl
-            user={user}
-            profile={profile}
-            supabase={supabase}
-            setUser={setUser}
-            setProfile={setProfile}
-          />
-        </div>
+        {/* User avatar */}
+        <UserControl
+          user={user}
+          profile={profile}
+          setUser={setUser}
+          setProfile={setProfile}
+        />
       </div>
     </header>
   );

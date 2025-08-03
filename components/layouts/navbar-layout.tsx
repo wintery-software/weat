@@ -1,29 +1,42 @@
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
-import { StoreIcon } from "lucide-react";
-import { type ReactNode } from "react";
+import { cn } from "@/lib/utils";
+import { MapIcon, StoreIcon } from "lucide-react";
+import { type PropsWithChildren } from "react";
 
-const groups = [
+interface NavbarLayoutProps extends PropsWithChildren {
+  fullscreen?: boolean;
+  searchBar?: boolean;
+  footer?: boolean;
+}
+
+const NAVIGATION_GROUPS = [
   {
     label: "导航",
     routes: [
       {
-        href: "/restaurants",
-        label: "餐厅",
+        href: "/discover",
+        label: "发现",
         icon: <StoreIcon />,
+      },
+      {
+        href: "/nearby",
+        label: "附近",
+        icon: <MapIcon />,
       },
     ],
   },
 ];
 
-interface NavbarLayoutProps {
-  children: ReactNode;
-}
-
-export const NavbarLayout = ({ children }: NavbarLayoutProps) => (
-  <div className="flex min-h-dvh flex-col">
-    <Navbar groups={groups} />
-    <main className="flex flex-1 flex-col">{children}</main>
-    <Footer />
+export const NavbarLayout = ({
+  children,
+  fullscreen = false,
+  searchBar = true,
+  footer = true,
+}: NavbarLayoutProps) => (
+  <div className={cn("flex flex-col", fullscreen ? "h-screen" : "min-h-dvh")}>
+    <Navbar searchBar={searchBar} groups={NAVIGATION_GROUPS} />
+    <main className="flex-1">{children}</main>
+    {footer && <Footer />}
   </div>
 );
