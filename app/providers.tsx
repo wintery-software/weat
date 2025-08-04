@@ -26,7 +26,9 @@ export const Providers = ({ children }: ProvidersProps) => {
         queryCache: new QueryCache({
           onError: (error) => {
             toast.error("Weat API Error", {
-              description: error.message,
+              description: error.message
+                .split("\n")
+                .map((line, i) => <div key={i}>{line}</div>),
             });
           },
         }),
