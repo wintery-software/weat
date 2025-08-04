@@ -1,6 +1,6 @@
 import { Providers } from "@/app/providers";
 import { Toaster } from "@/components/ui/sonner";
-import { APP_NAME, COMPANY_NAME } from "@/lib/constants";
+import { APP_NAME, COMPANY_NAME } from "@/lib/constants/app";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
@@ -51,7 +51,7 @@ const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
         <Providers>{children}</Providers>
         <Analytics />
         <SpeedInsights />
-        <Toaster richColors />
+        <Toaster richColors closeButton />
       </body>
     </html>
   );
