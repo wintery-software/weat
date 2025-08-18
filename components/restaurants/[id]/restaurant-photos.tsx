@@ -1,6 +1,6 @@
 "use client";
 
-import { type RestaurantData } from "@/app/api/restaurants/[id]/route";
+import { type GetRestaurantResponse } from "@/app/restaurants/[id]/actions";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -13,7 +13,7 @@ import { getRestaurantImageUrl } from "@/lib/image-utils";
 import Image from "next/image";
 
 interface RestaurantPhotosProps {
-  restaurant: RestaurantData;
+  restaurant: GetRestaurantResponse;
 }
 
 export const RestaurantPhotos = ({ restaurant }: RestaurantPhotosProps) => (
@@ -23,7 +23,7 @@ export const RestaurantPhotos = ({ restaurant }: RestaurantPhotosProps) => (
       <div className="flex flex-col gap-2 sm:hidden">
         <Carousel className="w-full">
           <CarouselContent>
-            {restaurant.images.map((image, index) => (
+            {restaurant.images?.map((image, index) => (
               <CarouselItem key={index}>
                 <div className="group relative aspect-square overflow-hidden rounded-lg">
                   <Image
@@ -50,7 +50,7 @@ export const RestaurantPhotos = ({ restaurant }: RestaurantPhotosProps) => (
 
       {/* Grid for larger screens */}
       <div className="hidden gap-2 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {restaurant.images.map((image, index) => (
+        {restaurant.images?.map((image, index) => (
           <div
             key={index}
             className="group relative aspect-square overflow-hidden rounded-lg"

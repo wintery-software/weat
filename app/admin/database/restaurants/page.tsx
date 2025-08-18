@@ -1,13 +1,15 @@
 "use client";
 
+import { type ListRestaurantsResponseData } from "@/app/restaurants/actions";
 import { api } from "@/lib/api";
-import { type Paginated, type Restaurant } from "@/types/types";
+import { type Paginated } from "@/types/types";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 const Page = () => {
   const { data } = useSuspenseQuery({
     queryKey: ["admin", "restaurants"],
-    queryFn: () => api.get<Paginated<Restaurant>>("/admin/restaurants"),
+    queryFn: () =>
+      api.get<Paginated<ListRestaurantsResponseData>>("/admin/restaurants"),
   });
 
   return (

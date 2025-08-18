@@ -1,4 +1,4 @@
-import { APP_NAME } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants/app";
 import { kilometersToMiles } from "@/lib/navigation";
 import { type DistanceUnit, type Place } from "@/types/types";
 import { type ClassValue, clsx } from "clsx";

@@ -1,5 +1,5 @@
 import { LoginForm } from "@/app/login/login-form";
-import { COMPANY_NAME } from "@/lib/constants";
+import { COMPANY_NAME } from "@/lib/constants/app";
 import { GalleryVerticalEnd } from "lucide-react";
 import Link from "next/link";
 

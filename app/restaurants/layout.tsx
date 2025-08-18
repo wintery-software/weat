@@ -1,5 +1,5 @@
 import { NavbarLayout } from "@/components/layouts/navbar-layout";
-import { APP_NAME } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants/app";
 import { type Metadata } from "next";
 import { type PropsWithChildren } from "react";
 

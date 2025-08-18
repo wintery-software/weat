@@ -1,12 +1,12 @@
 "use client";
 
-import { type RestaurantData } from "@/app/api/restaurants/[id]/route";
+import { type GetRestaurantResponse } from "@/app/restaurants/[id]/actions";
 import { Button } from "@/components/ui/button";
-import { APP_NAME } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants/app";
 import { Navigation, Share } from "lucide-react";
 
 interface RestaurantActionsProps {
-  restaurant: RestaurantData;
+  restaurant: GetRestaurantResponse;
 }
 
 export const RestaurantActions = ({ restaurant }: RestaurantActionsProps) => {
@@ -32,7 +32,10 @@ export const RestaurantActions = ({ restaurant }: RestaurantActionsProps) => {
         await navigator.share(shareData);
       }
     } catch (error) {
-      console.error("Error sharing:", error);
+      // Ignore share canceled errors
+      if (error instanceof Error && error.name !== "AbortError") {
+        console.error("Error sharing:", error);
+      }
     }
   };
 
@@ -46,7 +49,6 @@ export const RestaurantActions = ({ restaurant }: RestaurantActionsProps) => {
         onClick={handleNavigationClick}
       >
         <Navigation />
-        <span className="sr-only">导航</span>
       </Button>
       <Button
         size={"icon"}
@@ -56,7 +58,6 @@ export const RestaurantActions = ({ restaurant }: RestaurantActionsProps) => {
         onClick={handleShareClick}
       >
         <Share />
-        <span className="sr-only">分享</span>
       </Button>
     </div>
   );

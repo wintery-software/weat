@@ -1,9 +1,7 @@
-import { type RestaurantData } from "@/app/api/restaurants/[id]/route";
-import { Rating } from "@/components/rating";
+import { getRestaurant } from "@/app/restaurants/[id]/actions";
 import { RestaurantActions } from "@/components/restaurants/[id]/restaurant-actions";
-import { RestaurantAiInsights } from "@/components/restaurants/[id]/restaurant-ai-insights";
-import { RestaurantDishes } from "@/components/restaurants/[id]/restaurant-dishes";
 import { RestaurantInfo } from "@/components/restaurants/[id]/restaurant-info";
+import { RestaurantMap } from "@/components/restaurants/[id]/restaurant-map";
 import { RestaurantPhotos } from "@/components/restaurants/[id]/restaurant-photos";
 import {
   Popover,
@@ -11,8 +9,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { api } from "@/lib/api";
-import { getRestaurantImageUrl } from "@/lib/image-utils";
 import { CircleQuestionMarkIcon } from "lucide-react";
 
 interface PageProps {
@@ -21,25 +17,15 @@ interface PageProps {
 
 const Page = async ({ params }: PageProps) => {
   const { id } = await params;
-  const { data: restaurant } = await api.get<RestaurantData>(
-    `/restaurants/${id}`,
-  );
+  const restaurant = await getRestaurant(id);
 
   return (
     <>
-      {/* Background image */}
-      <div
-        className="h-64 w-full bg-cover bg-center md:h-80"
-        style={{
-          backgroundImage: `url(${
-            restaurant.images.length > 0
-              ? getRestaurantImageUrl(
-                  restaurant.id,
-                  restaurant.display_image ?? restaurant.images[0],
-                )
-              : "/placeholder.svg"
-          })`,
-        }}
+      {/* Restaurant Map */}
+      <RestaurantMap
+        title={restaurant.name_zh || restaurant.name_en || ""}
+        lat={restaurant.place.latitude}
+        lng={restaurant.place.longitude}
       />
 
       {/* Main content */}
@@ -54,18 +40,6 @@ const Page = async ({ params }: PageProps) => {
                 </p>
               )}
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span>
-                {restaurant.summary?.average_rating?.toFixed(1) ?? "-"}
-              </span>
-              <Rating
-                value={restaurant.summary?.average_rating ?? 0}
-                size={12}
-              />
-              <span className="text-muted-foreground">
-                ({restaurant.summary?.review_count ?? 0})
-              </span>
-            </div>
           </div>
 
           <RestaurantActions restaurant={restaurant} />
@@ -78,16 +52,7 @@ const Page = async ({ params }: PageProps) => {
           </TabsList>
 
           <TabsContent value="overview">
-            <div className="grid gap-2 lg:grid-cols-5 xl:grid-cols-6">
-              <div className="flex flex-col gap-2 lg:col-span-3 xl:col-span-4">
-                <RestaurantAiInsights restaurant={restaurant} />
-                <RestaurantDishes dishes={restaurant.dishes} />
-              </div>
-
-              <div className="lg:col-span-2 xl:col-span-2">
-                <RestaurantInfo restaurant={restaurant} />
-              </div>
-            </div>
+            <RestaurantInfo restaurant={restaurant} />
           </TabsContent>
 
           <TabsContent value="photos">

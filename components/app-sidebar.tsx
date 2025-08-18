@@ -23,7 +23,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { UserAvatar } from "@/components/user-avatar";
-import { APP_NAME } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants/app";
 import { createCSRClient } from "@/lib/supabase/clients/csr";
 import { type Profile } from "@/types/types";
 import { type User } from "@supabase/supabase-js";

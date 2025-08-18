@@ -1,4 +1,4 @@
-import { COMPANY_NAME } from "@/lib/constants";
+import { COMPANY_NAME } from "@/lib/constants/app";
 import Link from "next/link";
 
 export const Footer = () => (

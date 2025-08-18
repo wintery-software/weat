@@ -13,7 +13,7 @@ import {
 import { UserAvatar } from "@/components/user-avatar";
 import { createCSRClient } from "@/lib/supabase/clients/csr";
 import { cn } from "@/lib/utils";
-import { type Profile } from "@/types/data";
+import { type Profile } from "@/types/types";
 import { type User } from "@supabase/supabase-js";
 import {
   HelpCircleIcon,

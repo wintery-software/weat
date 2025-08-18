@@ -414,6 +414,11 @@ export type components = {
        */
       readonly id: string;
       /**
+       * Images
+       * @description The images of the restaurant.
+       */
+      readonly images: readonly string[] | null;
+      /**
        * Name En
        * @description The English name of the restaurant.
        */
@@ -539,6 +544,11 @@ export type components = {
        * @description The id of the restaurant.
        */
       readonly id: string;
+      /**
+       * Images
+       * @description The images of the restaurant.
+       */
+      readonly images: readonly string[] | null;
       /**
        * Name En
        * @description The English name of the restaurant.

@@ -1,6 +1,6 @@
 "use client";
 
-import { type RestaurantData } from "@/app/api/restaurants/[id]/route";
+import { type GetRestaurantResponse } from "@/app/restaurants/[id]/actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,12 +14,11 @@ import {
 } from "@/lib/navigation";
 import { formatAddress } from "@/lib/utils";
 import { SiApple, SiGooglemaps } from "@icons-pack/react-simple-icons";
-import { AdvancedMarker, Map } from "@vis.gl/react-google-maps";
 import { Clock, MapPin, Phone, StoreIcon } from "lucide-react";
 import Link from "next/link";
 
 interface RestaurantInfoProps {
-  restaurant: RestaurantData;
+  restaurant: GetRestaurantResponse;
 }
 
 export const RestaurantInfo = ({ restaurant }: RestaurantInfoProps) => {
@@ -30,35 +29,6 @@ export const RestaurantInfo = ({ restaurant }: RestaurantInfoProps) => {
         <h2>餐厅信息</h2>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="aspect-square overflow-hidden rounded-md border">
-          {restaurant.place.lat && restaurant.place.lng ? (
-            <Map
-              defaultZoom={15}
-              defaultCenter={{
-                lat: restaurant.place.lat,
-                lng: restaurant.place.lng,
-              }}
-              mapId="#"
-              className="h-full w-full"
-              gestureHandling="greedy"
-              disableDefaultUI
-              zoomControl={true}
-              scrollwheel={true}
-            >
-              <AdvancedMarker
-                position={{
-                  lat: restaurant.place.lat,
-                  lng: restaurant.place.lng,
-                }}
-                title={restaurant.name_zh || restaurant.name_en}
-              />
-            </Map>
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <p className="text-muted-foreground text-sm">暂无位置信息</p>
-            </div>
-          )}
-        </div>
         <div className="flex flex-col gap-2 text-sm">
           <div className="flex items-center gap-2">
             <MapPin className="text-primary size-4" />
@@ -108,7 +78,7 @@ export const RestaurantInfo = ({ restaurant }: RestaurantInfoProps) => {
         <Button
           className="flex-1"
           asChild
-          disabled={!restaurant.place.lat || !restaurant.place.lng}
+          disabled={!restaurant.place.latitude || !restaurant.place.longitude}
         >
           <a
             href={getAppleMapsSearchUrl({

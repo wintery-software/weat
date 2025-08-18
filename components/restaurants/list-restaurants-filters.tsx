@@ -22,13 +22,13 @@ import {
 } from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  DEFAULT_RESTAURANT_QUERY,
-  DEFAULT_RESTAURANT_SORT_BY,
-} from "@/lib/constants";
+import { DEFAULT_RESTAURANT_SORT_OPTION } from "@/lib/constants/restaurants";
 import { kilometersToMiles } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-import type { SortOption, ViewMode } from "@/types/types";
+import {
+  type RestaurantResultsSortOption,
+  type RestaurantResultsViewMode,
+} from "@/types/restaurants";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -43,6 +43,7 @@ import {
   StarIcon,
   XIcon,
 } from "lucide-react";
+import { type Dispatch, type ReactNode, type SetStateAction } from "react";
 
 interface UserLocation {
   latitude: number;
@@ -51,13 +52,13 @@ interface UserLocation {
 
 interface RestaurantsFiltersProps {
   filters: {
-    sortBy: SortOption;
+    sortOption: RestaurantResultsSortOption;
     distance: number;
     query: string;
   };
-  setFilters: React.Dispatch<
-    React.SetStateAction<{
-      sortBy: SortOption;
+  setFilters: Dispatch<
+    SetStateAction<{
+      sortOption: RestaurantResultsSortOption;
       distance: number;
       query: string;
     }>
@@ -66,79 +67,83 @@ interface RestaurantsFiltersProps {
   setSliderValue: (v: number) => void;
   isFilterOpen: boolean;
   setIsFilterOpen: (v: boolean) => void;
-  view: ViewMode;
-  setView: (v: ViewMode) => void;
+  view: RestaurantResultsViewMode;
+  setView: (v: RestaurantResultsViewMode) => void;
   userLocation: UserLocation | null;
   geoPermission: PermissionState | null;
   onRequestLocation: () => void;
+  onResetFilters: () => void;
 }
 
-const SORT_OPTIONS: { label: string; icon?: React.ReactNode; value: string }[] =
-  [
-    { label: "默认排序", value: "default" },
-    {
-      label: "距离最近",
-      icon: (
-        <>
-          <RouteIcon />
-          <ChevronDownIcon />
-        </>
-      ),
-      value: "distance:asc",
-    },
-    {
-      label: "距离最远",
-      icon: (
-        <>
-          <RouteIcon />
-          <ChevronUpIcon />
-        </>
-      ),
-      value: "distance:desc",
-    },
-    {
-      label: "评分最低",
-      icon: (
-        <>
-          <StarIcon />
-          <ChevronDownIcon />
-        </>
-      ),
-      value: "rating:asc",
-    },
-    {
-      label: "评分最高",
-      icon: (
-        <>
-          <StarIcon />
-          <ChevronUpIcon />
-        </>
-      ),
-      value: "rating:desc",
-    },
-    {
-      label: "评价最少",
-      icon: (
-        <>
-          <MessageSquareIcon />
-          <ChevronDownIcon />
-        </>
-      ),
-      value: "review_count:asc",
-    },
-    {
-      label: "评价最多",
-      icon: (
-        <>
-          <MessageSquareIcon />
-          <ChevronUpIcon />
-        </>
-      ),
-      value: "review_count:desc",
-    },
-  ];
+const SORT_OPTIONS: {
+  label: string;
+  icon?: ReactNode;
+  value: RestaurantResultsSortOption;
+}[] = [
+  { label: "默认排序", value: "distance:asc" },
+  {
+    label: "距离最近",
+    icon: (
+      <>
+        <RouteIcon />
+        <ChevronDownIcon />
+      </>
+    ),
+    value: "distance:asc",
+  },
+  {
+    label: "距离最远",
+    icon: (
+      <>
+        <RouteIcon />
+        <ChevronUpIcon />
+      </>
+    ),
+    value: "distance:desc",
+  },
+  {
+    label: "评分最低",
+    icon: (
+      <>
+        <StarIcon />
+        <ChevronDownIcon />
+      </>
+    ),
+    value: "rating:asc",
+  },
+  {
+    label: "评分最高",
+    icon: (
+      <>
+        <StarIcon />
+        <ChevronUpIcon />
+      </>
+    ),
+    value: "rating:desc",
+  },
+  {
+    label: "评价最少",
+    icon: (
+      <>
+        <MessageSquareIcon />
+        <ChevronDownIcon />
+      </>
+    ),
+    value: "review:asc",
+  },
+  {
+    label: "评价最多",
+    icon: (
+      <>
+        <MessageSquareIcon />
+        <ChevronUpIcon />
+      </>
+    ),
+    value: "review:desc",
+  },
+];
 
-export const RestaurantsFilters = ({
+export const ListRestaurantsFilters = ({
   filters,
   setFilters,
   sliderValue,
@@ -150,6 +155,7 @@ export const RestaurantsFilters = ({
   userLocation,
   geoPermission,
   onRequestLocation,
+  onResetFilters,
 }: RestaurantsFiltersProps) => {
   return (
     <div
@@ -202,11 +208,11 @@ export const RestaurantsFilters = ({
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="sort-by">排序方式</Label>
                   <Select
-                    value={filters.sortBy ?? ""}
+                    value={filters.sortOption ?? ""}
                     onValueChange={(value) => {
                       setFilters((prev) => ({
                         ...prev,
-                        sortBy: value as SortOption,
+                        sortOption: value as RestaurantResultsSortOption,
                       }));
                     }}
                   >
@@ -233,12 +239,12 @@ export const RestaurantsFilters = ({
                     max={100}
                     step={5}
                     onValueChange={(value) => {
-                      setSliderValue(value[0]);
+                      setSliderValue(value[0] ?? 0);
                     }}
                     onValueCommit={(value) => {
                       setFilters((prev) => ({
                         ...prev,
-                        distance: value[0],
+                        distance: value[0] ?? 0,
                       }));
                     }}
                   />
@@ -292,16 +298,7 @@ export const RestaurantsFilters = ({
                 </div>
               </div>
               <SheetFooter className="mt-6 flex-row justify-between sm:space-x-0">
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                    setFilters({
-                      sortBy: DEFAULT_RESTAURANT_SORT_BY,
-                      distance: 0,
-                      query: DEFAULT_RESTAURANT_QUERY,
-                    })
-                  }
-                >
+                <Button variant="outline" onClick={onResetFilters}>
                   清除
                 </Button>
                 <Button onClick={() => setIsFilterOpen(false)}>应用</Button>
@@ -313,7 +310,9 @@ export const RestaurantsFilters = ({
             type="single"
             value={view}
             variant={"outline"}
-            onValueChange={(value) => value && setView(value as ViewMode)}
+            onValueChange={(value) =>
+              value && setView(value as RestaurantResultsViewMode)
+            }
             className="flex-shrink-0"
           >
             <ToggleGroupItem value="grid" aria-label="网格视图">
@@ -332,7 +331,7 @@ export const RestaurantsFilters = ({
         </div>
       </div>
       {/* Active Filters */}
-      {(filters.sortBy !== DEFAULT_RESTAURANT_SORT_BY ||
+      {(filters.sortOption !== DEFAULT_RESTAURANT_SORT_OPTION ||
         filters.query ||
         filters.distance > 0) && (
         <div className="mt-4 flex flex-wrap gap-2">
@@ -346,22 +345,27 @@ export const RestaurantsFilters = ({
               <XIcon className="h-3 w-3" />
             </Badge>
           )}
-          {filters.sortBy && filters.sortBy !== DEFAULT_RESTAURANT_SORT_BY && (
-            <Badge
-              variant="secondary"
-              className="flex cursor-pointer items-center gap-1 select-none"
-              onClick={() => {
-                setFilters((prev) => ({ ...prev, sortBy: "default" }));
-              }}
-            >
-              排序:&nbsp;
-              {
-                SORT_OPTIONS.find((option) => option.value === filters.sortBy)
-                  ?.label
-              }
-              <XIcon className="h-3 w-3" />
-            </Badge>
-          )}
+          {filters.sortOption &&
+            filters.sortOption !== DEFAULT_RESTAURANT_SORT_OPTION && (
+              <Badge
+                variant="secondary"
+                className="flex cursor-pointer items-center gap-1 select-none"
+                onClick={() => {
+                  setFilters((prev) => ({
+                    ...prev,
+                    sortOption: DEFAULT_RESTAURANT_SORT_OPTION,
+                  }));
+                }}
+              >
+                排序:&nbsp;
+                {
+                  SORT_OPTIONS.find(
+                    (option) => option.value === filters.sortOption,
+                  )?.label
+                }
+                <XIcon className="h-3 w-3" />
+              </Badge>
+            )}
           {filters.distance > 0 && (
             <Badge
               variant="secondary"
@@ -379,19 +383,13 @@ export const RestaurantsFilters = ({
               <XIcon className="h-3 w-3" />
             </Badge>
           )}
-          {filters.sortBy !== DEFAULT_RESTAURANT_SORT_BY ||
+          {filters.sortOption !== DEFAULT_RESTAURANT_SORT_OPTION ||
           filters.query ||
           filters.distance > 0 ? (
             <Badge
               variant={"outline"}
               className="flex cursor-pointer items-center gap-1 select-none"
-              onClick={() =>
-                setFilters({
-                  sortBy: DEFAULT_RESTAURANT_SORT_BY,
-                  distance: 0,
-                  query: DEFAULT_RESTAURANT_QUERY,
-                })
-              }
+              onClick={onResetFilters}
             >
               清除所有
             </Badge>

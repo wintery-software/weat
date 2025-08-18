@@ -11,17 +11,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { APP_NAME, MIN_PASSWORD_LENGTH } from "@/lib/constants";
+import { MIN_PASSWORD_LENGTH } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants/app";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SiGoogle } from "@icons-pack/react-simple-icons";
 import { Loader2 } from "lucide-react";
-import { useTransition, type ComponentPropsWithoutRef } from "react";
+import { type ComponentPropsWithoutRef, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const loginSchema = z.object({
-  email: z.string().email({ message: "无效的邮箱地址" }),
+  email: z.email(),
   password: z.string().min(MIN_PASSWORD_LENGTH, {
     message: `密码至少${MIN_PASSWORD_LENGTH}个字符`,
   }),
